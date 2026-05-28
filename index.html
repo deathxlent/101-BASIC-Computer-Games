@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>101 BASIC Computer Games - HTML Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #00ff00;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 2px solid #00ff00;
+            background: #111;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .subtitle {
+            color: #00cc00;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #00aa00;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #111;
+        }
+
+        th {
+            background: #003300;
+            color: #00ff00;
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #00ff00;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 10px 15px;
+            border: 1px solid #004400;
+        }
+
+        tr:nth-child(even) {
+            background: #0a0a0a;
+        }
+
+        tr:hover {
+            background: #002200;
+        }
+
+        .game-name {
+            font-weight: bold;
+        }
+
+        a {
+            color: #00ffff;
+            text-decoration: none;
+            padding: 4px 10px;
+            border: 1px solid #00ffff;
+            transition: all 0.3s;
+        }
+
+        a:hover {
+            background: #00ffff;
+            color: #000;
+        }
+
+        a.basic-link {
+            color: #ffff00;
+            border-color: #ffff00;
+        }
+
+        a.basic-link:hover {
+            background: #ffff00;
+            color: #000;
+        }
+
+        .status-done {
+            color: #00ff00;
+        }
+
+        .status-pending {
+            color: #666;
+        }
+
+        .scroll-indicator {
+            text-align: center;
+            color: #006600;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            th, td {
+                padding: 8px 5px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>101 BASIC COMPUTER GAMES</h1>
+            <p class="subtitle">HTML Edition - Classic Games from the 1970s</p>
+            <p class="stats">Total Games: 101 | Ported: <span id="ported-count">5</span></p>
+        </header>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Game Name</th>
+                    <th>HTML Version</th>
+                    <th>Original BASIC</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="game-list">
+            </tbody>
+        </table>
+
+        <p class="scroll-indicator">↑ Scroll to see all games ↑</p>
+    </div>
+
+    <script>
+        const games = [
+            { name: "1check", file: "1check.bas", ported: false },
+            { name: "23mtch", file: "23mtch.bas", ported: false },
+            { name: "3dplot", file: "3dplot.bas", ported: false },
+            { name: "aceydu", file: "aceydu.bas", ported: false },
+            { name: "amazin", file: "amazin.bas", ported: false },
+            { name: "animal", file: "animal.bas", ported: false },
+            { name: "awari", file: "awari.bas", ported: false },
+            { name: "bagels", file: "bagels.bas", ported: false },
+            { name: "banner", file: "banner.bas", ported: false },
+            { name: "basbal", file: "basbal.bas", ported: false },
+            { name: "basbl1", file: "basbl1.bas", ported: false },
+            { name: "basket", file: "basket.bas", ported: false },
+            { name: "batnum", file: "batnum.bas", ported: false },
+            { name: "battle", file: "battle.bas", ported: false },
+            { name: "bingo", file: "bingo.bas", ported: false },
+            { name: "blkjac", file: "blkjac.bas", ported: true },
+            { name: "blkjak", file: "blkjak.bas", ported: false },
+            { name: "boat", file: "boat.bas", ported: false },
+            { name: "bomber", file: "bomber.bas", ported: false },
+            { name: "bounce", file: "bounce.bas", ported: false },
+            { name: "bowl", file: "bowl.bas", ported: false },
+            { name: "boxing", file: "boxing.bas", ported: false },
+            { name: "bug", file: "bug.bas", ported: false },
+            { name: "buleye", file: "buleye.bas", ported: false },
+            { name: "bull", file: "bull.bas", ported: false },
+            { name: "bullcow", file: "bullcow.bas", ported: false },
+            { name: "buzzwd", file: "buzzwd.bas", ported: false },
+            { name: "calndr", file: "calndr.bas", ported: false },
+            { name: "canam", file: "canam.bas", ported: false },
+            { name: "change", file: "change.bas", ported: false },
+            { name: "checkr", file: "checkr.bas", ported: false },
+            { name: "chemst", file: "chemst.bas", ported: false },
+            { name: "chief", file: "chief.bas", ported: false },
+            { name: "chomp", file: "chomp.bas", ported: false },
+            { name: "civilw", file: "civilw.bas", ported: false },
+            { name: "craps", file: "craps.bas", ported: false },
+            { name: "cube", file: "cube.bas", ported: false },
+            { name: "diamnd", file: "diamnd.bas", ported: false },
+            { name: "dice", file: "dice.bas", ported: false },
+            { name: "digits", file: "digits.bas", ported: false },
+            { name: "dogs", file: "dogs.bas", ported: false },
+            { name: "even", file: "even.bas", ported: false },
+            { name: "even1", file: "even1.bas", ported: false },
+            { name: "fipfop", file: "fipfop.bas", ported: false },
+            { name: "footbl", file: "footbl.bas", ported: false },
+            { name: "fotbal", file: "fotbal.bas", ported: false },
+            { name: "furs", file: "furs.bas", ported: false },
+            { name: "golf", file: "golf.bas", ported: false },
+            { name: "gomoko", file: "gomoko.bas", ported: false },
+            { name: "guess", file: "guess.bas", ported: true },
+            { name: "guner1", file: "guner1.bas", ported: false },
+            { name: "gunner", file: "gunner.bas", ported: false },
+            { name: "hang", file: "hang.bas", ported: false },
+            { name: "hello", file: "hello.bas", ported: true },
+            { name: "hex", file: "hex.bas", ported: false },
+            { name: "hi-lo", file: "hi-lo.bas", ported: false },
+            { name: "hi-q", file: "hi-q.bas", ported: false },
+            { name: "hmrabi", file: "hmrabi.bas", ported: false },
+            { name: "hockey", file: "hockey.bas", ported: false },
+            { name: "horses", file: "horses.bas", ported: false },
+            { name: "hurkle", file: "hurkle.bas", ported: false },
+            { name: "kinema", file: "kinema.bas", ported: false },
+            { name: "king", file: "king.bas", ported: false },
+            { name: "letter", file: "letter.bas", ported: false },
+            { name: "life", file: "life.bas", ported: false },
+            { name: "life2", file: "life2.bas", ported: false },
+            { name: "litqz", file: "litqz.bas", ported: false },
+            { name: "mathd", file: "mathd.bas", ported: false },
+            { name: "mnopfl", file: "mnopfl.bas", ported: false },
+            { name: "mnoply", file: "mnoply.bas", ported: false },
+            { name: "mugwump", file: "mugwump.bas", ported: false },
+            { name: "nicoma", file: "nicoma.bas", ported: false },
+            { name: "nim", file: "nim.bas", ported: false },
+            { name: "number", file: "number.bas", ported: false },
+            { name: "orbit", file: "orbit.bas", ported: false },
+            { name: "pizza", file: "pizza.bas", ported: false },
+            { name: "poet", file: "poet.bas", ported: false },
+            { name: "poetry", file: "poetry.bas", ported: false },
+            { name: "poker", file: "poker.bas", ported: false },
+            { name: "qubic", file: "qubic.bas", ported: false },
+            { name: "queen", file: "queen.bas", ported: false },
+            { name: "reverse", file: "reverse.bas", ported: false },
+            { name: "rocket", file: "rocket.bas", ported: true },
+            { name: "rocksp", file: "rocksp.bas", ported: false },
+            { name: "rockt1", file: "rockt1.bas", ported: false },
+            { name: "rockt2", file: "rockt2.bas", ported: false },
+            { name: "roulet", file: "roulet.bas", ported: false },
+            { name: "rusrou", file: "rusrou.bas", ported: false },
+            { name: "salvo", file: "salvo.bas", ported: false },
+            { name: "salvo1", file: "salvo1.bas", ported: false },
+            { name: "slots", file: "slots.bas", ported: false },
+            { name: "spcwar", file: "spcwar.bas", ported: false },
+            { name: "splat", file: "splat.bas", ported: false },
+            { name: "stars", file: "stars.bas", ported: false },
+            { name: "stock", file: "stock.bas", ported: false },
+            { name: "synonm", file: "synonm.bas", ported: false },
+            { name: "target", file: "target.bas", ported: false },
+            { name: "tictac", file: "tictac.bas", ported: true },
+            { name: "tower", file: "tower.bas", ported: false },
+            { name: "train", file: "train.bas", ported: false },
+            { name: "trap", file: "trap.bas", ported: false },
+            { name: "ugly", file: "ugly.bas", ported: false },
+            { name: "war", file: "war.bas", ported: false },
+            { name: "war2", file: "war2.bas", ported: false },
+            { name: "wekday", file: "wekday.bas", ported: false },
+            { name: "word", file: "word.bas", ported: false },
+            { name: "yahtze", file: "yahtze.bas", ported: false },
+            { name: "zoop", file: "zoop.bas", ported: false }
+        ];
+
+        const tbody = document.getElementById('game-list');
+        let portedCount = 0;
+
+        games.forEach((game, index) => {
+            const row = document.createElement('tr');
+            const htmlLink = game.ported 
+                ? `<a href="games/${game.name}.html">Play</a>`
+                : `<span style="color: #444;">Coming Soon</span>`;
+            
+            if (game.ported) portedCount++;
+
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="game-name">${game.name.toUpperCase()}</td>
+                <td>${htmlLink}</td>
+                <td><a href="maurymarkowitz/101-BASIC-Computer-Games/${game.file}" class="basic-link" target="_blank">View Code</a></td>
+                <td class="${game.ported ? 'status-done' : 'status-pending'}">${game.ported ? '✓ PORTED' : '○ PENDING'}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('ported-count').textContent = portedCount;
+    </script>
+</body>
+</html>

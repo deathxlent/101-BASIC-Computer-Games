@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROCKET - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">ROCKET.BAS - Lunar Lander</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter burn rate (0-200)">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'ROCKET'
+        });
+
+        async function runGame() {
+            await terminal.delay(500);
+            
+            terminal.print("THIS IS A COMPUTER SIMULATION OF AN APOLLO LUNAR");
+            terminal.print("LANDING CAPSULE.");
+            terminal.print("");
+            terminal.print("");
+            terminal.print("THE ON-BOARD COMPUTER HAS FAILED (IT WASN'T MADE BY");
+            terminal.print("DIGITAL) SO YOU HAVE TO LAND THE CAPSULE MANUALLY");
+            terminal.print("");
+            terminal.print("SET BURN RATE OF RETRO ROCKETS TO ANY VALUE BETWEEN");
+            terminal.print("0 (FREE FALL) AND 200 (MAXIMUM BURN) POUNDS PER SECOND");
+            terminal.print("SET NEW BURN RATE EVERY 10 SECONDS.");
+            terminal.print("");
+            terminal.print("CAPSULE WEIGHT 32,500 LBS;  FUEL WEIGHT 16,500 LBS");
+            terminal.print("");
+            terminal.print("");
+            terminal.print("");
+            terminal.print("GOOD LUCK!!!");
+            terminal.print("");
+            terminal.print("");
+            terminal.print("SEC           MI + FT           MPH           LB FUEL           BURN RATE");
+            terminal.print("");
+            
+            while (true) {
+                let L = 0;
+                let A = 120;
+                let V = 1;
+                let M = 33000;
+                let N = 16500;
+                let G = 0.001;
+                let Z = 1.8;
+                
+                while (true) {
+                    let miles = Math.floor(A);
+                    let feet = Math.floor(5280 * (A - miles));
+                    let mph = 3600 * V;
+                    let fuel = M - N;
+                    
+                    terminal.print(`${L.toFixed(0).padEnd(14)}${miles} + ${feet.toString().padEnd(12)}${mph.toFixed(0).padEnd(14)}${fuel.toFixed(0).padEnd(18)}`);
+                    
+                    let kStr = await terminal.input();
+                    let K = parseFloat(kStr) || 0;
+                    if (K < 0) K = 0;
+                    if (K > 200) K = 200;
+                    
+                    let T = 10;
+                    
+                    while (true) {
+                        if (M - N < 0.001) {
+                            terminal.print(`FUEL OUT AT ${L} SEC`);
+                            let S = (-V + Math.sqrt(V * V + 2 * A * G)) / G;
+                            V = V + G * S;
+                            L = L + S;
+                            let W = 3600 * V;
+                            terminal.print(`ON MOON AT ${L} SEC - IMPACT VELOCITY ${W} MPH`);
+                            
+                            if (W <= 1.2) {
+                                terminal.print("PERFECT LANDING! (LUCKY)");
+                            } else if (W <= 10) {
+                                terminal.print("GOOD LANDING (COULD BE BETTER)");
+                            } else if (W <= 60) {
+                                terminal.print("CRAFT DAMAGE.....YOU'RE STRANDED HERE UNTIL");
+                                terminal.print("A RESCUE PARTY ARRIVES. HOPE YOU HAVE ENOUGH OXYGEN!");
+                            } else {
+                                terminal.print("SORRY, BUT THERE WERE NO SURVIVORS...YOU BLEW IT!");
+                                terminal.print(`IN FACT, YOU BLASTED A NEW LUNAR CRATER ${(W * 2777).toFixed(0)} FT DEEP`);
+                            }
+                            break;
+                        }
+                        
+                        if (T < 0.001) break;
+                        
+                        let S = T;
+                        if (M < N + S * K) {
+                            S = (M - N) / K;
+                        }
+                        
+                        let Q = S * K / M;
+                        let J = V + G * S + Z * (-Q - Q * Q / 2 - Q / 3 - 3 - Q / 4 - 4 - Q / 5);
+                        let I = A - G * S / 2 - V * S + Z * S * (Q / 2 + Q / 2 + Q / 3 + Q / 3 + 12 * Q / 4 + 20 * Q / 5 + 30);
+                        
+                        if (I <= 0) {
+                            if (S < 0.005) {
+                                let W = 3600 * V;
+                                terminal.print(`ON MOON AT ${L} SEC - IMPACT VELOCITY ${W.toFixed(0)} MPH`);
+                                
+                                if (W <= 1.2) terminal.print("PERFECT LANDING! (LUCKY)");
+                                else if (W <= 10) terminal.print("GOOD LANDING (COULD BE BETTER)");
+                                else if (W <= 60) {
+                                    terminal.print("CRAFT DAMAGE.....YOU'RE STRANDED HERE UNTIL");
+                                    terminal.print("A RESCUE PARTY ARRIVES. HOPE YOU HAVE ENOUGH OXYGEN!");
+                                } else {
+                                    terminal.print("SORRY, BUT THERE WERE NO SURVIVORS...YOU BLEW IT!");
+                                    terminal.print(`IN FACT, YOU BLASTED A NEW LUNAR CRATER ${(W * 2777).toFixed(0)} FT DEEP`);
+                                }
+                                break;
+                            }
+                            let D = V + Math.sqrt(V * V + 2 * A * (G - Z / K / M));
+                            S = 2 * A / D;
+                            Q = S * K / M;
+                            J = V + G * S + Z * (-Q - Q * Q / 2 - Q / 3 - 3 - Q / 4 - 4 - Q / 5);
+                            I = A - G * S / 2 - V * S + Z * S * (Q / 2 + Q / 2 + Q / 3 + Q / 3 + 12 * Q / 4 + 20 * Q / 5 + 30);
+                        }
+                        
+                        L = L + S;
+                        T = T - S;
+                        M = M - S * K;
+                        A = I;
+                        V = J;
+                        
+                        if (V <= 0) break;
+                        if (J < 0) break;
+                    }
+                    
+                    if (A <= 0 || M - N < 0.001) break;
+                }
+                
+                terminal.print("");
+                terminal.print("");
+                terminal.print("");
+                terminal.print("TRY AGAIN?? (YES OR NO)");
+                let answer = (await terminal.input()).toUpperCase();
+                if (answer !== 'YES' && answer !== 'Y') break;
+            }
+            
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

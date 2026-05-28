@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUESS - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">GUESS.BAS - Number Guessing</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter your guess...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'GUESS'
+        });
+
+        async function runGame() {
+            await terminal.delay(500);
+            
+            terminal.print("THIS IS A NUMBER GUESSING GAME. I'LL THINK");
+            terminal.print("OF A NUMBER BETWEEN 1 AND ANY LIMIT YOU WANT.");
+            terminal.print("THEN YOU HAVE TO GUESS WHAT IT IS.");
+            terminal.print("");
+            
+            while (true) {
+                terminal.print("WHAT LIMIT DO YOU WANT?");
+                let limitStr = await terminal.input();
+                let limit = parseInt(limitStr);
+                
+                if (isNaN(limit) || limit < 2) {
+                    terminal.print("PLEASE ENTER A NUMBER GREATER THAN 1.");
+                    continue;
+                }
+                
+                let optimalGuesses = Math.floor(Math.log(limit) / Math.log(2)) + 1;
+                
+                terminal.print("");
+                terminal.print(`I'M THINKING OF A NUMBER BETWEEN 1 AND ${limit}`);
+                terminal.print("NOW YOU TRY TO GUESS WHAT IT IS");
+                
+                let target = Math.floor(limit * Math.random()) + 1;
+                let guesses = 0;
+                
+                while (true) {
+                    let guessStr = await terminal.input();
+                    let guess = parseInt(guessStr);
+                    guesses++;
+                    
+                    if (isNaN(guess)) {
+                        terminal.print("PLEASE ENTER A VALID NUMBER.");
+                        guesses--;
+                        continue;
+                    }
+                    
+                    if (guess <= 0) {
+                        terminal.print("");
+                        terminal.print("*** STARTING NEW GAME ***");
+                        terminal.print("");
+                        break;
+                    }
+                    
+                    if (guess === target) {
+                        terminal.print(`THAT'S IT! YOU GOT IT IN ${guesses} TRIES.`);
+                        
+                        if (guesses < optimalGuesses) {
+                            terminal.print("VERY GOOD.");
+                        } else if (guesses === optimalGuesses) {
+                            terminal.print("GOOD.");
+                        } else {
+                            terminal.print(`YOU SHOULD HAVE BEEN ABLE TO GET IT IN ONLY ${optimalGuesses}.`);
+                        }
+                        
+                        terminal.print("");
+                        terminal.print("*** STARTING NEW GAME ***");
+                        terminal.print("");
+                        break;
+                    } else if (guess < target) {
+                        terminal.print("TOO LOW. GUESS AGAIN.");
+                    } else {
+                        terminal.print("TOO HIGH. GUESS AGAIN.");
+                    }
+                }
+            }
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

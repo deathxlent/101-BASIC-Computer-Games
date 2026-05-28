@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HELLO - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">HELLO.BAS - Elisa</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter your input...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'HELLO'
+        });
+
+        let userName = '';
+
+        function printName() {
+            const nameParts = [];
+            for (let i = 1; i <= Math.floor(userName.length / 5) + 1; i++) {
+                nameParts.push(userName.substring((i - 1) * 5, i * 5));
+            }
+            return nameParts.join('');
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+            
+            terminal.print("HELLO. I'M AN EDUSYSTEM-25. MY NAME IS PETEY P. EIGHT.");
+            terminal.print("WHAT'S YOUR NAME?");
+            
+            userName = await terminal.input();
+            
+            terminal.print(`HI THERE ${userName}. ARE YOU ENJOYING YOURSELF HERE`);
+            terminal.print("IN BEAUTIFUL MAYNARD, MASS?");
+            
+            while (true) {
+                let answer = (await terminal.input()).toUpperCase();
+                
+                if (answer === 'YES') {
+                    terminal.print(`OH, I'M GLAD TO HEAR THAT ${userName}`);
+                    break;
+                } else if (answer === 'NO') {
+                    terminal.print(`OH, SORRY TO HEAR THAT ${userName}, MAYBE WE CAN`);
+                    terminal.print("BRIGHTEN UP YOUR STAY A BIT");
+                    break;
+                } else {
+                    terminal.print(`${userName}, I DON'T UNDERSTAND YOUR ANSWER OF '${answer}'.`);
+                    terminal.print("PLEASE ANSWER 'YES' OR 'NO'. DO YOU LIKE IT HERE");
+                }
+            }
+            
+            terminal.print("");
+            terminal.print(`SAY, ${userName}, I CAN SOLVE ALL KINDS OF PROBLEMS`);
+            terminal.print("EXCEPT THOSE DEALING WITH GREECE. WHAT KIND OF");
+            terminal.print("PROBLEMS DO YOU HAVE (ANSWER SEX, HEALTH, MONEY,");
+            terminal.print("OR JOB)?");
+            
+            while (true) {
+                let problem = (await terminal.input()).toUpperCase();
+                
+                if (problem === 'SEX') {
+                    await handleSexProblem();
+                    break;
+                } else if (problem === 'HEALTH') {
+                    handleHealthProblem();
+                    break;
+                } else if (problem === 'MONEY') {
+                    handleMoneyProblem();
+                    break;
+                } else if (problem === 'JOB') {
+                    handleJobProblem();
+                    break;
+                } else {
+                    terminal.print(`OH, ${userName}, YOUR ANSWER OF '${problem}' IS GREEK TO ME.`);
+                    break;
+                }
+            }
+            
+            await askMoreProblems();
+            await handlePayment();
+            
+            terminal.print("");
+            terminal.print(`NICE MEETING YOU ${userName}. HAVE A NICE DAY!!!`);
+            terminal.print("");
+            terminal.print("*** PROGRAM RESTARTING IN 3 SECONDS ***");
+            
+            await terminal.delay(3000);
+            location.reload();
+        }
+
+        async function handleSexProblem() {
+            terminal.print("IS YOUR PROBLEM TOO MUCH OR TOO LITTLE?");
+            
+            while (true) {
+                let answer = (await terminal.input()).toUpperCase();
+                
+                if (answer.includes('TOO MU') || answer === 'TOO MUCH') {
+                    terminal.print("YOU CALL THAT A PROBLEM?!! I SHOULD HAVE SUCH PROBLEMS!");
+                    terminal.print(`IF IT BOTHERS YOU, TAKE A COLD SHOWER ${userName}.`);
+                    break;
+                } else if (answer.includes('TOO LI') || answer === 'TOO LITTLE') {
+                    terminal.print(`WHY ARE YOU HERE ${userName}? YOU SHOULD BE`);
+                    terminal.print("IN TOKYO OR NEW YORK OR AMSTERDAM OR SOMEPLACE WITH SOME");
+                    terminal.print("REAL ACTION.");
+                    break;
+                } else {
+                    terminal.print(`DON'T GET ALL SHOOK ${userName}, JUST ANSWER THE QUESTION`);
+                    terminal.print("WITH 'TOO MUCH' OR 'TOO LITTLE'. WHICH IS IT?");
+                }
+            }
+        }
+
+        function handleHealthProblem() {
+            terminal.print(`MY ADVICE TO YOU ${userName}, IS:`);
+            terminal.print("     1. TAKE TWO ASPIRIN");
+            terminal.print("     2. DRINK PLENTY OF FLUIDS (ORANGE JUICE, NOT BEER!)");
+            terminal.print("     3. GO TO BED (ALONE)");
+        }
+
+        function handleMoneyProblem() {
+            terminal.print(`SORRY, ${userName} I'M BROKE TOO. WHY DON'T YOU SELL`);
+            terminal.print("ENCYCLOPEDIAS OR MARRY SOMEONE RICH OR STOP EATING");
+            terminal.print("SO YOU WON'T NEED SO MUCH MONEY?");
+        }
+
+        function handleJobProblem() {
+            terminal.print(`I CAN SYMPATHIZE WITH YOU ${userName}. I HAVE TO WORK`);
+            terminal.print("VERY LONG HOURS FOR NO PAY -- AND SOME OF MY BOSSES REALLY");
+            terminal.print("BEAT MY KEYBOARD. MY ADVICE TO YOU ");
+            terminal.print(`${userName}, IS TO SELL`);
+            terminal.print("IN THE EDUCATION MARKET. IT'S GREAT FUN.");
+        }
+
+        async function askMoreProblems() {
+            while (true) {
+                terminal.print("");
+                terminal.print(`ANY MORE PROBLEMS YOU WANT SOLVED, ${userName}?`);
+                
+                let answer = (await terminal.input()).toUpperCase();
+                
+                if (answer === 'YES') {
+                    terminal.print("WHAT KIND (SEX, MONEY, HEALTH, JOB)?");
+                    let problem = (await terminal.input()).toUpperCase();
+                    
+                    if (problem === 'SEX') await handleSexProblem();
+                    else if (problem === 'HEALTH') handleHealthProblem();
+                    else if (problem === 'MONEY') handleMoneyProblem();
+                    else if (problem === 'JOB') handleJobProblem();
+                    else terminal.print(`OH, ${userName}, THAT'S GREEK TO ME.`);
+                } else if (answer === 'NO') {
+                    break;
+                } else {
+                    terminal.print(`JUST A SIMPLE 'YES' OR 'NO' PLEASE, ${userName}.`);
+                }
+            }
+        }
+
+        async function handlePayment() {
+            terminal.print("");
+            terminal.print(`THAT WILL BE $5.00 FOR THE ADVICE, ${userName}.`);
+            terminal.print("PLEASE LEAVE THE MONEY ON THE TERMINAL.");
+            terminal.print("");
+            terminal.print("");
+            terminal.print("");
+            terminal.print("DID YOU LEAVE THE MONEY?");
+            
+            while (true) {
+                let answer = (await terminal.input()).toUpperCase();
+                
+                if (answer === 'YES') {
+                    terminal.print(`HEY, ${userName}??? YOU LEFT NO MONEY AT ALL!`);
+                    terminal.print("YOU ARE CHEATING ME OUT OF MY HARD-EARNED LIVING.");
+                    terminal.print(`RIP OFF, ${userName} *=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*=*`);
+                    break;
+                } else if (answer === 'NO') {
+                    terminal.print(`THAT'S HONEST, ${userName}, BUT HOW DO YOU EXPECT`);
+                    terminal.print("ME TO GO ON WITH MY PSYCHOLOGY STUDIES IF MY PATIENTS DON'T");
+                    terminal.print("PAY THEIR BILLS?");
+                    break;
+                } else {
+                    terminal.print(`YOUR ANSWER OF '${answer}' CONFUSES ME, ${userName} PLEASE`);
+                    terminal.print("RESPOND WITH A 'YES' OR 'NO'.");
+                }
+            }
+            
+            terminal.print("");
+            terminal.print("");
+            terminal.print("NOW LET ME TALK TO SOMEONE ELSE.");
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

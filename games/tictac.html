@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TICTAC - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">TICTAC.BAS - Tic-Tac-Toe</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter move: row,col">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'TICTAC'
+        });
+
+        const C = [0, 2, 0, 0, 1, 1, 3, 3, 1, 3, 3, 1, 1, 2, 3, 2, 2, 3, 2, 1];
+        const D = [0, 2, 0, 0, 1, 3, 3, 1, 3, 3, 1, 1, 2, 3, 2, 2, 3, 2, 1, 1];
+        
+        let A = [];
+        let B = [];
+        let Z = 0;
+
+        function initBoard() {
+            A = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+            B = new Array(10).fill(0);
+            Z = 0;
+        }
+
+        function printBoard() {
+            terminal.print("");
+            for (let k = 1; k <= 3; k++) {
+                let b = A[k][1];
+                let d = A[k][2];
+                let f = A[k][3];
+                printRow(b, d, f);
+                if (k < 3) {
+                    terminal.print("***************");
+                }
+            }
+            terminal.print("");
+        }
+
+        function printRow(b, d, f) {
+            let line = "";
+            if (b === 0) line += "    * ";
+            else if (b < 0) line += "YOU * ";
+            else line += "CPU * ";
+            
+            if (d === 0) line += "    * ";
+            else if (d < 0) line += "YOU * ";
+            else line += "CPU * ";
+            
+            if (f === 0) line += "  ";
+            else if (f < 0) line += "YOU";
+            else line += "CPU";
+            
+            terminal.print(line);
+            terminal.print("    *     * ");
+        }
+
+        function checkWin() {
+            let t1 = 0;
+            B = new Array(10).fill(0);
+            
+            for (let j = 1; j <= 3; j++) {
+                let match = true;
+                for (let i = 1; i <= 3; i++) {
+                    if (A[j][1] !== A[j][i]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match && A[j][1] !== 0) t1 = A[j][1];
+            }
+            
+            for (let j = 1; j <= 3; j++) {
+                let match = true;
+                for (let i = 1; i <= 3; i++) {
+                    if (A[1][j] !== A[i][j]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if (match && A[1][j] !== 0) t1 = A[1][j];
+            }
+            
+            if (A[1][1] === A[2][2] && A[2][2] === A[3][3] && A[1][1] !== 0) {
+                t1 = A[1][1];
+            }
+            if (A[1][3] === A[2][2] && A[2][2] === A[3][1] && A[1][3] !== 0) {
+                t1 = A[1][3];
+            }
+            
+            if (t1 !== 0) {
+                if (t1 > 0) {
+                    terminal.print(" ... THE CPU WINS THIS TIME ...");
+                    Z = 2;
+                } else {
+                    terminal.print(" ... YOU WIN THIS TIME ...");
+                    Z = 1;
+                }
+                return true;
+            }
+            
+            for (let j = 1; j <= 3; j++) {
+                for (let i = 1; i <= 3; i++) {
+                    B[j] += A[j][i];
+                    B[j + 3] += A[i][j];
+                }
+            }
+            B[7] = A[1][1] + A[2][2] + A[3][3];
+            B[8] = A[1][3] + A[2][2] + A[3][1];
+            
+            return false;
+        }
+
+        function cpuMove() {
+            for (let i = 1; i <= 8; i++) {
+                if (B[i] > 1) {
+                    if (fillLine(i)) return;
+                }
+            }
+            
+            for (let i = 1; i <= 8; i++) {
+                if (B[i] < -1) {
+                    if (fillLine(i)) return;
+                }
+            }
+            
+            for (let k = 1; k <= 11; k++) {
+                let i = C[k];
+                let j = D[k];
+                if (A[i][j] === 0) {
+                    A[i][j] = 1;
+                    return;
+                }
+            }
+        }
+
+        function fillLine(i) {
+            if (i <= 3) {
+                for (let j = 1; j <= 3; j++) {
+                    if (A[i][j] === 0) {
+                        A[i][j] = 1;
+                        return true;
+                    }
+                }
+            } else if (i <= 6) {
+                for (let j = 1; j <= 3; j++) {
+                    if (A[j][i - 3] === 0) {
+                        A[j][i - 3] = 1;
+                        return true;
+                    }
+                }
+            } else if (i === 7) {
+                for (let j = 1; j <= 3; j++) {
+                    if (A[j][j] === 0) {
+                        A[j][j] = 1;
+                        return true;
+                    }
+                }
+            } else {
+                if (A[1][3] === 0) { A[1][3] = 1; return true; }
+                if (A[3][1] === 0) { A[3][1] = 1; return true; }
+                if (A[2][2] === 0) { A[2][2] = 1; return true; }
+            }
+            return false;
+        }
+
+        function checkTie() {
+            let t2 = 0;
+            for (let j = 1; j <= 3; j++) {
+                for (let i = 1; i <= 3; i++) {
+                    if (A[i][j] === 0) t2++;
+                }
+            }
+            return t2 === 0;
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+            
+            terminal.print("YOU HAVE THE OPPORTUNITY OF TRYING TO BEAT THE COMPUTER");
+            terminal.print("AT TIC-TAC-TOE. ENTER YOUR MOVES AS FOLLOWS:");
+            terminal.print("");
+            terminal.print("...ROW NUMBER...COMMA...COLUMN NUMBER...");
+            terminal.print("");
+            terminal.print("ROWS ARE HORIZONTAL(ACROSS)...COLUMNS ARE VERTICAL(UP + DOWN)");
+            
+            while (true) {
+                initBoard();
+                terminal.print("");
+                terminal.print("NEW GAME STARTED NOW...........................");
+                
+                while (true) {
+                    terminal.print("YOUR MOVE");
+                    let move = await terminal.input();
+                    let parts = move.split(/[, ]+/);
+                    let r = parseInt(parts[0]);
+                    let c = parseInt(parts[1]);
+                    
+                    if (isNaN(r) || isNaN(c) || r < 1 || r > 3 || c < 1 || c > 3 || A[r][c] !== 0) {
+                        terminal.print("---- ILLEGAL MOVE -- TRY AGAIN ----");
+                        terminal.print("");
+                        continue;
+                    }
+                    
+                    A[r][c] = -1;
+                    
+                    if (checkWin()) {
+                        printBoard();
+                        break;
+                    }
+                    
+                    if (checkTie()) {
+                        terminal.print("  ... TIE GAME ...  ");
+                        printBoard();
+                        break;
+                    }
+                    
+                    cpuMove();
+                    
+                    if (checkWin()) {
+                        printBoard();
+                        break;
+                    }
+                    
+                    if (checkTie()) {
+                        terminal.print("  ... TIE GAME ...  ");
+                        printBoard();
+                        break;
+                    }
+                    
+                    printBoard();
+                }
+                
+                terminal.print("DO YOU WANT TO PLAY ANOTHER GAME: YES(1), NO(0)");
+                let answer = await terminal.input();
+                if (answer !== '1') break;
+            }
+            
+            terminal.print("IT'S BEEN FUN, COME AGAIN SOMETIME");
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

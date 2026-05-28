@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLKJAC - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BLKJAC.BAS - Blackjack</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter your choice...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BLKJAC'
+        });
+
+        const remarks = [
+            "I MUST HAVE DEALT WRONG.",
+            "YOU LUCKED OUT AGAIN:",
+            "YOU MUST HAVE BEEN PEEKING.",
+            "I COULD LOSE MY JOB THIS WAY.",
+            "THE CARDS HAVE TURNED AGAINST ME:",
+            "THE BOTTOM OF THE DECK STRIKES AGAIN:",
+            "A VICTORY FOR US GOOD GUYS.",
+            "YOU CAN'T BEAT SKILL.",
+            "YOU CAN'T WIN 'EM ALL.",
+            "BABY GETS A NEW PAIR OF SHOES:"
+        ];
+
+        let D = new Array(53).fill(0);
+        let Q = new Array(53).fill(0);
+        let E = new Array(6).fill(0);
+        let V = new Array(6).fill(0);
+        let T = new Array(6).fill(0);
+        let W = new Array(6).fill(0);
+        let K = 0;
+        let W1 = 0;
+        let R = 0;
+        let X = 0;
+        let M = 0;
+        let G = 0;
+        let S = 0;
+
+        function initDeck() {
+            for (let i = 1; i <= 52; i++) {
+                D[i] = 0;
+            }
+            for (let a = 0; a <= 39; a += 13) {
+                for (let c = 1; c <= 13; c++) {
+                    Q[a + c] = c;
+                }
+            }
+        }
+
+        function reshuffle() {
+            for (let i = 1; i <= 52; i++) {
+                D[i] = 0;
+            }
+            R = 0;
+            terminal.print("   I RESHUFFLED");
+        }
+
+        function drawCard() {
+            let N;
+            while (true) {
+                if (R >= 50) {
+                    reshuffle();
+                }
+                N = Math.floor(52.999999 * Math.random());
+                if (N === 0) N = 1;
+                if (D[N] === 0) break;
+                R++;
+            }
+            R = 0;
+            D[N] = K;
+            return N;
+        }
+
+        function getCardValue(card, player) {
+            if (Q[card] === 1) {
+                E[player]++;
+                return 11;
+            }
+            if (Q[card] > 10) return 10;
+            return Q[card];
+        }
+
+        function printCardName(card) {
+            if (Q[card] === 1) return " ACE";
+            if (Q[card] <= 10) return " " + Q[card];
+            if (Q[card] === 11) return " JACK";
+            if (Q[card] === 12) return " QUEEN";
+            return " KING";
+        }
+
+        function printSuit(card) {
+            if (card <= 13) return " OF SPADES";
+            if (card <= 26) return " OF HEARTS";
+            if (card <= 39) return " OF DIAMONDS";
+            return " OF CLUBS";
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+            
+            terminal.print("DO YOU WANT INSTRUCTIONS (IF SO TYPE A 1)");
+            let instr = await terminal.input();
+            
+            if (instr === '1') {
+                terminal.print("");
+                terminal.print("");
+                terminal.print("");
+                terminal.print("");
+                terminal.print("THIS IS A GAME OF BLACKJACK, LAS VEGAS STYLE.");
+                terminal.print("HERE ARE THE RULES OF THE HOUSE. THE DEALER");
+                terminal.print("MUST HIT ON 16 OR LESS AND WILL STAY ON 17 OR");
+                terminal.print("MORE. YOU MAY SPLIT TWO CARDS IF THEY ARE THE");
+                terminal.print("SAME AND PLAY ONE HAND WITH EACH OF THEM. ALSO,");
+                terminal.print("YOU MAY DOUBLE YOUR BET AND RECEIVE EXACTLY ONE");
+                terminal.print("MORE CARD ANY TIME ON YOUR FIRST HIT. THE TYPING");
+                terminal.print("INSTRUCTIONS ARE: 0-NO HIT; 1-HIT; 2-DOUBLE; AND");
+                terminal.print("3-SPLIT A PAIR.");
+                terminal.print("WHEN THE DEALER HAS AN EXPOSED ACE HE WILL ASK");
+                terminal.print("YOU FOR AN INSURANCE BET. AN INSURANCE BET WILL");
+                terminal.print("RISK HALF YOUR BET FOR AN AMOUNT EQUAL TO YOUR BET");
+                terminal.print("IF YOU WIN. YOU WIN IF THE DEALER HAS A BLACKJACK");
+                terminal.print("AND LOSE IF HE DOESN'T. THE HOUSE LIMIT IS $500.00");
+                terminal.print("GOOD LUCK. OH, BY THE WAY, THE DEALER IS NOTED FOR");
+                terminal.print("DEALING OFF THE BOTTOM OF THE DECK. WATCH HIM VERY");
+                terminal.print("CLOSELY. HERE HE IS NOW.");
+            }
+            
+            K = 0;
+            W1 = 0;
+            initDeck();
+            N = Math.floor(1945 * Math.random() + 1);
+            
+            terminal.print("");
+            terminal.print("ANY TIME YOU WANT ME TO RESHUFFLE THE CARDS SIMPLY");
+            terminal.print("TYPE 7777 WHEN I ASK FOR YOUR WAGER AND I'LL BE VERY");
+            terminal.print("HAPPY TO OBLIGE. OK, HERE IS THE FIRST HAND.");
+            
+            while (true) {
+                K++;
+                for (let p = 1; p <= 5; p++) {
+                    E[p] = 0;
+                    V[p] = 0;
+                    T[p] = 0;
+                }
+                V[3] = 1;
+                
+                terminal.print("");
+                terminal.print("WAGER");
+                let wagerStr = await terminal.input();
+                let wager = parseFloat(wagerStr);
+                
+                if (wager <= 0) break;
+                
+                if (wager === 7777) {
+                    reshuffle();
+                    continue;
+                }
+                
+                if (wager > 500) {
+                    terminal.print("THAT'S TOO MUCH - HOUSE LIMIT IS $500");
+                    continue;
+                }
+                
+                W[2] = wager;
+                V[4] = 0;
+                V[5] = 1;
+                
+                terminal.print("I SHOW ");
+                X = drawCard();
+                M = X;
+                T[1] += getCardValue(X, 1);
+                terminal.print(printCardName(X) + printSuit(X));
+                
+                if (E[1] > 0) V[4] = 1;
+                
+                X = drawCard();
+                T[1] += getCardValue(X, 1);
+                
+                terminal.print("FIRST CARD IS");
+                X = drawCard();
+                G = X;
+                T[2] += getCardValue(X, 2);
+                terminal.print(printCardName(X) + printSuit(X));
+                
+                terminal.print("NEXT CARD IS");
+                X = drawCard();
+                S = X;
+                T[2] += getCardValue(X, 2);
+                terminal.print(printCardName(X) + printSuit(X));
+                
+                V[2] = 0;
+                let P = 2;
+                let insurance = false;
+                
+                if (V[4] === 1) {
+                    terminal.print("INSURANCE ANYONE   (TYPE 1 OR 0, 1 MEANS YES)");
+                    let ins = await terminal.input();
+                    if (ins === '1') insurance = true;
+                }
+                
+                if (T[1] === 21) {
+                    terminal.print("**I HAVE BLACKJACK**");
+                    terminal.print("MY HOLE CARD WAS " + printCardName(M) + printSuit(M));
+                    
+                    if (insurance) {
+                        W1 += wager;
+                        terminal.print("YOU WIN $" + wager + " ON YOUR INSURANCE BET");
+                    }
+                    
+                    if (T[2] !== 21) {
+                        W1 -= wager;
+                        terminal.print("YOU LOSE!");
+                    } else {
+                        terminal.print("TIE!");
+                    }
+                    continue;
+                }
+                
+                if (insurance) {
+                    W1 -= wager / 2;
+                    terminal.print("YOU LOST $" + (wager/2) + " ON YOUR INSURANCE BET - I DON'T HAVE BLACKJACK");
+                }
+                
+                if (T[2] === 21 && V[3] === 1) {
+                    terminal.print("   ***BLACKJACK***");
+                    terminal.print("");
+                    terminal.print("THAT'S GETTING A BIT RIDICULOUS!!!!");
+                    terminal.print("");
+                    terminal.print("MY HOLE CARD WAS " + printCardName(M) + printSuit(M));
+                    W1 += 1.5 * wager;
+                    continue;
+                }
+                
+                let splitDone = false;
+                
+                while (true) {
+                    if (T[P] > 21) {
+                        if (E[P] > 0) {
+                            E[P]--;
+                            T[P] -= 10;
+                        } else {
+                            terminal.print("YOU BUSTED,");
+                            terminal.print("YOUR TOTAL IS " + T[P]);
+                            W1 -= W[P];
+                            break;
+                        }
+                    }
+                    
+                    if (V[1] === 2) {
+                        terminal.print("YOU BUSTED");
+                        W1 -= W[P];
+                        break;
+                    }
+                    
+                    V[3]++;
+                    terminal.print("HIT ");
+                    let choice = await terminal.input();
+                    V[1] = parseInt(choice);
+                    
+                    if (V[1] === 3) {
+                        if (V[2] > 0 || V[3] !== 2 || Q[G] !== Q[S]) {
+                            terminal.print("NO SPLITS NOW -- TRY AGAIN");
+                            continue;
+                        }
+                        
+                        V[2] = 1;
+                        P = 3;
+                        W[3] = wager;
+                        T[2] = getCardValue(G, 2);
+                        T[3] = getCardValue(S, 3);
+                        terminal.print("       PLAY HAND ONE NOW");
+                        terminal.print("FIRST CARD IS " + printCardName(G) + printSuit(G));
+                        X = drawCard();
+                        T[2] += getCardValue(X, 2);
+                        terminal.print("NEXT CARD IS " + printCardName(X) + printSuit(X));
+                        continue;
+                    }
+                    
+                    if (V[1] === 2) {
+                        if (V[3] !== 2) {
+                            terminal.print("TOO LATE TO DOUBLE, CHARLIE.");
+                            continue;
+                        }
+                        W[P] = 2 * W[P];
+                    }
+                    
+                    if (V[1] > 0) {
+                        X = drawCard();
+                        T[P] += getCardValue(X, P);
+                        terminal.print(printCardName(X) + printSuit(X));
+                        if (V[1] === 2) V[1] = 0;
+                    } else {
+                        break;
+                    }
+                }
+                
+                if (V[2] === 1 && !splitDone) {
+                    splitDone = true;
+                    P = 2;
+                    V[2] = 2;
+                    terminal.print("        PLAY HAND TWO NOW");
+                    terminal.print("FIRST CARD IS " + printCardName(S) + printSuit(S));
+                    X = drawCard();
+                    T[3] += getCardValue(X, 3);
+                    terminal.print("NEXT CARD IS " + printCardName(X) + printSuit(X));
+                    V[3] = 2;
+                    V[1] = 0;
+                    
+                    while (true) {
+                        if (T[P] > 21) {
+                            if (E[P] > 0) {
+                                E[P]--;
+                                T[P] -= 10;
+                            } else {
+                                terminal.print("YOU BUSTED,");
+                                terminal.print("YOUR TOTAL IS " + T[P]);
+                                W1 -= W[P];
+                                break;
+                            }
+                        }
+                        
+                        V[3]++;
+                        terminal.print("HIT ");
+                        let choice = await terminal.input();
+                        V[1] = parseInt(choice);
+                        
+                        if (V[1] === 2) {
+                            if (V[3] !== 2) {
+                                terminal.print("TOO LATE TO DOUBLE.");
+                                continue;
+                            }
+                            W[P] = 2 * W[P];
+                        }
+                        
+                        if (V[1] > 0) {
+                            X = drawCard();
+                            T[P] += getCardValue(X, P);
+                            terminal.print(printCardName(X) + printSuit(X));
+                            if (V[1] === 2) V[1] = 0;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                
+                P = 2;
+                terminal.print(" MY HOLE CARD WAS " + printCardName(M) + printSuit(M));
+                
+                while (true) {
+                    if (T[1] < 17 || (T[1] === 17 && E[1] > 0)) {
+                        terminal.print("I DRAW");
+                        X = drawCard();
+                        T[1] += getCardValue(X, 1);
+                        terminal.print(printCardName(X) + printSuit(X));
+                    } else {
+                        break;
+                    }
+                    
+                    if (T[1] > 21 && E[1] > 0) {
+                        E[1]--;
+                        T[1] -= 10;
+                    }
+                }
+                
+                if (T[1] > 21) {
+                    terminal.print("I BUSTED*****");
+                    W1 += W[P];
+                } else {
+                    terminal.print(" MY TOTAL IS " + T[1]);
+                    
+                    if (T[P] <= 21) {
+                        if (T[1] > T[P]) {
+                            W1 -= W[P];
+                        } else if (T[1] < T[P]) {
+                            W1 += W[P];
+                        }
+                    }
+                }
+                
+                if (W1 < 0) {
+                    terminal.print("YOU'RE BEHIND $" + Math.abs(W1).toFixed(2));
+                } else if (W1 === 0) {
+                    terminal.print("YOU'RE EVEN");
+                } else {
+                    terminal.print("YOU'RE AHEAD $" + W1.toFixed(2));
+                }
+            }
+            
+            terminal.print("");
+            terminal.print("*** Thanks for playing! ***");
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>
