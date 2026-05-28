@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BATTLE - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BATTLE.BAS - Battleship</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter row,col...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BATTLE'
+        });
+
+        let F, H, C, L, S, hits;
+
+        function placeShips() {
+            F = Array.from({length: 7}, () => Array(7).fill(0));
+
+            for (let i = 1; i <= 3; i++) {
+                let N = 4 - i;
+                for (let j = 1; j <= 2; j++) {
+                    let placed = false;
+                    while (!placed) {
+                        let A = Math.floor(6 * Math.random()) + 1;
+                        let B = Math.floor(6 * Math.random()) + 1;
+                        let D = Math.floor(4 * Math.random()) + 1;
+                        if (F[A][B] > 0) continue;
+
+                        let cells = [[A, B]];
+                        let ok = true;
+
+                        if (D === 1) {
+                            for (let k = 1; k <= N; k++) {
+                                if (B + k > 6 || F[A][B + k] > 0) { ok = false; break; }
+                                cells.push([A, B + k]);
+                            }
+                        } else if (D === 2) {
+                            for (let k = 1; k <= N; k++) {
+                                if (A - k < 1 || B - k < 1) { ok = false; break; }
+                                if (F[A - k][B] > 0 && F[A - k][B] !== F[A][B - k]) { if (F[A - k][B - k] > 0) { ok = false; break; } }
+                                cells.push([A - k, B - k]);
+                            }
+                        } else if (D === 3) {
+                            for (let k = 1; k <= N; k++) {
+                                if (A + k > 6) { ok = false; break; }
+                                if (F[A + k][B] > 0) { ok = false; break; }
+                                cells.push([A + k, B]);
+                            }
+                        } else {
+                            for (let k = 1; k <= N; k++) {
+                                if (A + k > 6 || B - k < 1) { ok = false; break; }
+                                if (F[A + k][B] > 0 && F[A + k][B] !== F[A][B - k]) { if (F[A + k][B - k] > 0) { ok = false; break; } }
+                                cells.push([A + k, B - k]);
+                            }
+                        }
+
+                        if (!ok) continue;
+
+                        let val = 9 - 2 * i - j;
+                        for (let [r, c] of cells) {
+                            F[r][c] = val;
+                        }
+                        placed = true;
+                    }
+                }
+            }
+        }
+
+        function initGame() {
+            placeShips();
+            H = Array.from({length: 7}, () => Array(7).fill(0));
+            C = [0, 2, 2, 1, 1, 0, 0];
+            L = [0, 0, 0, 0];
+            S = 0;
+            hits = 0;
+        }
+
+        function printGrid() {
+            let line = "  1 2 3 4 5 6";
+            terminal.print(line);
+            for (let r = 1; r <= 6; r++) {
+                let row = r + " ";
+                for (let c = 1; c <= 6; c++) {
+                    if (H[r][c] > 0) row += "* ";
+                    else row += ". ";
+                }
+                terminal.print(row);
+            }
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            while (true) {
+                initGame();
+
+                terminal.print("");
+                terminal.print("THE FOLLOWING CODE OF THE BAD GUYS' FLEET DISPOSITION");
+                terminal.print("HAS BEEN CAPTURED BUT NOT DE-CODED:");
+                terminal.print("");
+                for (let c = 1; c <= 6; c++) {
+                    let row = "";
+                    for (let r = 1; r <= 6; r++) {
+                        row += F[r][c] + " ";
+                    }
+                    terminal.print(row);
+                }
+                terminal.print("");
+                terminal.print("DE-CODE IT AND USE IT IF YOU CAN");
+                terminal.print("BUT KEEP THE DE-CODING METHOD A SECRET.");
+                terminal.print("");
+                terminal.print("START GAME");
+                terminal.print("");
+
+                while (true) {
+                    let inp = await terminal.input("ENTER COORDINATES (ROW,COL)");
+                    let parts = inp.split(/[, ]+/);
+                    let X = parseInt(parts[0]);
+                    let Y = parseInt(parts[1]);
+
+                    if (isNaN(X) || isNaN(Y) || X < 1 || X > 6 || Y < 0 || Y > 7) {
+                        terminal.print("INVALID INPUT. TRY AGAIN.");
+                        continue;
+                    }
+
+                    let R = 7 - Y;
+                    let Cc = X;
+
+                    if (F[R][Cc] === 0) {
+                        S++;
+                        terminal.print("SPLASH! TRY AGAIN.");
+                        continue;
+                    }
+
+                    let shipNum = F[R][Cc];
+                    if (C[shipNum] >= 4) {
+                        terminal.print("THERE USED TO BE A SHIP AT THAT POINT, BUT YOU SUNK IT.");
+                        terminal.print("SPLASH! TRY AGAIN.");
+                        S++;
+                        continue;
+                    }
+
+                    if (H[R][Cc] > 0) {
+                        terminal.print("YOU HAVE ALREADY PUT A HOLE IN SHIP NUMBER " + shipNum);
+                        terminal.print("AT THAT POINT.");
+                        terminal.print("SPLASH! TRY AGAIN.");
+                        S++;
+                        continue;
+                    }
+
+                    hits++;
+                    H[R][Cc] = shipNum;
+                    terminal.print("A DIRECT HIT ON SHIP NUMBER " + shipNum);
+                    C[shipNum]++;
+
+                    if (C[shipNum] >= 4) {
+                        let idx = Math.floor((shipNum - 1) / 2) + 1;
+                        L[idx]++;
+                        terminal.print("AND YOU SUNK IT. HURRAH FOR THE GOOD GUYS.");
+                        terminal.print("SO FAR THE BAD GUYS HAVE LOST");
+                        terminal.print(L[1] + " DESTROYER(S), " + L[2] + " CRUISER(S), AND " + L[3] + " AIRCRAFT CARRIER(S).");
+                        terminal.print("YOUR CURRENT SPLASH/HIT RATIO IS " + (S / hits).toFixed(2));
+
+                        if (L[1] + L[2] + L[3] >= 6) {
+                            terminal.print("");
+                            terminal.print("YOU HAVE TOTALLY WIPED OUT THE BAD GUYS' FLEET");
+                            terminal.print("WITH A FINAL SPLASH/HIT RATIO OF " + (S / hits).toFixed(2));
+                            if (S === 0) terminal.print("CONGRATULATIONS -- A DIRECT HIT EVERY TIME.");
+                            terminal.print("");
+                            terminal.print("*********************");
+                            break;
+                        }
+                    } else {
+                        terminal.print("TRY AGAIN.");
+                    }
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("PLAY AGAIN (YES OR NO)")).toUpperCase();
+                if (again !== "YES" && again !== "Y") break;
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

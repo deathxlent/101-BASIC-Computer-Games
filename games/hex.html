@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HEX - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">HEX.BAS - Hexapawn</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'HEX'});
+function boardStr(b) { return b[0]+b[1]+b[2]+b[3]+b[4]+b[5]+b[6]+b[7]+b[8]; }
+function printBoard(b) { t.print(b[0]+" "+b[1]+" "+b[2]); t.print(b[3]+" "+b[4]+" "+b[5]); t.print(b[6]+" "+b[7]+" "+b[8]); }
+function getMoves(b, player, dir) {
+  let moves = [], p = player==='*' ? '*' : 'O';
+  for (let i=0;i<9;i++) {
+    if (b[i]!==p) continue;
+    let fwd = i + dir*3;
+    if (fwd>=0&&fwd<9&&b[fwd]==='-') moves.push([i,fwd]);
+    let cap1 = i + dir*2;
+    if (cap1>=0&&cap1<9&&(i%3)!==(dir>0?0:2)) {
+      if (b[cap1]!=='-'&&b[cap1]!==p) moves.push([i,cap1]);
+    }
+    let cap2 = i + dir*4;
+    if (cap2>=0&&cap2<9&&(i%3)!==(dir>0?2:0)&&i!==2&&i!==6) {
+      if (b[cap2]!=='-'&&b[cap2]!==p) moves.push([i,cap2]);
+    }
+  }
+  return moves;
+}
+async function run() {
+  await t.delay(300);
+  let instr = await t.input("INSTRUCTIONS");
+  if (instr.toUpperCase()==="YES") {
+    t.print("HEXAPAWN IS PLAYED WITH CHESS PAWNS ON A 3 BY 3 BOARD.");
+    t.print("PAWNS MOVE ONE SPACE FORWARD OR ONE SPACE FORWARD AND DIAGONALLY TO CAPTURE.");
+    t.print("YOUR PAWNS ARE 'O', COMPUTER'S ARE '*', EMPTY IS '-'.");
+    t.print("TO ENTER A MOVE, TYPE THE NUMBER OF THE SQUARE (1-9) YOU MOVE FROM AND TO.");
+  }
+  let W1=0, W2=0;
+  while (true) {
+    let P = ["*","*","*","-","-","-","O","O","O"];
+    t.print("SINCE I'M A GOOD SPORT, YOU'LL ALWAYS GO FIRST.");
+    t.print(""); t.print("NUMBERING: 123 456 789"); t.print("");
+    while (true) {
+      t.print("BOARD:"); printBoard(P); t.print("");
+      let moves = getMoves(P,'O',1);
+      if (moves.length===0) { t.print("YOU CAN'T MOVE. I WIN."); W1++; break; }
+      let a = parseInt(await t.input("YOUR MOVE: FROM"));
+      let b = parseInt(await t.input("TO"));
+      if (a<1||a>9||b<1||b>9) { t.print("ILLEGAL."); continue; }
+      let valid = moves.some(m=>m[0]===a-1&&m[1]===b-1);
+      if (!valid) { t.print("ILLEGAL MOVE."); continue; }
+      P[a-1]='-'; P[b-1]='O';
+      if (!P.includes('*')||P.slice(0,3).includes('O')) { t.print("YOU WIN."); W2++; break; }
+      let cmoves = getMoves(P,'*',-1);
+      if (cmoves.length===0) { t.print("I CAN'T MOVE, YOU WIN."); W2++; break; }
+      let cm = cmoves[Math.floor(Math.random()*cmoves.length)];
+      P[cm[0]]='-'; P[cm[1]]='*';
+      t.print("I MOVE FROM "+(cm[0]+1)+" TO "+(cm[1]+1));
+      if (!P.includes('O')||P.slice(6).includes('*')) { t.print("BOARD:"); printBoard(P); t.print("I WIN!"); W1++; break; }
+    }
+    t.print(""); t.print("I HAVE WON "+W1+" AND YOU HAVE WON "+W2+" OF "+(W1+W2)+" GAMES");
+    let again = await t.input("ANOTHER GAME");
+    if (again.toUpperCase()==="NO") break;
+  }
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

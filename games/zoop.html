@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ZOOP - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">ZOOP.BAS - Zoop</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'ZOOP'});
+async function run() {
+  await t.delay(300);
+  t.print("ZOOP - ZOOP");
+  t.print("I WILL THINK OF A NUMBER BETWEEN 0 AND 100.");
+  t.print("YOU CAN GUESS OR PASS. IF YOU PASS, I GUESS.");
+  let score = 0;
+  while (true) {
+    let N = Math.floor(Math.random() * 101);
+    let turn = 1;
+    while (true) {
+      let action = await t.input("(G)UESS OR (P)ASS");
+      if (action.toUpperCase() === "G") {
+        let g = parseInt(await t.input("YOUR GUESS"));
+        if (g === N) { t.print("RIGHT! YOU GOT IT IN " + turn + " TURNS."); score += turn; break; }
+        if (g < N) t.print("MY NUMBER IS GREATER");
+        else t.print("MY NUMBER IS LESS");
+        turn++;
+      } else if (action.toUpperCase() === "P") {
+        let cg = Math.floor(Math.random() * 101);
+        t.print("I GUESS " + cg);
+        if (cg === N) { t.print("I GOT IT!"); score += 2; break; }
+        else t.print("I WAS WRONG. THE NUMBER WAS " + N);
+        turn++;
+      } else continue;
+      if (turn > 10) { t.print("TOO MANY TRIES. NUMBER WAS " + N); break; }
+    }
+    let again = await t.input("ANOTHER (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("YOUR SCORE: " + score);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

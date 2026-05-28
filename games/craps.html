@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CRAPS - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CRAPS.BAS - Craps</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CRAPS'});
+async function run() {
+  await t.delay(300);
+  t.print("THIS DEMONSTRATION SIMULATES A CRAP GAME WITH THE COMPUTER");
+  t.print("AS YOUR OPPONENT. THE RULES ARE SIMPLE.");
+  t.print("  *A 7 OR 11 ON THE FIRST ROLL WINS");
+  t.print("  *A 2, 3 OR 12 ON THE FIRST ROLL LOSES");
+  t.print("ANY OTHER NUMBER ROLLED BECOMES YOUR 'POINT'. YOU CONTINUE");
+  t.print("TO ROLL...IF YOU GET YOUR POINT, YOU WIN. IF YOU ROLL A 7,");
+  t.print("YOU LOSE. THE DICE CHANGE HANDS WHEN THIS HAPPENS.");
+  t.print("JUST BET $0 TO QUIT.");
+  t.print("");
+  let Z = 5 + Math.floor(10 * Math.random());
+  let ready = await t.input("ARE YOU READY");
+  if (ready.toUpperCase() !== "YES") { t.print("I'LL REPEAT MYSELF THEN"); await run(); return; }
+  t.print("SPLENDID.....YOU ARE GIVEN $" + Z + " TO PLAY WITH.");
+  t.print("");
+  let W = 1;
+  while (Z > 0) {
+    t.print((W > 0 ? "YOU" : "I") + " ROLL FIRST.....");
+    let bet = parseInt(await t.input("HOW MUCH DO YOU BET"));
+    if (bet === 0) { t.print("THANKS FOR THE GAME. AND CONGRATULATIONS FOR BEING ABLE TO QUIT WHILE YOU WERE AHEAD."); break; }
+    if (isNaN(bet) || bet !== Math.floor(bet)) { t.print("NO COINS PERMITTED...JUST BILLS, PLEASE."); continue; }
+    if (bet > Z) { t.print("DON'T TRY TO BET MORE THAN YOU HAVE, PLEASE."); continue; }
+    let Q = 0, P = 0, C = 0;
+    while (true) {
+      let d1 = Math.floor(6 * Math.random()) + 1;
+      let d2 = Math.floor(6 * Math.random()) + 1;
+      let S = d1 + d2;
+      Q++;
+      let who = W > 0 ? "YOU" : "I";
+      t.print(who + " ROLL " + d1 + " AND " + d2);
+      if (Q === 1) {
+        if (S === 2 || S === 3 || S === 12) { t.print("AND CRAP OUT..."); C = -1; }
+        else if (S === 7 || S === 11) { t.print("AND PASS...."); C = 1; }
+        else { P = S; t.print("SO " + (W > 0 ? "YOUR" : "MY") + " POINT IS " + P); continue; }
+      } else {
+        if (S === 7) { t.print("AND LOSE..."); C = -1; }
+        else if (S === P) { t.print("AND " + (W > 0 ? "MAKE YOUR" : "MAKE MY") + " POINT"); C = 1; }
+        else { t.print("....ROLL AGAIN."); continue; }
+      }
+      if (C > 0) { Z += (W > 0 ? bet : -bet); }
+      else { Z -= (W > 0 ? bet : -bet); }
+      break;
+    }
+    t.print("");
+    if (Z < 1) { t.print("YOU HAVE RUN OUT OF MONEY....SORRY ABOUT THAT."); break; }
+    t.print("YOU NOW HAVE $" + Z);
+    if (C > 0) t.print("CHANGE DICE NOW...");
+    W = -W;
+    t.print("");
+  }
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

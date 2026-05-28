@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ROCKT2 - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">ROCKT2.BAS - Rocket (Launch)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'ROCKT2'});
+async function run() {
+  await t.delay(300);
+  t.print("ROCKET LAUNCH");
+  t.print("YOU ARE IN COMMAND OF A ROCKET LAUNCH.");
+  let fuel = parseInt(await t.input("ENTER FUEL (KG)"));
+  let mass = parseInt(await t.input("ENTER PAYLOAD MASS (KG)"));
+  let thrust = fuel * 9.8;
+  let accel = thrust / mass;
+  if (accel < 1) { t.print("NOT ENOUGH THRUST TO LIFT OFF!"); }
+  else {
+    let maxH = (fuel * accel) / 9.8;
+    t.print("ROCKET LIFTS OFF! ACCELERATION: " + accel.toFixed(2) + " M/S^2");
+    t.print("MAX ALTITUDE: " + maxH.toFixed(0) + " M");
+    if (maxH > 100000) t.print("YOU REACHED SPACE!");
+    else t.print("ROCKET FALLS BACK TO EARTH.");
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

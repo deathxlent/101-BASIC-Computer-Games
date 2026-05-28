@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DIAMND - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">DIAMND.BAS - Diamond Pattern</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'DIAMND'});
+async function run() {
+  await t.delay(300);
+  t.print("FOR A PRETTY DIAMOND PATTERN,");
+  t.print("TYPE IN AN ODD NUMBER BETWEEN 5 AND 31.");
+  let R = parseInt(await t.input(""));
+  if (isNaN(R) || R < 5 || R > 31 || R % 2 === 0) { t.print("ODD NUMBER BETWEEN 5 AND 31, PLEASE."); await run(); return; }
+  let Q = Math.floor(60 / R);
+  for (let L = 0; L < Q; L++) {
+    for (let N = 1, step = 2; ; step = -2, N = R - 2) {
+      for (let n = N; step > 0 ? n <= R : n >= 1; n += step) {
+        let line = "";
+        let pad = (R - n) / 2;
+        for (let m = 0; m < Q; m++) {
+          line += " ".repeat(pad - (m > 0 ? 0 : 0));
+          let C = 1;
+          for (let a = 0; a < n; a++) {
+            if (C === 1) line += "D";
+            else if (C === 2) line += "E";
+            else line += "C";
+            C++;
+            if (C > 3) C = 1;
+          }
+          if (m < Q - 1) line += " ";
+        }
+        t.print(line);
+      }
+      if (step === -2) break;
+    }
+  }
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

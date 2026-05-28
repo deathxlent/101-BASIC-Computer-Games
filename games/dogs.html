@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DOGS - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">DOGS.BAS - Dog Race</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'DOGS'});
+const dogNames = ["FASTER","ZELDAH","SPEEDY","ZIFFLE","KILLER","HURSON","BUGZY","SNOOPY","LASSIE","WINNER"];
+async function run() {
+  await t.delay(300);
+  t.print("WELCOME TO ROOK-A-DAY RACE TRACK!!!!");
+  t.print("");
+  let instr = await t.input("DO YOU WANT THE INSTRUCTIONS");
+  if (instr.toUpperCase() === "YES") {
+    t.print("THIS IS A DOG RACE GAME, THERE ARE 10 DOGS");
+    t.print("WHICH RUN IN THIS RACE. THE WINNER OF THE RACE WILL BE");
+    t.print("DETERMINED BY HOW MANY WINS AND LOSSES EACH DOG HAS.");
+    t.print("YOU MAY BET ON A DOG ($2-$500).");
+    t.print("THE STRATEGY IS TO PICK THE WINNER IN SUCH A WAY THAT");
+    t.print("THE ODDS ON THAT DOG ARE GOOD IN YOUR FAVOR.");
+    t.print("GOOD LUCK!!!");
+  }
+  let wins = Array(10).fill(0);
+  let losses = Array(10).fill(0);
+  for (let i = 0; i < 10; i++) { wins[i] = Math.floor(Math.random()*5); losses[i] = Math.floor(Math.random()*5); }
+  while (true) {
+    t.print(""); t.print("DOG    NUMBER    WINS    LOSSES");
+    for (let i = 0; i < 10; i++) t.print(dogNames[i] + "    " + (i+1) + "        " + wins[i] + "       " + losses[i]);
+    let q = parseInt(await t.input("HOW MANY WISH TO BET (MAX 19)"));
+    if (q < 1 || q > 19) { t.print("1-19 ALLOWED"); continue; }
+    let bettors = [], dogs = [], bets = [];
+    for (let z = 0; z < q; z++) {
+      let name = await t.input("BETTOR " + (z+1) + " NAME");
+      let dog = parseInt(await t.input("DOG'S NUMBER (1-10)"));
+      if (dog < 1 || dog > 10) { z--; continue; }
+      let bet = parseFloat(await t.input("YOUR BET ($2-$500)"));
+      if (bet < 2 || bet > 500) { z--; continue; }
+      bettors.push(name); dogs.push(dog); bets.push(bet);
+    }
+    let pool = bets.reduce((a,b)=>a+b, 0);
+    let totals = Array(10).fill(0);
+    for (let i = 0; i < q; i++) totals[dogs[i]-1] += bets[i];
+    let odds = [];
+    for (let i = 0; i < 10; i++) {
+      if (totals[i] >= 2) odds.push(Math.max(2, Math.floor((pool - totals[i]) / (totals[i] * 0.83))));
+      else odds.push(Math.max(2, Math.floor(pool + Math.random())));
+    }
+    t.print(""); t.print("DOG    NUMBER    ODDS");
+    for (let i = 0; i < 10; i++) t.print(dogNames[i] + "    " + (i+1) + "     " + odds[i] + ":1");
+    let finish = [];
+    for (let r = 0; r < 10; r++) {
+      let speed = (wins[r]+1) / (wins[r]+losses[r]+2) * 20 + Math.random() * 5;
+      finish.push({dog: r+1, speed: speed});
+    }
+    finish.sort((a,b)=>b.speed - a.speed);
+    let winner = finish[0].dog;
+    t.print("");
+    t.print("...AND THEY'RE OFF!!!");
+    let progress = Array(10).fill(0);
+    for (let step = 0; step < 20; step++) {
+      for (let r = 0; r < 10; r++) {
+        if (progress[r] < 20) progress[r] += Math.random() * 3;
+      }
+      let line = "";
+      for (let p = 1; p <= 20; p++) {
+        let found = false;
+        for (let r = 0; r < 10; r++) {
+          if (Math.floor(progress[r]) === p) { line += r+1; found = true; break; }
+        }
+        if (!found) line += "-";
+      }
+      t.print(line);
+    }
+    t.print("XXXXXXXXFINISHXXXXXXXX");
+    t.print("AND THE WINNER IS DOG NUMBER " + winner + " (" + dogNames[winner-1] + ")");
+    losses[winner-1]++;
+    for (let i = 0; i < q; i++) {
+      if (dogs[i] === winner) {
+        let mult = odds[winner-1] === 2 ? 1 : odds[winner-1];
+        let winnings = Math.floor(bets[i] * (mult + 1));
+        t.print("CONGRATULATIONS " + bettors[i] + "! YOU HAVE WON $" + (winnings - bets[i]));
+      }
+    }
+    wins[winner-1]++;
+    let again = await t.input("PLAY AGAIN");
+    if (again.toUpperCase() !== "YES") {
+      t.print(""); t.print("PERSON    AMOUNT");
+      for (let i = 0; i < q; i++) t.print(bettors[i] + "    $" + (dogs[i]===winner?bets[i]*(odds[winner-1]+1)-bets[i]:0));
+      break;
+    }
+  }
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

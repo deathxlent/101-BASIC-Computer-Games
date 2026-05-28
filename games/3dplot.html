@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3DPLOT - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+    <style>
+        .plot-line { font-size: 0.6em; letter-spacing: 0; white-space: pre; }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">3DPLOT.BAS - 3D Surface Plot</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: '3DPLOT'
+        });
+
+        function FNA(Z) {
+            return 30 * Math.exp(-Z * Z / 100);
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("3D SURFACE PLOT OF Z = 30*EXP(-(X^2+Y^2)/100)");
+            terminal.print("");
+
+            for (let X = -30; X <= 30; X += 1.5) {
+                let L = 0;
+                let Y1 = 5 * Math.floor(Math.sqrt(900 - X * X) / 5);
+
+                let line = "";
+                for (let Y = Y1; Y >= -Y1; Y -= 5) {
+                    let Z = Math.floor(25 + FNA(Math.sqrt(X * X + Y * Y)) - 0.7 * Y);
+                    if (Z > L) {
+                        L = Z;
+                        while (line.length < Z) line += " ";
+                        line = line.substring(0, Z) + "*";
+                    }
+                }
+
+                terminal.print(line);
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HI-LO - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">HI-LO.BAS - Hi-Lo</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'HI-LO'});
+async function run() {
+  await t.delay(300);
+  t.print("THIS IS THE GAME OF HI-LO");
+  t.print("YOU WILL HAVE 6 TRIES TO GUESS THE AMOUNT OF MONEY IN THE");
+  t.print("HI-LO JACKPOT, WHICH IS BETWEEN 1 AND 100 DOLLARS. IF YOU");
+  t.print("GUESS THE AMOUNT, YOU WIN ALL THE MONEY IN THE JACKPOT!");
+  t.print("THEN YOU GET ANOTHER CHANCE TO WIN MORE MONEY. HOWEVER,");
+  t.print("IF YOU DO NOT GUESS THE AMOUNT, THE GAME ENDS.");
+  let R = 0;
+  while (true) {
+    let Y = Math.floor(100 * Math.random()) + 1;
+    for (let B = 1; B <= 6; B++) {
+      let A = parseInt(await t.input("YOUR GUESS"));
+      if (A === Y) {
+        t.print("GOT IT!!!!!!!! YOU WIN $" + Y + " DOLLARS.");
+        R += Y;
+        t.print("YOUR TOTAL WINNINGS ARE NOW $" + R + " DOLLARS.");
+        break;
+      }
+      if (A > Y) t.print("YOUR GUESS IS TOO HIGH");
+      else t.print("YOUR GUESS IS TOO LOW");
+      if (B === 6) { t.print("YOU BLEW IT....TOO BAD....THE NUMBER WAS " + Y); R = 0; }
+    }
+    let again = await t.input("PLAY AGAIN (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("SO LONG. HOPE YOU ENJOYED YOURSELF!!");
+  await t.delay(2000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

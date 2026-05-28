@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BINGO - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BINGO.BAS - BINGO</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Press Enter...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BINGO'
+        });
+
+        const letters = ["B","I","N","G","O"];
+        let playerCard, cpuCard, called;
+
+        function generateCard(first) {
+            let card = Array.from({length: 10}, () => Array(10).fill(0));
+            let M = 16;
+            let G = first + 4;
+            for (let Y = first; Y <= G; Y++) {
+                for (let X = first; X <= G; X++) {
+                    while (true) {
+                        let R = Math.floor(M * Math.random());
+                        if (R < M - 15) continue;
+                        let used = false;
+                        for (let xx = first; xx <= G; xx++) {
+                            for (let yy = first; yy <= G; yy++) {
+                                if (card[xx][yy] === R) used = true;
+                            }
+                        }
+                        if (!used) { card[X][Y] = R; break; }
+                    }
+                }
+                M += 15;
+            }
+            card[first+2][first+2] = 0;
+            return card;
+        }
+
+        function printCard(card, first, label) {
+            terminal.print("");
+            terminal.print(label);
+            terminal.print("--B-- --I-- --N-- --G-- --O--");
+            let G = first + 4;
+            for (let X = first; X <= G; X++) {
+                let row = "";
+                for (let Y = first; Y <= G; Y++) {
+                    let v = card[X][Y];
+                    if (X === first+2 && Y === first+2) row += " FREE ";
+                    else if (v === 0) row += "  X   ";
+                    else row += (v < 10 ? "  " : " ") + v + "   ";
+                }
+                terminal.print(row);
+            }
+        }
+
+        function checkBingo(card, first) {
+            let G = first + 4;
+            for (let Y = first; Y <= G; Y++) {
+                let all = true;
+                for (let X = first; X <= G; X++) {
+                    if (card[X][Y] !== 0) { all = false; break; }
+                }
+                if (all) return true;
+            }
+            for (let X = first; X <= G; X++) {
+                let all = true;
+                for (let Y = first; Y <= G; Y++) {
+                    if (card[X][Y] !== 0) { all = false; break; }
+                }
+                if (all) return true;
+            }
+            let all = true;
+            for (let i = 0; i < 5; i++) {
+                if (card[first+i][first+i] !== 0) { all = false; break; }
+            }
+            if (all) return true;
+            all = true;
+            for (let i = 0; i < 5; i++) {
+                if (card[first+i][first+4-i] !== 0) { all = false; break; }
+            }
+            return all;
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("YOU ARE NOW GOING TO PLAY A COMPUTERIZED VERSION OF BINGO--");
+            terminal.print("");
+
+            while (true) {
+                playerCard = generateCard(1);
+                cpuCard = generateCard(6);
+                called = new Array(76).fill(false);
+
+                printCard(playerCard, 1, "YOUR CARD");
+                terminal.print("");
+                printCard(cpuCard, 6, "MY CARD");
+                terminal.print("");
+
+                terminal.print("NOW WE'RE ALL SET TO PLAY THE GAME. USE A PENCIL TO MARK OFF");
+                terminal.print("THE NUMBERS ON YOUR CARD AS THEY ARE CALLED.");
+                terminal.print("  (PLEASE PLAY MY CARD AS WELL AS YOUR OWN)");
+                terminal.print("***DON'T GET SMART. I'LL BE PLAYING BOTH YOUR CARD AND MINE");
+                terminal.print("    UP HERE IN BOSTON. (SO THERE--)");
+                terminal.print("");
+
+                let ready = await terminal.input("ARE YOU READY");
+                while (ready.toUpperCase() === "NO") {
+                    terminal.print("*********:HURRY UP:*********");
+                    ready = await terminal.input("ARE YOU READY");
+                }
+
+                playerCard[3][3] = 0;
+                cpuCard[8][8] = 0;
+
+                let playerWon = false, cpuWon = false;
+
+                while (true) {
+                    let U;
+                    do {
+                        U = Math.floor(75 * Math.random()) + 1;
+                    } while (called[U]);
+                    called[U] = true;
+
+                    let col = Math.floor((U - 1) / 15);
+                    terminal.print(letters[col] + " " + U);
+
+                    for (let Y = 1; Y <= 5; Y++) {
+                        for (let X = 1; X <= 5; X++) {
+                            if (playerCard[X][Y] === U) playerCard[X][Y] = 0;
+                        }
+                    }
+                    for (let Y = 6; Y <= 10; Y++) {
+                        for (let X = 6; X <= 10; X++) {
+                            if (cpuCard[X][Y] === U) cpuCard[X][Y] = 0;
+                        }
+                    }
+
+                    playerWon = checkBingo(playerCard, 1);
+                    cpuWon = checkBingo(cpuCard, 6);
+
+                    if (playerWon && cpuWon) {
+                        terminal.print("  *********** IT'S A TIE ***********");
+                        break;
+                    }
+                    if (cpuWon) {
+                        for (let s = 0; s < 6; s++) terminal.print("I WIN.  ");
+                        break;
+                    }
+                    if (playerWon) {
+                        terminal.print("  YOU WIN..... YOU WIN..... YOU WIN.....");
+                        break;
+                    }
+
+                    await terminal.delay(200);
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("DO YOU WANT TO PLAY AGAIN")).toUpperCase();
+                if (again !== "YES" && again !== "Y") break;
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

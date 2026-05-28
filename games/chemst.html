@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CHEMST - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CHEMST.BAS - Chemical</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CHEMST'});
+async function run() {
+  await t.delay(300);
+  t.print("THE FICTICIOUS CHEMICAL KRYPTOCYANIC ACID CAN ONLY BE");
+  t.print("DILUTED BY THE RATIO OF 7 PARTS WATER TO 3 PARTS ACID.");
+  t.print("IF ANY OTHER RATIO IS ATTEMPTED, THE ACID BECOMES UNSTABLE");
+  t.print("AND SOON EXPLODES. GIVEN THE AMOUNT OF ACID, YOU MUST");
+  t.print("DECIDE HOW MUCH WATER TO ADD FOR DILUTION. IF YOU MISS");
+  t.print("YOU FACE THE CONSEQUENCES.");
+  t.print("");
+  let lives = 9;
+  while (lives > 0) {
+    let a = Math.floor(Math.random() * 50) + 1;
+    let w = 7 * a / 3;
+    let r = parseFloat(await t.input(a + " LITERS OF KRYPTOCYANIC ACID. HOW MUCH WATER"));
+    let d = Math.abs(w - r);
+    if (d > w / 20) {
+      t.print("SIZZLE! YOU HAVE JUST BEEN DESALINATED INTO A BLOB");
+      t.print("OF QUIVERING PROTOPLASM!");
+      lives--;
+      if (lives > 0) t.print("HOWEVER, YOU MAY TRY AGAIN WITH ANOTHER LIFE. (" + lives + " LEFT)");
+    } else {
+      t.print("GOOD JOB! YOU MAY BREATHE NOW, BUT DON'T INHALE THE FUMES!");
+    }
+    t.print("");
+  }
+  t.print("YOUR 9 LIVES ARE USED, BUT YOU WILL BE LONG REMEMBERED FOR");
+  t.print("YOUR CONTRIBUTIONS TO THE FIELD OF COMIC BOOK CHEMISTRY.");
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

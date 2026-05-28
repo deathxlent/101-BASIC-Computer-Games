@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HOCKEY - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">HOCKEY.BAS - Cornell Hockey</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'HOCKEY'});
+async function run() {
+  await t.delay(300);
+  let A1 = Math.floor(Math.random() * 14) + 6;
+  let A = 0, B = 0;
+  let period = 1;
+  let oppName = await t.input("I AM CORNELL, WHO ARE YOU");
+  t.print("YOU HAVE THREE SHOTS: 1. SLAP SHOT  2. FLICK SHOT  3. WRIST SHOT");
+  function showScore() {
+    t.print("SCORE: CORNELL " + A + ", " + oppName + " " + B);
+  }
+  async function faceoff() {
+    showScore();
+    if (period === 2 && A + B >= Math.floor(2/3 * A1)) { t.print("***** END OF SECOND PERIOD *****"); period = 3; return; }
+    if (period === 3 && A + B >= A1) { t.print("***** END OF GAME *****"); return true; }
+    if (A + B >= Math.floor(1/3 * A1) && period === 1) { t.print("***** END OF FIRST PERIOD *****"); period = 2; return; }
+    let faceoffWin = Math.random() < 0.5;
+    if (faceoffWin) {
+      t.print("CORNELL TAKES THE FACE-OFF.");
+      let shotType = Math.floor(Math.random() * 3) + 1;
+      let shotName = shotType === 1 ? "SLAP SHOT" : shotType === 2 ? "FLICK SHOT" : "WRIST SHOT";
+      t.print(shotName + "...");
+      if (shotType === 2 && Math.random() < 0.33) {
+        t.print("PENALTY FOR HIGH STICKING! CORNELL MAN PUT IN BOX FOR TWO MINUTES!");
+        return false;
+      }
+      if (shotType === 1 && Math.random() < 0.33) {
+        t.print("ICING PENALTY.....");
+        return false;
+      }
+      if (Math.random() < 0.2) { t.print("**GOOD!**"); A++; }
+      else { t.print("SHOT IS MISSED."); }
+    } else {
+      t.print(oppName + " WINS THE FACE-OFF.");
+    }
+    return false;
+  }
+  while (true) {
+    if (period > 3) break;
+    let ended = await faceoff();
+    if (ended) break;
+    let g = parseInt(await t.input("YOUR SHOT (1=SLAP, 2=FLICK, 3=WRIST)"));
+    if (g < 1 || g > 3) continue;
+    let shotName = g === 1 ? "SLAP SHOT" : g === 2 ? "FLICK SHOT" : "WRIST SHOT";
+    t.print(shotName + ".");
+    if (g === 2 && Math.random() < 0.33) { t.print("ICING PENALTY....."); continue; }
+    if (g === 1 && Math.random() < 0.33) { t.print("ICING PENALTY....."); continue; }
+    if (Math.random() < 0.2) { t.print("**GOOD!**"); B++; }
+    else { t.print("SHOT IS WIDE."); }
+    t.print("CORNELL SHOT:");
+    let cornellShot = Math.floor(Math.random() * 3) + 1;
+    let csName = cornellShot === 1 ? "WRIST SHOT" : cornellShot === 2 ? "FLICK SHOT" : "SLAP SHOT";
+    t.print(csName + ".");
+    if (cornellShot === 2 && Math.random() < 0.33) { t.print("ICING PENALTY....."); continue; }
+    if (Math.random() < 0.2) { t.print("**GOOD!**"); A++; }
+    else { t.print("SHOT HITS THE POST."); }
+    await faceoff();
+  }
+  if (A === B) {
+    t.print("SINCE SCORE IS TIED, WE WILL HAVE TO GO INTO SUDDEN-DEATH!");
+    while (true) {
+      t.print("HERE IS THE FACE-OFF.");
+      showScore();
+      if (Math.random() < 0.5) {
+        t.print(oppName + " WINS THE FACE-OFF.");
+        let s = parseInt(await t.input("YOUR SHOT"));
+        if (s >= 1 && s <= 3) {
+          if (Math.random() < 0.2) { t.print("**GOOD!**"); B++; break; }
+        }
+      } else {
+        t.print("CORNELL WINS THE FACE-OFF.");
+        if (Math.random() < 0.2) { t.print("**GOOD!**"); A++; break; }
+      }
+    }
+  }
+  t.print("GAME IS OVER!!! FINAL SCORE: CORNELL " + A + ", " + oppName + " " + B);
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

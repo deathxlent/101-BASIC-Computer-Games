@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GUNNER - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">GUNNER.BAS - Gunner</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'GUNNER'});
+async function run() {
+  await t.delay(300);
+  t.print("THIS COMPUTER DEMONSTRATION SIMULATES THE");
+  t.print("RESULTS OF FIRING A FIELD ARTILLERY WEAPON.");
+  t.print("YOU ARE THE OFFICER-IN-CHARGE, TELLING THEM THE DEGREES");
+  t.print("OF ELEVATION YOU ESTIMATE WILL HIT THE TARGET.");
+  t.print("A HIT WITHIN 100 YARDS OF THE TARGET WILL DESTROY IT.");
+  t.print("TAKE MORE THAN 5 SHOTS, AND THE ENEMY WILL DESTROY YOU!");
+  t.print("MAXIMUM RANGE OF YOUR GUN IS 46500 YARDS.");
+  let S1 = 0;
+  while (true) {
+    let T = 43000 - 30000 * Math.random();
+    let S = 0;
+    t.print("DISTANCE TO TARGET IS "+Math.floor(T)+" YARDS.....");
+    while (true) {
+      let B = parseInt(await t.input("ELEVATION (1-89)"));
+      if (B>89) { t.print("MAXIMUM ELEVATION IS 89 DEGREES"); continue; }
+      if (B<1) { t.print("MINIMUM ELEVATION IS 1 DEGREE"); continue; }
+      S++;
+      if (S>5) { t.print("BOOM!!! YOU HAVE JUST BEEN DESTROYED BY THE ENEMY!"); break; }
+      let B2 = 2*B/57.3;
+      let X = 46500 * Math.sin(B2);
+      let E = Math.floor(X - T);
+      if (Math.abs(E) < 100) {
+        t.print("***TARGET DESTROYED*** "+S+" ROUNDS EXPENDED");
+        S1 += S;
+        break;
+      }
+      if (E > 100) t.print("SHORT OF TARGET BY "+Math.abs(E)+" YARDS.");
+      else t.print("OVER TARGET BY "+Math.abs(E)+" YARDS.");
+    }
+    if (S>5) break;
+    let again = await t.input("CONTINUE? (Y/N)");
+    if (again.toUpperCase() !== "Y") break;
+  }
+  t.print("TOTAL ROUNDS EXPENDED: "+S1);
+  if (S1<=15) t.print("NICE SHOOTING!!");
+  else t.print("BETTER GO BACK TO FORT SILL FOR REFRESHER TRAINING!");
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

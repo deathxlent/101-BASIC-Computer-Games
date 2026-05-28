@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOUNCE - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+    <style>
+        .bounce-line { font-size: 0.6em; white-space: pre; }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BOUNCE.BAS - Bouncing Ball</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter value...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BOUNCE'
+        });
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("THIS SIMULATION LETS YOU SPECIFY THE INITIAL VELOCITY");
+            terminal.print("OF A BALL THROWN STRAIGHT UP. AND THE COEFFICIENT OF");
+            terminal.print("ELASTICITY OF THE BALL. PLEASE USE A DECIMAL FRACTION");
+            terminal.print("COEFFICIENT (LESS THAN 1).");
+            terminal.print("");
+            terminal.print("YOU ALSO SPECIFY THE TIME INCREMENT TO BE USED IN");
+            terminal.print("'STROBING' THE BALL'S FLIGHT (TRY .1 INITIALLY).");
+            terminal.print("");
+
+            while (true) {
+                let S2 = parseFloat(await terminal.input("TIME INCREMENT (SEC)"));
+                let V = parseFloat(await terminal.input("VELOCITY (FPS)"));
+                let C = parseFloat(await terminal.input("COEFFICIENT"));
+
+                terminal.print("");
+                terminal.print("FEET");
+                terminal.print("");
+
+                let S1 = Math.floor(70 / (V / (16 * S2)));
+                let T = new Array(20);
+                for (let i = 0; i < S1; i++) {
+                    T[i] = V * Math.pow(C, i) / 16;
+                }
+
+                let maxH = Math.floor(-16 * Math.pow(V / 32, 2) + Math.pow(V, 2) / 32 + 0.5);
+
+                for (let H = maxH; H >= 0; H -= 0.5) {
+                    H = Math.round(H * 2) / 2;
+                    let line = "";
+                    if (H === Math.floor(H)) {
+                        line += H.toString().padStart(3);
+                    } else {
+                        line += "   ";
+                    }
+
+                    let L = 0;
+                    for (let i = 0; i < S1; i++) {
+                        for (let t = 0; t <= T[i]; t += S2) {
+                            L += S2;
+                            let pos = -16 * t * t + V * Math.pow(C, i) * t;
+                            if (Math.abs(H - pos) <= 0.25) {
+                                let tab = Math.round(L / S2);
+                                while (line.length < tab) line += " ";
+                                line += "O";
+                            }
+                        }
+                        let t2 = (i + 1 < S1) ? T[i + 1] / 2 : 0;
+                        if (-16 * t2 * t2 + V * Math.pow(C, i) * t2 < H) break;
+                    }
+                    terminal.print(line);
+                }
+
+                let ground = "";
+                let totalL = 0;
+                for (let i = 0; i < S1; i++) {
+                    totalL += T[i] / S2;
+                }
+                for (let i = 0; i < Math.floor(totalL) + 2; i++) {
+                    ground += ". ";
+                }
+                terminal.print(ground);
+
+                let bottomLine = " 0";
+                for (let i = 1; i <= Math.floor(totalL + 0.9995); i++) {
+                    let tab = Math.round(i / S2);
+                    while (bottomLine.length < tab) bottomLine += " ";
+                    bottomLine += i;
+                }
+                terminal.print(bottomLine);
+
+                let secLabel = "";
+                let secTab = Math.round(totalL / 2) - 2;
+                while (secLabel.length < secTab) secLabel += " ";
+                secLabel += "SECONDS";
+                terminal.print(secLabel);
+
+                terminal.print("");
+                let again = (await terminal.input("ANOTHER (Y/N)")).toUpperCase();
+                if (again !== "Y" && again !== "YES") break;
+                terminal.print("");
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

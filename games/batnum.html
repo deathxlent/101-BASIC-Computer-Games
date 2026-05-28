@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BATNUM - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BATNUM.BAS - Battle of Numbers</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter number...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BATNUM'
+        });
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("THIS PROGRAM IS A 'BATTLE OF NUMBERS'");
+            terminal.print("GAME, WHERE THE COMPUTER IS YOUR OPPONENT.");
+            terminal.print("");
+            terminal.print("THE GAME STARTS WITH AN ASSUMED PILE OF OBJECTS. YOU AND");
+            terminal.print("YOUR OPPONENT ALTERNATLY REMOVE OBJECTS FROM THE PILE.");
+            terminal.print("WINNING IS DEFINED IN ADVANCE AS TAKING THE LAST OBJECT");
+            terminal.print("OR NOT. YOU CAN ALSO SPECIFY SOME OTHER BEGINNING");
+            terminal.print("CONDITIONS. DON'T USE ZERO, HOWEVER, IN PLAYING THE GAME.");
+            terminal.print("");
+
+            while (true) {
+                let N, M, A, B, S;
+
+                while (true) {
+                    N = parseInt(await terminal.input("ENTER PILE SIZE"));
+                    if (isNaN(N) || N < 1 || N !== Math.floor(N)) continue;
+                    break;
+                }
+
+                while (true) {
+                    M = parseInt(await terminal.input("ENTER WIN OPTION - 1 TO TAKE LAST, 2 TO AVOID LAST"));
+                    if (M === 1 || M === 2) break;
+                }
+
+                while (true) {
+                    A = parseInt(await terminal.input("ENTER MIN AND MAX"));
+                    B = parseInt(await terminal.input(""));
+                    if (!isNaN(A) && !isNaN(B) && A <= B && A >= 1 && A === Math.floor(A) && B === Math.floor(B)) break;
+                }
+
+                while (true) {
+                    S = parseInt(await terminal.input("ENTER START OPTION - 1 COMPUTER FIRST, 2 YOU FIRST"));
+                    if (S === 1 || S === 2) break;
+                }
+
+                let C = A + B;
+                let W = 0;
+
+                while (true) {
+                    if (S === 1) {
+                        let Q = N;
+                        if (M === 2) Q = Q - 1;
+
+                        if (M === 1 && N <= B) {
+                            terminal.print("COMPUTER TAKES " + N + " AND WINS.");
+                            break;
+                        }
+                        if (M === 2 && N < A) {
+                            terminal.print("COMPUTER TAKES " + N + " AND LOSES.");
+                            break;
+                        }
+
+                        let P = Q - C * Math.floor(Q / C);
+                        if (P < A) P = A;
+                        if (P > B) P = B;
+                        N = N - P;
+                        terminal.print("COMPUTER TAKES " + P + " AND LEAVES " + N);
+
+                        if (N === 0) {
+                            if (M === 1) { terminal.print("CONGRATULATIONS, YOU WIN."); }
+                            else { terminal.print("TOUGH LUCK, YOU LOSE."); }
+                            break;
+                        }
+                    }
+
+                    S = 2;
+
+                    let P = parseInt(await terminal.input("YOUR MOVE"));
+                    if (P === 0) {
+                        terminal.print("I TOLD YOU NOT TO USE ZERO...COMPUTER WINS BY FORFEIT.");
+                        break;
+                    }
+                    if (isNaN(P) || P !== Math.floor(P) || P < A || P > N || P > B) {
+                        terminal.print("ILLEGAL MOVE, REENTER IT.");
+                        continue;
+                    }
+
+                    N = N - P;
+
+                    if (N === 0) {
+                        if (M === 1) { terminal.print("CONGRATULATIONS, YOU WIN."); }
+                        else { terminal.print("TOUGH LUCK, YOU LOSE."); }
+                        break;
+                    }
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("PLAY AGAIN (YES OR NO)")).toUpperCase();
+                if (again !== "YES" && again !== "Y") break;
+                terminal.print("");
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

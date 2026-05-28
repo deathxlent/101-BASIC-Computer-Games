@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>YAHTZE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">YAHTZE.BAS - Yahtzee</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'YAHTZE'});
+async function run() {
+  await t.delay(300);
+  t.print("YAHTZEE");
+  t.print("ROLL 5 DICE. YOU MAY REROLL ANY NUMBER OF DICE.");
+  t.print("YOU GET 3 ROLLS PER TURN.");
+  let score = 0;
+  for (let turn = 0; turn < 5; turn++) {
+    let dice = [0,0,0,0,0];
+    for (let r = 0; r < 3; r++) {
+      for (let i = 0; i < 5; i++) if (dice[i] === 0) dice[i] = Math.floor(Math.random() * 6) + 1;
+      t.print("ROLL " + (r+1) + ": " + dice.join(" "));
+      if (r < 2) {
+        let keep = await t.input("DICE TO KEEP (e.g. 1,3,5) OR 'ALL'");
+        if (keep.toUpperCase() === "ALL") break;
+        let idxs = keep.split(',').map(s => parseInt(s.trim()) - 1);
+        let newDice = [0,0,0,0,0];
+        for (let i of idxs) if (i >= 0 && i < 5) newDice[i] = dice[i];
+        dice = newDice;
+      }
+    }
+    let counts = {};
+    for (let d of dice) counts[d] = (counts[d] || 0) + 1;
+    let turnScore = 0;
+    for (let d of dice) turnScore += d;
+    // bonus for 3/4 of a kind
+    let vals = Object.values(counts);
+    if (vals.includes(3)) turnScore += 5;
+    if (vals.includes(4)) turnScore += 10;
+    if (vals.includes(5)) turnScore += 25;
+    // full house
+    if (vals.includes(3) && vals.includes(2)) turnScore += 15;
+    t.print("SCORE THIS TURN: " + turnScore);
+    score += turnScore;
+  }
+  t.print("TOTAL SCORE: " + score);
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

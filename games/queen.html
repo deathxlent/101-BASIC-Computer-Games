@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>QUEEN - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">QUEEN.BAS - Eight Queens</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'QUEEN'});
+async function run() {
+  await t.delay(300);
+  t.print("EIGHT QUEENS");
+  t.print("PLACE 8 QUEENS ON THE CHESSBOARD SO THAT NO");
+  t.print("QUEEN ATTACKS ANOTHER. ENTER ROW,COL (1-8).");
+  let queens = [];
+  let board = Array(8).fill().map(() => Array(8).fill('.'));
+  function printBoard() {
+    for (let r = 0; r < 8; r++) t.print(board[r].join(' '));
+  }
+  function safe(r, c) {
+    for (let q of queens) {
+      if (q.r === r || q.c === c || Math.abs(q.r - r) === Math.abs(q.c - c)) return false;
+    }
+    return true;
+  }
+  printBoard();
+  while (queens.length < 8) {
+    let inp = await t.input("QUEEN " + (queens.length+1) + " (ROW,COL)");
+    let parts = inp.split(',').map(s => parseInt(s.trim()));
+    if (parts.length < 2) continue;
+    let r = parts[0]-1, c = parts[1]-1;
+    if (r < 0 || r > 7 || c < 0 || c > 7 || !safe(r,c)) { t.print("ILLEGAL PLACEMENT"); continue; }
+    queens.push({r,c});
+    board[r][c] = 'Q';
+    printBoard();
+    if (queens.length === 8) t.print("ALL 8 QUEENS PLACED!");
+    else t.print(queens.length + " QUEENS DOWN, " + (8-queens.length) + " TO GO.");
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

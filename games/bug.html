@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUG - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BUG.BAS - Bug (Cootie)</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Press Enter to roll...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BUG'
+        });
+
+        const partNames = ["", "BODY", "NECK", "HEAD", "FEELERS", "TAIL", "LEGS"];
+        const partNeeded = [0, 1, 1, 1, 2, 1, 6];
+
+        function drawBug(parts) {
+            terminal.print("");
+            if (parts[5] > 0) {
+                let tail = "~".repeat(parts[5] * 2);
+                terminal.print("    " + tail);
+            }
+            if (parts[1] > 0) {
+                let body = "(" + "0".repeat(Math.max(1, parts[1] * 3)) + ")";
+                terminal.print("   " + body);
+            }
+            if (parts[2] > 0) {
+                let neck = "|" + "|".repeat(parts[2]);
+                terminal.print("   " + neck);
+            }
+            if (parts[3] > 0) {
+                let head = "O" + "O".repeat(parts[3]);
+                terminal.print("  " + head);
+            }
+            if (parts[4] > 0) {
+                let feelers = "V".repeat(parts[4]) + " ^".repeat(parts[4]);
+                terminal.print(" " + feelers);
+            }
+            if (parts[6] > 0) {
+                let legs = "/" + "\\".repeat(parts[6]) + "/";
+                terminal.print(legs);
+            }
+            terminal.print("");
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("THE GAME BUG IS LIKE THE GAME COOTIE,");
+            terminal.print("I HOPE YOU ENJOY THIS GAME");
+            terminal.print("");
+
+            let instr = (await terminal.input("DO YOU WANT INSTRUCTIONS")).toUpperCase();
+            if (instr !== "NO") {
+                terminal.print("THE OBJECT OF BUG IS TO FINISH YOUR BUG BEFORE I FINISH MINE");
+                terminal.print("EACH NUMBER STANDS FOR A PART OF THE BUG'S BODY");
+                terminal.print("I WILL ROLL THE DIE FOR YOU, TELL YOU WHAT I ROLLED FOR YOU");
+                terminal.print("WHAT THE NUMBER STANDS FOR, AND IF YOU CAN GET THE PART,");
+                terminal.print("IF YOU CAN GET THE PART I WILL GIVE IT TO YOU.");
+                terminal.print("THE SAME WILL HAPPEN ON MY TURN");
+                terminal.print("IF THERE IS A CHANGE IN EITHER BUG I WILL GIVE YOU THE");
+                terminal.print("OPTION OF SEEING THE PICTURES OF THE BUGS.");
+                terminal.print("THE NUMBERS STAND FOR PARTS AS FOLLOWS:");
+                terminal.print("NUMBER   PART             NUMBER OF PART NEEDED");
+                terminal.print("1        BODY             1");
+                terminal.print("2        NECK             1");
+                terminal.print("3        HEAD             1");
+                terminal.print("4        FEELERS          2");
+                terminal.print("5        TAIL             1");
+                terminal.print("6        LEGS             6");
+                terminal.print("");
+            }
+
+            while (true) {
+                let player = [0, 0, 0, 0, 0, 0, 0];
+                let cpu = [0, 0, 0, 0, 0, 0, 0];
+
+                while (true) {
+                    let playerRoll = Math.floor(6 * Math.random()) + 1;
+                    terminal.print("YOU ROLLED A " + playerRoll);
+                    terminal.print(playerRoll + "=" + partNames[playerRoll]);
+
+                    if (player[playerRoll] < partNeeded[playerRoll]) {
+                        if (playerRoll === 2 && player[1] === 0) {
+                            terminal.print("YOU NEED A BODY FIRST!");
+                        } else if (playerRoll === 3 && player[2] === 0) {
+                            terminal.print("YOU NEED A NECK FIRST!");
+                        } else if (playerRoll === 4 && player[3] === 0) {
+                            terminal.print("YOU NEED A HEAD FIRST!");
+                        } else if (playerRoll === 6 && player[1] === 0) {
+                            terminal.print("YOU NEED A BODY FIRST!");
+                        } else {
+                            player[playerRoll]++;
+                            terminal.print("YOU NOW HAVE A " + partNames[playerRoll]);
+                        }
+                    } else {
+                        terminal.print("YOU DO NOT NEED A " + partNames[playerRoll]);
+                    }
+
+                    if (player[1] >= 1 && player[2] >= 1 && player[3] >= 1 && player[4] >= 2 && player[5] >= 1 && player[6] >= 6) {
+                        terminal.print("YOUR BUG IS COMPLETE! YOU WIN!!!");
+                        drawBug(player);
+                        break;
+                    }
+
+                    let show = (await terminal.input("SEE PICTURE (Y/N)")).toUpperCase();
+                    if (show === "Y") {
+                        terminal.print("YOUR BUG:");
+                        drawBug(player);
+                    }
+
+                    let cpuRoll = Math.floor(6 * Math.random()) + 1;
+                    terminal.print("I ROLLED A " + cpuRoll);
+                    terminal.print(cpuRoll + "=" + partNames[cpuRoll]);
+
+                    if (cpu[cpuRoll] < partNeeded[cpuRoll]) {
+                        if (cpuRoll === 2 && cpu[1] === 0) {
+                            terminal.print("I NEED A BODY FIRST!");
+                        } else if (cpuRoll === 3 && cpu[2] === 0) {
+                            terminal.print("I NEED A NECK FIRST!");
+                        } else if (cpuRoll === 4 && cpu[3] === 0) {
+                            terminal.print("I NEED A HEAD FIRST!");
+                        } else if (cpuRoll === 6 && cpu[1] === 0) {
+                            terminal.print("I NEED A BODY FIRST!");
+                        } else {
+                            cpu[cpuRoll]++;
+                            terminal.print("I NOW HAVE A " + partNames[cpuRoll]);
+                        }
+                    } else {
+                        terminal.print("I DO NOT NEED A " + partNames[cpuRoll]);
+                    }
+
+                    if (cpu[1] >= 1 && cpu[2] >= 1 && cpu[3] >= 1 && cpu[4] >= 2 && cpu[5] >= 1 && cpu[6] >= 6) {
+                        terminal.print("MY BUG IS COMPLETE! I WIN!!!");
+                        drawBug(cpu);
+                        break;
+                    }
+
+                    if (show === "Y") {
+                        terminal.print("MY BUG:");
+                        drawBug(cpu);
+                    }
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("PLAY AGAIN (YES OR NO)")).toUpperCase();
+                if (again !== "YES" && again !== "Y") break;
+                terminal.print("");
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

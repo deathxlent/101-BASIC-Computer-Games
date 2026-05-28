@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BULL - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">BULL.BAS - Bullfight</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'BULL'});
+const ranks = ["SUPERB","GOOD","FAIR","POOR","AWFUL"];
+async function run() {
+  await t.delay(300);
+  let z = await t.input("DO YOU WANT INSTRUCTIONS");
+  if (z.toUpperCase() !== "NO") {
+    t.print("HELLO, ALL YOU BLOODLOVERS AND AFICIONADOS");
+    t.print("HERE IS YOUR BIG CHANCE TO KILL A BULL");
+    t.print("ON EACH PASS OF THE BULL, YOU MAY TRY");
+    t.print("0 - VERONICA (DANGEROUS INSIDE MOVE OF THE CAPE)");
+    t.print("1 - LESS DANGEROUS OUTSIDE MOVE OF THE CAPE");
+    t.print("2 - ORDINARY SWIRL OF THE CAPE");
+    t.print("INSTEAD OF THE ABOVE, YOU MAY TRY TO KILL THE BULL");
+    t.print("ON ANY TURN: 4 (OVER THE HORNS), 5 (IN THE CHEST)");
+    t.print("BUT IF I WERE YOU, I WOULDN'T TRY IT BEFORE THE SEVENTH PASS");
+    t.print("THE CROWD WILL DETERMINE WHAT AWARD YOU DESERVE");
+    t.print("POSTHUMOUSLY IF NECESSARY");
+    t.print("THE BRAVER YOU ARE, THE BETTER THE AWARD YOU RECEIVE");
+    t.print("THE BETTER A JOB THE PICADORES AND TOREADORES DO,");
+    t.print("THE BETTER YOUR CHANCES ARE");
+  }
+  while (true) {
+    t.print("");
+    let a = Math.floor(Math.random()*5)+1;
+    t.print("YOU HAVE DRAWN A "+ranks[a-1]+" BULL");
+    if (a>4) t.print("YOU'RE LUCKY");
+    else if (a<2) t.print("GOOD LUCK. YOU'LL NEED IT");
+    function jobQuality() { let b = Math.random()*3/a; if (b<.37) return .5; if (b<.5) return .4; if (b<.63) return .3; if (b<.87) return .2; return .1; }
+    let d1 = jobQuality();
+    let d1r = Math.floor(d1*10);
+    t.print("THE PICADORES DID A "+ranks[Math.min(d1r,4)]+" JOB");
+    let d2 = jobQuality();
+    let d2r = Math.floor(d2*10);
+    t.print("THE TOREADORES DID A "+ranks[Math.min(d2r,4)]+" JOB");
+    let l = 1, pass = 0, dead = false, killed = false, ran = false;
+    while (!dead && !killed && !ran) {
+      pass++;
+      t.print(""); t.print("PASS NUMBER "+pass);
+      let tryKill = false;
+      if (pass < 3) {
+        let a = await t.input("THE BULL IS CHARGING! TRY FOR A KILL? (YES/NO)");
+        if (a.toUpperCase()==="YES") tryKill = true; else t.print("CAPE MOVE");
+      } else {
+        let a = await t.input("DO YOU WANT TO KILL THE BULL? (YES/NO)");
+        if (a.toUpperCase()==="YES") tryKill = true;
+      }
+      if (tryKill) {
+        let h = parseInt(await t.input("HOW? 4 (OVER THE HORNS) OR 5 (IN THE CHEST)"));
+        if (h!==4 && h!==5) {
+          t.print("YOU PANICKED. THE BULL GORED YOU.");
+          dead = true; break;
+        }
+        let k = (6-a)*10*Math.random()/((d1+d2)*5*pass);
+        if (h===5 && k>0.2 && k<=0.8) { t.print("YOU KILLED THE BULL!"); killed = true; break; }
+        if (h===4 && k>0.8) { t.print("YOU KILLED THE BULL!"); killed = true; break; }
+        t.print("THE BULL HAS GORED YOU");
+        if (Math.random()<0.5) { t.print("YOU ARE DEAD"); dead = true; }
+        else {
+          t.print("YOU ARE STILL ALIVE");
+          let r = await t.input("DO YOU RUN FROM THE RING? (YES/NO)");
+          if (r.toUpperCase()==="YES") { t.print("COWARD"); ran = true; }
+          else { t.print("YOU ARE BRAVE. STUPID, BUT BRAVE"); }
+        }
+      } else {
+        if (pass>=3 && pass>=7) { /* keep going */ }
+        let e = parseInt(await t.input("WHAT MOVE DO YOU MAKE WITH THE CAPE? (0,1,2)"));
+        if (e<0||e>2) { t.print("DON'T PANIC! PUT DOWN A CORRECT NUMBER"); continue; }
+        let m = e===0 ? 3 : e===1 ? 2 : 0.5;
+        l += m;
+        let f = (6-a+m/10)*Math.random()/((d1+d2+pass/10)*5);
+        if (f>=0.51) {
+          t.print("THE BULL HAS GORED YOU");
+          if (Math.random()<0.5) { t.print("YOU ARE DEAD"); dead = true; }
+          else {
+            t.print("YOU ARE STILL ALIVE");
+            let r = await t.input("DO YOU RUN FROM THE RING? (YES/NO)");
+            if (r.toUpperCase()==="YES") { t.print("COWARD"); ran = true; }
+          }
+        }
+      }
+    }
+    t.print("");
+    if (ran) {
+      t.print("THE CROWD BOOS FOR TEN MINUTES. IF YOU EVER DARE TO SHOW");
+      t.print("YOUR FACE IN A RING AGAIN, THEY SWEAR THEY WILL KILL YOU--");
+      t.print("UNLESS THE BULL DOES FIRST");
+    } else if (!dead) {
+      if (killed) t.print("THE CROWD CHEERS");
+      let q = (4.5+l/6-(d1+d2)*2.5+4*(dead?0:1)+2*(killed?2:0)-(pass*pass)/120-a)*Math.random();
+      t.print("THE CROWD AWARDS YOU ");
+      if (q<2.4) t.print("NOTHING");
+      else if (q<4.9) t.print("ONE EAR OF THE BULL. OLE!");
+      else if (q<7.4) t.print("BOTH EARS OF THE BULL. OLE!");
+      else t.print("OLE! YOU ARE 'MUY HOMBRE'! OLE! OLE!");
+    }
+    t.print(""); t.print("ADIOS");
+    let again = await t.input("ANOTHER FIGHT? (Y/N)");
+    if (again.toUpperCase()!=="Y") break;
+  }
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

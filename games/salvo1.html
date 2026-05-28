@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SALVO1 - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">SALVO1.BAS - Salvo (Salvo!)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'SALVO1'});
+async function run() {
+  await t.delay(300);
+  t.print("SALVO!");
+  t.print("A SIMPLIFIED VERSION OF THE CLASSIC NAVAL BATTLE.");
+  t.print("FIRE SHELLS AT THE ENEMY FLEET.");
+  let ships = [];
+  for (let i = 0; i < 4; i++) {
+    let x = Math.floor(Math.random() * 10);
+    let y = Math.floor(Math.random() * 10);
+    while (ships.some(s => s.x === x && s.y === y)) { x = Math.floor(Math.random() * 10); y = Math.floor(Math.random() * 10); }
+    ships.push({x, y});
+  }
+  let shots = 0;
+  while (ships.length > 0 && shots < 20) {
+    let inp = await t.input("ENTER TARGET (e.g. B7)");
+    if (inp.length < 2) continue;
+    let x = inp.toUpperCase().charCodeAt(0) - 65;
+    let y = parseInt(inp.substring(1)) - 1;
+    if (x < 0 || x > 9 || y < 0 || y > 9) continue;
+    shots++;
+    let hit = ships.some(s => s.x === x && s.y === y);
+    if (hit) { t.print("HIT!"); ships = ships.filter(s => !(s.x === x && s.y === y)); }
+    else t.print("MISS.");
+  }
+  if (ships.length === 0) t.print("FLEET DESTROYED IN " + shots + " SHOTS!");
+  else { t.print("OUT OF AMMO."); for (let s of ships) t.print("SHIP AT " + String.fromCharCode(65+s.x) + (s.y+1)); }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

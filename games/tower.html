@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TOWER - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">TOWER.BAS - Tower of Hanoi</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'TOWER'});
+async function run() {
+  await t.delay(300);
+  t.print("TOWER OF HANOI");
+  t.print("MOVE ALL DISKS FROM PEG 1 TO PEG 3.");
+  t.print("NEVER PLACE A LARGER DISK ON A SMALLER ONE.");
+  let N = parseInt(await t.input("HOW MANY DISKS (3-7)"));
+  if (N < 3 || N > 7) N = 5;
+  let pegs = [[], [], []];
+  for (let i = N; i > 0; i--) pegs[0].push(i);
+  function render() {
+    for (let p = 0; p < 3; p++) t.print("PEG " + (p+1) + ": " + pegs[p].join(" "));
+  }
+  render();
+  let moves = 0;
+  let minMoves = Math.pow(2, N) - 1;
+  while (pegs[2].length < N) {
+    let from = parseInt(await t.input("FROM PEG (1-3)")) - 1;
+    let to = parseInt(await t.input("TO PEG (1-3)")) - 1;
+    if (from < 0 || from > 2 || to < 0 || to > 2 || pegs[from].length === 0) { t.print("ILLEGAL"); continue; }
+    let disk = pegs[from][pegs[from].length - 1];
+    if (pegs[to].length > 0 && pegs[to][pegs[to].length - 1] < disk) { t.print("CANNOT PLACE LARGER ON SMALLER"); continue; }
+    pegs[from].pop();
+    pegs[to].push(disk);
+    moves++;
+    render();
+  }
+  t.print("YOU DID IT IN " + moves + " MOVES. MINIMUM: " + minMoves);
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

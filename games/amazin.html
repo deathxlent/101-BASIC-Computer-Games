@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMAZIN - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+    <style>
+        .maze-line { font-size: 0.7em; letter-spacing: 1px; white-space: pre; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">AMAZIN.BAS - Amazing Maze</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter width and length...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'AMAZIN'
+        });
+
+        function makeMaze(H, V) {
+            let right = Array.from({length: V}, () => Array(H).fill(true));
+            let bottom = Array.from({length: V}, () => Array(H).fill(true));
+            let vis = Array.from({length: V}, () => Array(H).fill(false));
+
+            let r = 0, c = Math.floor(Math.random() * H);
+            vis[r][c] = true;
+            let entry = c;
+            let cnt = 1;
+            let total = H * V;
+
+            while (cnt < total) {
+                let nb = [];
+                if (r > 0 && !vis[r - 1][c]) nb.push([-1, 0]);
+                if (c > 0 && !vis[r][c - 1]) nb.push([0, -1]);
+                if (c < H - 1 && !vis[r][c + 1]) nb.push([0, 1]);
+                if (r < V - 1 && !vis[r + 1][c]) nb.push([1, 0]);
+
+                if (nb.length) {
+                    let [dr, dc] = nb[Math.floor(Math.random() * nb.length)];
+                    if (dr === -1) bottom[r - 1][c] = false;
+                    else if (dr === 1) bottom[r][c] = false;
+                    else if (dc === -1) right[r][c - 1] = false;
+                    else right[r][c] = false;
+                    r += dr;
+                    c += dc;
+                    vis[r][c] = true;
+                    cnt++;
+                } else {
+                    for (let s = 0; s < V; s++) {
+                        let found = false;
+                        for (let cc = 0; cc < H; cc++) {
+                            if (vis[s][cc]) continue;
+                            if (s > 0 && vis[s - 1][cc]) {
+                                bottom[s - 1][cc] = false;
+                                vis[s][cc] = true; cnt++;
+                                r = s; c = cc; found = true; break;
+                            } else if (cc > 0 && vis[s][cc - 1]) {
+                                right[s][cc - 1] = false;
+                                vis[s][cc] = true; cnt++;
+                                r = s; c = cc; found = true; break;
+                            } else if (cc < H - 1 && vis[s][cc + 1]) {
+                                right[s][cc] = false;
+                                vis[s][cc] = true; cnt++;
+                                r = s; c = cc; found = true; break;
+                            } else if (s < V - 1 && vis[s + 1][cc]) {
+                                bottom[s][cc] = false;
+                                vis[s][cc] = true; cnt++;
+                                r = s; c = cc; found = true; break;
+                            }
+                        }
+                        if (found) break;
+                    }
+                }
+            }
+
+            return { right, bottom, entry };
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("AMAZING MAZE PROGRAM");
+            terminal.print("CREATIVE COMPUTING  MORRISTOWN, NEW JERSEY");
+            terminal.print("");
+
+            while (true) {
+                terminal.print("WHAT ARE YOUR WIDTH AND LENGTH?");
+                let input = await terminal.input();
+                let parts = input.split(/[, ]+/);
+                let H = parseInt(parts[0]);
+                let V = parseInt(parts[1]);
+
+                if (isNaN(H) || isNaN(V) || H < 1 || V < 1 || (H === 1 && V === 1)) {
+                    terminal.print("MEANINGLESS DIMENSIONS. TRY AGAIN");
+                    terminal.print("");
+                    continue;
+                }
+
+                terminal.print("");
+                let maze = makeMaze(H, V);
+
+                let top = "";
+                for (let i = 0; i < H; i++) {
+                    top += (i === maze.entry) ? ":  " : ":--";
+                }
+                top += ":";
+                terminal.print(top);
+
+                for (let j = 0; j < V; j++) {
+                    let row1 = "I";
+                    for (let i = 0; i < H; i++) {
+                        row1 += maze.right[j][i] ? "  I" : "   ";
+                    }
+                    terminal.print(row1);
+
+                    let row2 = "";
+                    for (let i = 0; i < H; i++) {
+                        row2 += maze.bottom[j][i] ? ":--" : ":  ";
+                    }
+                    row2 += ":";
+                    terminal.print(row2);
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("ANOTHER MAZE (Y/N)")).toUpperCase();
+                if (again !== "Y" && again !== "YES") break;
+                terminal.print("");
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>FIPFOP - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">FIPFOP.BAS - Flip-Flop Puzzle</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'FIPFOP'});
+async function run() {
+  await t.delay(300);
+  t.print("THE OBJECT OF THIS PUZZLE IS TO CHANGE THIS:");
+  t.print(""); t.print("X X X X X X X X X X"); t.print("");
+  t.print("TO THIS:"); t.print(""); t.print("O O O O O O O O O O"); t.print("");
+  t.print("BY TYPING IN THE NUMBER CORRESPONDING TO THE POSITION");
+  t.print("OF THE LETTER. ON SOME NUMBERS, ONE POSITION WILL");
+  t.print("CHANGE, ON OTHERS, TWO WILL CHANGE.");
+  t.print("TO RESET THE LINE TO ALL X'S, TYPE 0.");
+  t.print("TO START A NEW GAME IN THE MIDDLE, TYPE 11.");
+  while (true) {
+    let A = Array(10).fill("X");
+    let C = 0, M = -1;
+    t.print(""); t.print("HERE IS THE STARTING LINE OF X'S:"); t.print("");
+    while (true) {
+      t.print("1 2 3 4 5 6 7 8 9 10");
+      t.print(A.join(" ")); t.print("");
+      if (A.every(x => x === "O")) {
+        if (C <= 12) t.print("VERY GOOD. YOU GUESSED IT IN ONLY " + C + " GUESSES!!!!");
+        else t.print("TRY HARDER NEXT TIME, IT TOOK YOU " + C + " GUESSES.");
+        break;
+      }
+      let N = parseInt(await t.input("INPUT THE NUMBER"));
+      if (isNaN(N) || N > 11 || N < 0) { t.print("ILLEGAL ENTRY--TRY AGAIN"); continue; }
+      if (N === 11) { A = Array(10).fill("X"); C = 0; M = -1; continue; }
+      if (N === 0) { A = Array(10).fill("X"); C = 0; M = -1; t.print(""); continue; }
+      C++;
+      A[N-1] = (A[N-1] === "X") ? "O" : "X";
+      if (M === N) {
+        A[N-1] = (A[N-1] === "X") ? "O" : "X";
+      }
+      let R = Math.floor(19 * (N * C / 10 - N - Math.sin(C/N) + 336 * Math.sin(8 + N) - Math.floor(N * C / 10 - N - Math.sin(C/N) + 336 * Math.sin(8 + N))));
+      if (R <= 10) {
+        let idx = R - 1;
+        if (idx >= 0 && idx < 10) A[idx] = (A[idx] === "X") ? "O" : "X";
+      }
+      M = N;
+    }
+    let again = await t.input("DO YOU WANT TO DO ANOTHER PUZZLE");
+    if (again.toUpperCase() === "NO") break;
+  }
+  await t.delay(2000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

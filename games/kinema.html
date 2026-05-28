@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KINEMA - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">KINEMA.BAS - Kinema (Kinetic Energy)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'KINEMA'});
+async function run() {
+  await t.delay(300);
+  t.print("KINEMA - KINETIC ENERGY");
+  t.print("A BODY OF MASS M MOVING AT A VELOCITY OF V");
+  t.print("HAS A KINETIC ENERGY OF (M*V**2)/2");
+  t.print("WE WILL TEST YOU ON THREE PROBLEMS.");
+  while (true) {
+    let play = await t.input("READY (YES OR NO)");
+    if (play.toUpperCase() !== "YES") { t.print("OK"); await t.delay(1500); window.location.href="../index.html"; return; }
+    let correct = 0;
+    for (let i = 1; i <= 3; i++) {
+      let M = (Math.floor(Math.random() * 8) + 2) * 10;
+      let V = (Math.floor(Math.random() * 9) + 2);
+      let KE = M * V * V / 2;
+      let ans = parseFloat(await t.input("PROBLEM " + i + ": IF MASS=" + M + " AND VELOCITY=" + V + ", FIND KINETIC ENERGY"));
+      if (Math.abs(ans - KE) < 0.001 * KE) {
+        t.print("CORRECT");
+        correct++;
+      } else {
+        t.print("WRONG. ANSWER IS " + KE);
+      }
+    }
+    t.print("YOU GOT " + correct + " OUT OF 3.");
+  }
+}
+run();
+</script>
+</body>
+</html>

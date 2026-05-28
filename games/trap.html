@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>TRAP - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">TRAP.BAS - Trap</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'TRAP'});
+async function run() {
+  await t.delay(300);
+  t.print("TRAP - SHOOTING CLAY PIGEONS");
+  t.print("YOU ARE A TRAPSHOOTER. PIGEONS FLY ACROSS THE SKY.");
+  t.print("YOU GET 5 ROUNDS. EACH ROUND HAS 5 PIGEONS.");
+  let totalHits = 0;
+  for (let round = 1; round <= 5; round++) {
+    t.print("ROUND " + round);
+    let hits = 0;
+    for (let bird = 1; bird <= 5; bird++) {
+      await t.delay(500);
+      let speed = Math.floor(Math.random() * 3) + 1;
+      let dir = Math.random() < 0.5 ? "LEFT" : "RIGHT";
+      t.print("PIGEON " + bird + " FLYING " + dir + " AT SPEED " + speed);
+      let aim = parseFloat(await t.input("AIM DISTANCE (1-10)"));
+      let dist = Math.abs(speed * 2 - aim);
+      if (dist < 2) { t.print("HIT!"); hits++; }
+      else t.print("MISS.");
+    }
+    t.print("ROUND " + round + ": " + hits + " / 5");
+    totalHits += hits;
+  }
+  t.print("TOTAL: " + totalHits + " / 25");
+  if (totalHits >= 20) t.print("EXPERT!");
+  else if (totalHits >= 15) t.print("GOOD SHOOTING.");
+  else t.print("KEEP PRACTICING.");
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

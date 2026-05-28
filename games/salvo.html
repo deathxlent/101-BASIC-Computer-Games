@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SALVO - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">SALVO.BAS - Salvo</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'SALVO'});
+async function run() {
+  await t.delay(300);
+  t.print("SALVO - NAVAL BATTLE");
+  t.print("THERE ARE 5 ENEMY SHIPS ON A 10X10 GRID (A1-J10).");
+  t.print("YOU GET 30 SHELLS. SINK ALL SHIPS TO WIN.");
+  let ships = [];
+  for (let i = 0; i < 5; i++) {
+    let x = Math.floor(Math.random() * 10);
+    let y = Math.floor(Math.random() * 10);
+    while (ships.some(s => s.x === x && s.y === y)) { x = Math.floor(Math.random() * 10); y = Math.floor(Math.random() * 10); }
+    ships.push({x, y});
+  }
+  let hits = 0;
+  let maxShots = 30;
+  for (let shot = 1; shot <= maxShots; shot++) {
+    let inp = await t.input("SHOT " + shot + "/" + maxShots + " (e.g. A5)");
+    if (inp.length < 2) continue;
+    let x = inp.toUpperCase().charCodeAt(0) - 65;
+    let y = parseInt(inp.substring(1)) - 1;
+    if (x < 0 || x > 9 || y < 0 || y > 9) continue;
+    let hit = ships.some(s => s.x === x && s.y === y);
+    if (hit) { t.print("HIT!"); hits++; ships = ships.filter(s => !(s.x === x && s.y === y)); }
+    else t.print("MISS.");
+    if (ships.length === 0) { t.print("ALL SHIPS SUNK!"); break; }
+  }
+  if (ships.length > 0) { t.print("YOU RAN OUT OF SHELLS."); for (let s of ships) t.print("SHIP AT " + String.fromCharCode(65+s.x) + (s.y+1)); }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

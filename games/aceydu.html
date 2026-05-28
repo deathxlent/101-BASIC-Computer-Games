@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACEYDU - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">ACEYDU.BAS - Acey-Duecy</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter your bet...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'ACEYDU'
+        });
+
+        function cardName(V) {
+            if (V <= 10) return V.toString();
+            if (V === 11) return "JACK";
+            if (V === 12) return "QUEEN";
+            if (V === 13) return "KING";
+            return "ACE";
+        }
+
+        function drawCard() {
+            return Math.floor(14 * Math.random()) + 2;
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("ACEY-DUCEY IS PLAYED IN THE FOLLOWING MANNER:");
+            terminal.print("THE DEALER (COMPUTER) DEALS TWO CARDS FACE UP.");
+            terminal.print("YOU HAVE THE OPTION TO BET OR NOT TO BET DEPENDING");
+            terminal.print("ON WHETHER OR NOT YOU FEEL THE NEXT CARD WILL HAVE");
+            terminal.print("A VALUE BETWEEN THE FIRST TWO.");
+            terminal.print("IF YOU DO NOT WANT TO BET, INPUT A 0.");
+            terminal.print("");
+
+            let Q = 100;
+
+            while (true) {
+                terminal.print("YOU NOW HAVE " + Q + " DOLLARS.");
+                terminal.print("");
+
+                let A, B;
+                while (true) {
+                    A = drawCard();
+                    B = drawCard();
+                    if (A < B) break;
+                }
+
+                terminal.print("HERE ARE YOUR NEXT TWO CARDS...");
+                terminal.print(cardName(A));
+                terminal.print(cardName(B));
+                terminal.print("");
+
+                let M = parseInt(await terminal.input("WHAT IS YOUR BET"));
+                if (isNaN(M)) continue;
+
+                if (M === 0) {
+                    terminal.print("CHICKEN!!");
+                    terminal.print("");
+                    continue;
+                }
+
+                if (M > Q) {
+                    terminal.print("SORRY, MY FRIEND, BUT YOU BET TOO MUCH");
+                    terminal.print("YOU HAVE ONLY " + Q + " DOLLARS TO BET.");
+                    continue;
+                }
+
+                let C = drawCard();
+                terminal.print(cardName(C));
+
+                if (C > A && C < B) {
+                    terminal.print("YOU WIN!!!");
+                    Q = Q + M;
+                } else {
+                    terminal.print("SORRY, YOU LOSE.");
+                    Q = Q - M;
+                }
+
+                if (Q <= 0) {
+                    terminal.print("");
+                    terminal.print("SORRY, FRIEND, BUT YOU BLEW YOUR WAD.");
+                    let again = (await terminal.input("TRY AGAIN (YES OR NO)")).toUpperCase();
+                    if (again === "YES" || again === "Y") {
+                        Q = 100;
+                        terminal.print("");
+                        continue;
+                    }
+                    break;
+                }
+                terminal.print("");
+            }
+
+            terminal.print("");
+            terminal.print("O.K. HOPE YOU HAD FUN!!");
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

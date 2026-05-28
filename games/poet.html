@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>POET - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">POET.BAS - Poet</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'POET'});
+const nouns = ["heart","moon","wind","sea","star","dream","flame","snow","song","tree"];
+const verbs = ["burns","flows","sings","dances","cries","whispers","shines","falls","flies","glows"];
+const adjs = ["silent","golden","dark","bright","wild","tender","cold","fierce","soft","pale"];
+const advs = ["gently","wildly","softly","deeply","brightly"];
+async function run() {
+  await t.delay(300);
+  t.print("POET - COMPUTER POETRY");
+  t.print("I WILL GENERATE A POEM FOR YOU.");
+  for (let i = 0; i < 4; i++) {
+    let n = nouns[Math.floor(Math.random() * nouns.length)];
+    let v = verbs[Math.floor(Math.random() * verbs.length)];
+    let a = adjs[Math.floor(Math.random() * adjs.length)];
+    let ad = advs[Math.floor(Math.random() * advs.length)];
+    let line = "The " + a + " " + n + " " + v + " " + ad;
+    t.print(line);
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

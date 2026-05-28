@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>POKER - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">POKER.BAS - Poker</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'POKER'});
+const suits = ["HEARTS","DIAMONDS","CLUBS","SPADES"];
+const ranks = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
+function deck() {
+  let d = [];
+  for (let s of suits) for (let r of ranks) d.push(r + " " + s);
+  return d;
+}
+function shuffle(d) {
+  for (let i = d.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [d[i], d[j]] = [d[j], d[i]];
+  }
+}
+function handRank(hand) {
+  let rVals = hand.map(c => ranks.indexOf(c.split(' ')[0])).sort((a,b) => a-b);
+  let s = hand[0].split(' ')[1];
+  let flush = hand.every(c => c.split(' ')[1] === s);
+  let straight = rVals.every((v,i,a) => i===0 || v===a[i-1]+1);
+  let counts = {};
+  rVals.forEach(v => counts[v] = (counts[v]||0)+1);
+  let groups = Object.values(counts).sort((a,b) => b-a);
+  if (straight && flush && rVals[4]===12) return 9;
+  if (straight && flush) return 8;
+  if (groups[0]===4) return 7;
+  if (groups[0]===3 && groups[1]===2) return 6;
+  if (flush) return 5;
+  if (straight) return 4;
+  if (groups[0]===3) return 3;
+  if (groups[0]===2 && groups[1]===2) return 2;
+  if (groups[0]===2) return 1;
+  return 0;
+}
+async function run() {
+  await t.delay(300);
+  t.print("POKER - FIVE CARD DRAW");
+  t.print("WE EACH GET 5 CARDS. YOU CAN DISCARD UP TO 3.");
+  t.print("I'LL MATCH YOUR BET EVERY TIME.");
+  let money = 500;
+  while (true) {
+    if (money <= 0) { t.print("YOU'RE BROKE!"); break; }
+    let d = deck(); shuffle(d);
+    let player = d.slice(0,5);
+    let comp = d.slice(5,10);
+    let pot = 0;
+    let bet = parseInt(await t.input("YOUR BET (YOU HAVE $" + money + ")"));
+    if (bet < 1 || bet > money) continue;
+    money -= bet; pot += bet * 2;
+    t.print("YOUR HAND: " + player.join(" | "));
+    t.print("I'LL TAKE THE SAME NUMBER OF CARDS AS YOU.");
+    let discards = await t.input("HOW MANY TO DISCARD (0-3)");
+    let n = parseInt(discards);
+    if (n > 0) {
+      let indices = [];
+      for (let i = 0; i < n; i++) {
+        let idx = parseInt(await t.input("DISCARD CARD #" + (i+1) + " (1-5)"));
+        if (idx < 1 || idx > 5) { i--; continue; }
+        indices.push(idx-1);
+      }
+      for (let idx of indices) player[idx] = d[10 + d.indexOf(player[idx])];
+    }
+    // computer draws
+    for (let i = 0; i < n; i++) {
+      let idx = Math.floor(Math.random() * 5);
+      comp[idx] = d[15 + Math.floor(Math.random() * 20)];
+    }
+    t.print("YOUR FINAL HAND: " + player.join(" | "));
+    t.print("MY HAND: " + comp.join(" | "));
+    let pr = handRank(player), cr = handRank(comp);
+    let pName = ["HIGH CARD","PAIR","TWO PAIR","THREE KIND","STRAIGHT","FLUSH","FULL HOUSE","FOUR KIND","STRAIGHT FLUSH","ROYAL FLUSH"][pr];
+    let cName = ["HIGH CARD","PAIR","TWO PAIR","THREE KIND","STRAIGHT","FLUSH","FULL HOUSE","FOUR KIND","STRAIGHT FLUSH","ROYAL FLUSH"][cr];
+    t.print("YOU HAVE: " + pName + ", I HAVE: " + cName);
+    if (pr > cr) { t.print("YOU WIN $" + pot); money += pot; }
+    else if (cr > pr) { t.print("I WIN!"); }
+    else { t.print("TIE! YOU GET YOUR BET BACK."); money += bet; }
+    let again = await t.input("PLAY AGAIN (YES/NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("YOU END WITH $" + money);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BASKET - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BASKET.BAS - Dartmouth College Basketball</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter shot (1-4) or defense (6-7.5)...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BASKET'
+        });
+
+        let T, D, S, P, OPP;
+
+        function initGame() {
+            T = 0; P = 0; S = [0, 0];
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("THIS IS DARTMOUTH COLLEGE BASKETBALL. YOU WILL BE DARTMOUTH");
+            terminal.print("  CAPTAIN AND PLAYMAKER. CALL SHOTS AS FOLLOWS: 1. LONG");
+            terminal.print("  (30 FT.) JUMP SHOT; 2. SHORT (15 FT.) JUMP SHOT; 3. LAY");
+            terminal.print("  UP; 4. SET SHOT.");
+            terminal.print("BOTH TEAMS WILL USE THE SAME DEFENSE. CALL DEFENSE AS");
+            terminal.print("  FOLLOWS: 6 PRESS; 6.5 MAN-TO-MAN; 7 ZONE; 7.5 NONE.");
+            terminal.print("  TO CHANGE DEFENSE, JUST TYPE 0 AS YOUR NEXT SHOT.");
+
+            terminal.print("YOUR STARTING DEFENSE WILL BE");
+            let dStr = await terminal.input();
+            D = parseFloat(dStr);
+
+            terminal.print("");
+            terminal.print("CHOOSE YOUR OPPONENT");
+            OPP = await terminal.input();
+
+            initGame();
+
+            function offense() {
+                return new Promise(async (resolve) => {
+                    while (true) {
+                        T++;
+                        if (T === 50) {
+                            terminal.print("   ***** END OF FIRST HALF *****");
+                            terminal.print("SCORE: DARTMOUTH " + S[1] + " " + OPP + " " + S[0]);
+                            terminal.print("");
+                            await terminal.delay(1000);
+                            let result = await centerJump();
+                            if (result === "opponent") {
+                                await opponentPos();
+                            }
+                            resolve();
+                            return;
+                        }
+                        if (T === 92) {
+                            terminal.print("");
+                            terminal.print("  ***  TWO MINUTES LEFT IN THE GAME  ***");
+                            terminal.print("");
+                        }
+                        if (T >= 100) {
+                            if (S[1] !== S[0]) {
+                                terminal.print("    ***** END OF GAME *****");
+                                terminal.print("FINAL SCORE: DARTMOUTH " + S[1] + " " + OPP + " " + S[0]);
+                                resolve();
+                                return;
+                            }
+                            terminal.print("   ***** END OF SECOND HALF *****");
+                            terminal.print("SCORE AT END OF REGULATION TIME:");
+                            terminal.print("        DARTMOUTH " + S[1] + " " + OPP + " " + S[0]);
+                            terminal.print("");
+                            terminal.print("BEGIN TWO MINUTE OVERTIME PERIOD");
+                            T = 93;
+                            let result = await centerJump();
+                            if (result === "opponent") {
+                                await opponentPos();
+                            }
+                            resolve();
+                            return;
+                        }
+
+                        terminal.print("");
+                        terminal.print("YOUR SHOT");
+                        let zStr = await terminal.input();
+                        let Z = parseInt(zStr);
+                        if (isNaN(Z) || Z < 0 || Z > 4 || Z !== Math.floor(Z)) {
+                            if (Z === 0 || (zStr.includes(".") && parseFloat(zStr) >= 6)) {
+                                if (Z === 0 || parseFloat(zStr) >= 6) {
+                                    D = parseFloat(zStr);
+                                    if (D < 6) D = 6;
+                                    terminal.print("YOUR NEW DEFENSIVE ALIGNMENT IS " + D);
+                                    continue;
+                                }
+                            }
+                            terminal.print("INCORRECT ANSWER. RETYPE IT");
+                            continue;
+                        }
+
+                        if (Z === 0) {
+                            terminal.print("YOUR NEW DEFENSIVE ALIGNMENT IS");
+                            let dStr2 = await terminal.input();
+                            D = parseFloat(dStr2);
+                            if (D < 6) D = 6;
+                            continue;
+                        }
+
+                        let shotResult = doShot(Z);
+                        terminal.print(shotResult.text);
+                        if (shotResult.points) {
+                            S[1] += shotResult.points;
+                            terminal.print("SCORE: " + S[1] + " TO " + S[0]);
+                        }
+
+                        if (shotResult.rebound === "dartmouth") {
+                            if (Math.random() > 0.4) {
+                                terminal.print("BALL PASSED BACK TO YOU.");
+                                continue;
+                            }
+                        }
+
+                        await opponentPos();
+                        resolve();
+                        return;
+                    }
+                });
+            }
+
+            function doShot(Z) {
+                let r;
+                if (Z === 1 || Z === 2) {
+                    r = Math.random();
+                    if (r < 0.341 * D / 8) return {text: "JUMP SHOT. SHOT IS GOOD.", points: 2};
+                    if (r < 0.682 * D / 8) {
+                        if (D / 6 * Math.random() > 0.45) return {text: "JUMP SHOT. SHOT IS OFF TARGET. REBOUND TO " + OPP + "."};
+                        if (Math.random() > 0.4) {
+                            if (D === 6 && Math.random() > 0.6) return {text: "PASS STOLEN BY " + OPP + " EASY LAY-UP.", opponentPoints: 2};
+                            return {text: "SHOT IS OFF TARGET. DARTMOUTH CONTROLS THE REBOUND.", rebound: "dartmouth"};
+                        }
+                        return {text: "SHOT IS OFF TARGET. REBOUND TO " + OPP + "."};
+                    }
+                    r = Math.random();
+                    if (r < 0.782 * D / 8) {
+                        if (Math.random() > 0.5) return {text: "SHOT IS BLOCKED. BALL CONTROLLED BY DARTMOUTH.", rebound: "dartmouth"};
+                        return {text: "SHOT IS BLOCKED. BALL CONTROLLED BY " + OPP + "."};
+                    }
+                    if (r < 0.843 * D / 8) {
+                        let ft = doFreeThrows();
+                        return {text: "SHOOTER IS FOULED. TWO SHOTS." + ft.text, points: ft.points};
+                    }
+                    return {text: "CHARGING FOUL. DARTMOUTH LOSES THE BALL."};
+                }
+                if (Z === 3 || Z === 4) {
+                    let r2;
+                    if (Z === 4) terminal.print("SET SHOT");
+                    r = Math.random();
+                    if (7 / D * r < 0.4) return {text: "LAY UP. SHOT IS GOOD. TWO POINTS.", points: 2};
+                    if (7 / D * r < 0.7) {
+                        if (Math.random() > 2 / 3) {
+                            if (Math.random() > 0.4) return {text: "SHOT IS OFF THE RIM. BALL PASSED BACK TO YOU.", rebound: "dartmouth"};
+                            return {text: "SHOT IS OFF THE RIM. DARTMOUTH CONTROLS THE REBOUND.", rebound: "dartmouth"};
+                        }
+                        return {text: "SHOT IS OFF THE RIM. " + OPP + " CONTROLS THE REBOUND."};
+                    }
+                    if (7 / D * r < 0.875) {
+                        let ft = doFreeThrows();
+                        return {text: "SHOOTER FOULED. TWO SHOTS." + ft.text, points: ft.points};
+                    }
+                    if (7 / D * r < 0.925) return {text: "SHOT BLOCKED. " + OPP + "'S BALL."};
+                    return {text: "CHARGING FOUL. DARTMOUTH LOSES THE BALL."};
+                }
+                return {text: "INCORRECT SHOT."};
+            }
+
+            function doFreeThrows() {
+                let r = Math.random();
+                if (r < 0.49) return {text: " SHOOTER MAKES BOTH SHOTS.", points: 2};
+                if (r < 0.75) return {text: " SHOOTER MAKES ONE SHOT AND MISSES ONE.", points: 1};
+                return {text: " BOTH SHOTS MISSED.", points: 0};
+            }
+
+            async function opponentPos() {
+                T++;
+                if (T === 50 || T >= 100) return;
+
+                if (T === 92) {
+                    terminal.print("");
+                    terminal.print("  ***  TWO MINUTES LEFT IN THE GAME  ***");
+                    terminal.print("");
+                }
+
+                let Z1 = Math.floor(10 / 4 * Math.random()) + 1;
+                let r;
+
+                if (Z1 <= 2) {
+                    terminal.print("JUMP SHOT");
+                    r = Math.random();
+                    if (8 / D * r < 0.35) {
+                        S[0] += 2;
+                        terminal.print("SHOT IS GOOD.");
+                        terminal.print("SCORE: " + S[1] + " TO " + S[0]);
+                        return;
+                    }
+                    if (8 / D * r < 0.75) {
+                        if (D / 6 * Math.random() > 0.5) {
+                            terminal.print("SHOT IS OFF THE RIM. " + OPP + " CONTROLS THE REBOUND.");
+                            if (D === 6 && Math.random() > 0.75) {
+                                terminal.print("BALL STOLEN. EASY LAY-UP FOR DARTMOUTH.");
+                                S[1] += 2;
+                                terminal.print("SCORE: " + S[1] + " TO " + S[0]);
+                                return;
+                            }
+                            if (Math.random() > 0.5) {
+                                terminal.print("PASS BACK TO " + OPP + " GUARD.");
+                                await opponentPos();
+                                return;
+                            }
+                        } else {
+                            terminal.print("SHOT IS OFF THE RIM. DARTMOUTH CONTROLS THE REBOUND.");
+                            return;
+                        }
+                    }
+                    if (8 / D * r < 0.9) {
+                        let ft = doFreeThrows();
+                        S[0] += ft.points;
+                        terminal.print("PLAYER FOULED. TWO SHOTS." + ft.text);
+                        terminal.print("SCORE: " + S[1] + " TO " + S[0]);
+                        return;
+                    }
+                    terminal.print("OFFENSIVE FOUL. DARTMOUTH'S BALL.");
+                    return;
+                }
+
+                if (Z1 <= 3) {
+                    terminal.print("LAY UP");
+                } else {
+                    terminal.print("SET SHOT");
+                }
+
+                r = Math.random();
+                if (7 / D * r < 0.413) {
+                    S[0] += 2;
+                    terminal.print("SHOT IS GOOD.");
+                    terminal.print("SCORE: " + S[1] + " TO " + S[0]);
+                    return;
+                }
+
+                terminal.print("SHOT IS MISSED.");
+                if (D / 6 * Math.random() > 0.5) {
+                    terminal.print(OPP + " CONTROLS THE REBOUND.");
+                    if (D === 6 && Math.random() > 0.75) {
+                        terminal.print("BALL STOLEN. EASY LAY-UP FOR DARTMOUTH.");
+                        S[1] += 2;
+                        terminal.print("SCORE: " + S[1] + " TO " + S[0]);
+                        return;
+                    }
+                    if (Math.random() > 0.5) {
+                        terminal.print("PASS BACK TO " + OPP + " GUARD.");
+                        await opponentPos();
+                        return;
+                    }
+                } else {
+                    terminal.print("DARTMOUTH CONTROLS THE REBOUND.");
+                }
+            }
+
+            async function centerJump() {
+                terminal.print("CENTER JUMP");
+                if (Math.random() > 3 / 5) {
+                    terminal.print(OPP + " CONTROLS THE TAP.");
+                    return "opponent";
+                }
+                terminal.print("DARTMOUTH CONTROLS THE TAP.");
+                return "dartmouth";
+            }
+
+            while (true) {
+                let result = await centerJump();
+                if (result === "opponent") {
+                    await opponentPos();
+                }
+                await offense();
+                if (T >= 100 && S[1] !== S[0]) break;
+            }
+
+            terminal.print("");
+            let again = (await terminal.input("PLAY AGAIN (YES OR NO)")).toUpperCase();
+            if (again === "YES" || again === "Y") {
+                terminal.print("");
+                initGame();
+                // restart flow
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

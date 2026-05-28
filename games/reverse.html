@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>REVERSE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">REVERSE.BAS - Reverse</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'REVERSE'});
+async function run() {
+  await t.delay(300);
+  t.print("REVERSE");
+  t.print("I WILL GIVE YOU A LIST OF NUMBERS 1 THROUGH 9 IN RANDOM ORDER.");
+  t.print("YOU MUST REVERSE A PREFIX OF THE LIST TO SORT IT.");
+  t.print("HOW MANY REVERSES DOES IT TAKE?");
+  while (true) {
+    let nums = [1,2,3,4,5,6,7,8,9];
+    for (let i = nums.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [nums[i], nums[j]] = [nums[j], nums[i]];
+    }
+    let moves = 0;
+    while (nums.some((v,i) => v !== i+1)) {
+      t.print(nums.join(" "));
+      let r = parseInt(await t.input("REVERSE HOW MANY"));
+      if (r < 2 || r > 9) continue;
+      nums = nums.slice(0, r).reverse().concat(nums.slice(r));
+      moves++;
+    }
+    t.print(nums.join(" "));
+    t.print("YOU DID IT IN " + moves + " MOVES!");
+    let again = await t.input("PLAY AGAIN (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

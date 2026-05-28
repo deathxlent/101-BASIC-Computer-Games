@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CUBE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CUBE.BAS - Cube Game</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CUBE'});
+function randPos() { return Math.floor(Math.random()*3)+1; }
+function genMines() {
+  let mines = [];
+  while (mines.length < 5) {
+    let p = [randPos(), randPos(), randPos()];
+    if (p[0]===1 && p[1]===1 && p[2]===1) continue;
+    if (p[0]===3 && p[1]===3 && p[2]===3) continue;
+    if (!mines.some(m => m[0]===p[0] && m[1]===p[1] && m[2]===p[2])) mines.push(p);
+  }
+  return mines;
+}
+async function run() {
+  await t.delay(300);
+  let b7 = await t.input("DO YOU WANT TO SEE THE INSTRUCTIONS? (1=YES, 0=NO)");
+  if (b7 !== "0") {
+    t.print("THIS IS A GAME IN WHICH YOU WILL BE PLAYING AGAINST THE");
+    t.print("RANDOM DECISION OF THE COMPUTER. THE FIELD OF PLAY IS A");
+    t.print("CUBE OF SIDE 3. ANY OF THE 27 LOCATIONS CAN BE DESIGNATED");
+    t.print("BY INPUTING THREE NUMBERS SUCH AS 2,3,1. AT THE START,");
+    t.print("YOU ARE AUTOMATICALLY AT LOCATION 1,1,1. THE OBJECT OF");
+    t.print("THE GAME IS TO GET TO LOCATION 3,3,3. ONE MINOR DETAIL,");
+    t.print("THE COMPUTER WILL PICK, AT RANDOM, 5 LOCATIONS AT WHICH");
+    t.print("IT WILL PLANT LAND MINES. IF YOU HIT ONE OF THESE LOCATIONS,");
+    t.print("YOU LOSE. YOU MAY MOVE ONLY ONE SPACE IN ONE DIRECTION");
+    t.print("EACH MOVE. FROM 1,1,2 YOU MAY MOVE TO 2,1,2 OR 1,1,3.");
+    t.print("YOU MAY NOT CHANGE TWO OF THE NUMBERS ON THE SAME MOVE.");
+    t.print("ALL YES OR NO QUESTIONS WILL BE ANSWERED BY A 1 FOR YES");
+    t.print("OR A 0 FOR NO.");
+    t.print("YOU ARE AUTOMATICALLY STARTED WITH A $500 ACCOUNT.");
+    t.print("GOOD LUCK");
+  }
+  let A1 = 500;
+  while (true) {
+    let mines = genMines();
+    let W = 1, X = 1, Y = 1;
+    let wager = false;
+    let Z = await t.input("WANT TO MAKE A WAGER? (1=YES, 0=NO)");
+    let Z1 = 0;
+    if (Z === "1") {
+      wager = true;
+      Z1 = parseInt(await t.input("HOW MUCH"));
+      while (Z1 > A1) { t.print("TRIED TO FOOL ME; BET AGAIN"); Z1 = parseInt(await t.input("HOW MUCH")); }
+    }
+    t.print("ITS YOUR MOVE");
+    let lost = false;
+    while (true) {
+      let P = parseInt(await t.input("X"));
+      let Q = parseInt(await t.input("Y"));
+      let R = parseInt(await t.input("Z"));
+      if (P > W + 1 || Q > X + 1 || R > Y + 1 || (P === W + 1 && Q >= X + 1) || (P === W && Q === X + 1 && R >= Y + 1) || P < W || Q < X || R < Y) {
+        t.print("ILLEGAL MOVE. YOU LOSE");
+        lost = true; break;
+      }
+      W = P; X = Q; Y = R;
+      if (P === 3 && Q === 3 && R === 3) { t.print("CONGRATULATIONS!"); break; }
+      let hit = mines.some(m => m[0]===P && m[1]===Q && m[2]===R);
+      if (hit) { t.print("******BANG******"); t.print("YOU LOSE"); lost = true; break; }
+      t.print("NEXT MOVE");
+    }
+    if (wager) {
+      if (lost) { A1 -= Z1; if (A1 <= 0) { t.print("YOU BUST"); break; } }
+      else { A1 += Z1; }
+      t.print("YOU NOW HAVE $" + A1);
+    }
+    let again = await t.input("DO YOU WANT TO TRY AGAIN? (1=YES, 0=NO)");
+    if (again !== "1") break;
+  }
+  if (A1 <= 0) t.print("TOUGH LUCK");
+  t.print("GOODBYE");
+  await t.delay(2000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

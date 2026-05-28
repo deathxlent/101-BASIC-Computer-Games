@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WEKDAY - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">WEKDAY.BAS - Weekday</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'WEKDAY'});
+const days = ["SUNDAY","MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY","SATURDAY"];
+function dayOfWeek(y, m, d) {
+  // Zeller's congruence
+  if (m < 3) { m += 12; y--; }
+  let K = y % 100;
+  let J = Math.floor(y / 100);
+  let h = (d + Math.floor(13*(m+1)/5) + K + Math.floor(K/4) + Math.floor(J/4) - 2*J) % 7;
+  return ((h + 6) % 7);
+}
+async function run() {
+  await t.delay(300);
+  t.print("WEEKDAY CALCULATOR");
+  t.print("ENTER A DATE AND I WILL TELL YOU THE DAY OF THE WEEK.");
+  let y = parseInt(await t.input("YEAR"));
+  let m = parseInt(await t.input("MONTH (1-12)"));
+  let d = parseInt(await t.input("DAY"));
+  let day = dayOfWeek(y, m, d);
+  t.print(days[day]);
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

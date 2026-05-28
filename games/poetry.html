@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>POETRY - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">POETRY.BAS - Poetry Generator</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'POETRY'});
+const lines = [
+  ["The","moon","like a","silver","coin"],
+  ["Stars","twinkle","in the","vast","night"],
+  ["A","gentle","breeze","whispers","secrets"],
+  ["Shadows","dance","upon","the","wall"],
+  ["Time","flows","like","restless","water"],
+  ["Dreams","take","flight","on","wings"],
+  ["The","sun","paints","golden","skies"],
+  ["Leaves","fall","to","earth's","embrace"]
+];
+async function run() {
+  await t.delay(300);
+  t.print("POETRY GENERATOR");
+  t.print("HERE IS YOUR POEM:");
+  for (let i = 0; i < 4; i++) {
+    let l = lines[Math.floor(Math.random() * lines.length)];
+    t.print(l.join(" "));
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

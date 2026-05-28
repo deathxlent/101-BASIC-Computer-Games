@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HANG - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">HANG.BAS - Hangman</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'HANG'});
+const words = ["GUM","SIN","FOR","CRY","LUG","BYE","FLY","UGLY","EACH","FROM","WORK","TALK","WITH","SELF","PIZZA","THING","FEIGN","FIEND","ELBOW","FAULT","DIRTY","BUDGET","SPIRIT","QUAINT","MAIDEN","ESCORT","PICKAX","EXAMPLE","TENSION","QUININE","KIDNEY","REPLICA","SLEEPER","TRIANGLE","KANGAROO","MAHOGANY","SERGEANT","SEQUENCE","MOUSTACHE","DANGEROUS","SCIENTIST","DIFFERENT","QUIESCENT","MAGISTRATE","ERRONEOUSLY","LOUDSPEAKER","PHYTOTOXIC","MATRIMONIAL","PARASYMPATHOMIMETIC","THIGMOTROPISM"];
+const hangman = [
+  "",
+  "FIRST, WE DRAW A HEAD",
+  "NOW WE DRAW A BODY",
+  "NEXT WE DRAW AN ARM",
+  "THIS TIME IT'S THE OTHER ARM",
+  "NOW, LET'S DRAW THE RIGHT LEG",
+  "THIS TIME WE DRAW THE LEFT LEG",
+  "NOW WE PUT UP A HAND",
+  "NEXT THE OTHER HAND",
+  "NOW WE DRAW ONE FOOT",
+  "HERE'S THE OTHER FOOT -- YOU'RE HUNG!!"
+];
+async function run() {
+  await t.delay(300);
+  t.print("GAME OF HANGMAN");
+  let usedWords = [];
+  while (usedWords.length < words.length) {
+    let idx;
+    do { idx = Math.floor(Math.random() * words.length); } while (usedWords.includes(idx));
+    usedWords.push(idx);
+    let word = words[idx];
+    let display = "-".repeat(word.length);
+    let usedLetters = [];
+    let misses = 0;
+    let guesses = 0;
+    while (misses < 10 && display.includes("-")) {
+      t.print("");
+      if (usedLetters.length > 0) t.print("USED LETTERS: " + usedLetters.join(","));
+      t.print(display.split('').join(' '));
+      let guess = (await t.input("YOUR GUESS (LETTER)")).toUpperCase();
+      if (guess.length !== 1 || guess < 'A' || guess > 'Z') { t.print("JUST ONE LETTER."); continue; }
+      if (usedLetters.includes(guess)) { t.print("YOU GUESSED THAT LETTER BEFORE."); continue; }
+      usedLetters.push(guess);
+      guesses++;
+      if (word.includes(guess)) {
+        let newDisplay = "";
+        for (let i = 0; i < word.length; i++) {
+          newDisplay += word[i] === guess ? guess : display[i];
+        }
+        display = newDisplay;
+        if (!display.includes("-")) {
+          t.print(display.split('').join(' '));
+          t.print("YOU FOUND THE WORD! IT TOOK YOU " + guesses + " GUESSES!");
+          break;
+        }
+      } else {
+        misses++;
+        t.print("SORRY, THAT LETTER ISN'T IN THE WORD.");
+        t.print(hangman[misses]);
+      }
+    }
+    if (misses >= 10) {
+      t.print("SORRY, YOU LOSE. THE WORD WAS " + word);
+    }
+    let again = await t.input("WANT ANOTHER WORD");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  if (usedWords.length >= words.length) t.print("YOU DID ALL THE WORDS!!!");
+  t.print("IT'S BEEN FUN! BYE FOR NOW.");
+  await t.delay(2000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

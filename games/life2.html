@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>LIFE2 - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">LIFE2.BAS - Life Insurance</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'LIFE2'});
+async function run() {
+  await t.delay(300);
+  t.print("LIFE INSURANCE");
+  t.print("I'M GOING TO TAKE THE PLACE OF A LIFE INSURANCE");
+  t.print("SALESMAN. I'LL ASK YOU SOME QUESTIONS AND THEN");
+  t.print("COMPUTE THE PREMIUM.");
+  while (true) {
+    let answer = await t.input("DO YOU WANT TO TAKE OUT SOME LIFE INSURANCE (YES/NO)");
+    if (answer.toUpperCase() !== "YES") { t.print("OK. GOODBYE."); await t.delay(1500); window.location.href="../index.html"; return; }
+    let age = parseInt(await t.input("WHAT IS YOUR AGE"));
+    if (age < 18 || age > 65) { t.print("SORRY, WE CANNOT INSURE YOU."); continue; }
+    let health = await t.input("DESCRIBE YOUR HEALTH (POOR/FAIR/GOOD)");
+    let smoker = await t.input("DO YOU SMOKE (YES/NO)");
+    let driving = await t.input("DO YOU SPEED WHILE DRIVING (YES/NO)");
+    let base = 50 + age * 2;
+    let premium = base;
+    if (health.toUpperCase() === "POOR") premium += base * 0.5;
+    else if (health.toUpperCase() === "FAIR") premium += base * 0.25;
+    if (smoker.toUpperCase() === "YES") premium += base * 0.3;
+    if (driving.toUpperCase() === "YES") premium += base * 0.2;
+    t.print("YOUR MONTHLY PREMIUM IS $" + premium.toFixed(2));
+  }
+}
+run();
+</script>
+</body>
+</html>

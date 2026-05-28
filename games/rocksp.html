@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ROCKSP - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">ROCKSP.BAS - Rock Scissors Paper</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'ROCKSP'});
+async function run() {
+  await t.delay(300);
+  t.print("ROCK, SCISSORS, PAPER");
+  t.print("1=ROCK, 2=SCISSORS, 3=PAPER");
+  let pw = 0, cw = 0;
+  while (true) {
+    let p = parseInt(await t.input("YOUR MOVE (1-3)"));
+    if (p < 1 || p > 3) { t.print("1, 2, OR 3"); continue; }
+    let c = Math.floor(Math.random() * 3) + 1;
+    let names = ["ROCK","SCISSORS","PAPER"];
+    t.print("YOU: " + names[p-1] + "  ME: " + names[c-1]);
+    if (p === c) t.print("TIE");
+    else if ((p === 1 && c === 2) || (p === 2 && c === 3) || (p === 3 && c === 1)) {
+      t.print("YOU WIN!"); pw++;
+    } else {
+      t.print("I WIN!"); cw++;
+    }
+    t.print("SCORE: YOU " + pw + "  ME " + cw);
+    let again = await t.input("PLAY AGAIN (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("FINAL SCORE: YOU " + pw + "  ME " + cw);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

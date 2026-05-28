@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WAR2 - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">WAR2.BAS - War 2 (Battleship)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'WAR2'});
+async function run() {
+  await t.delay(300);
+  t.print("WAR2 - SIMULATED NAVAL COMBAT");
+  t.print("TWO FLEETS ENGAGE IN BATTLE.");
+  let yourFleet = 5, enemyFleet = 5;
+  while (yourFleet > 0 && enemyFleet > 0) {
+    t.print("YOUR FLEET: " + yourFleet + " SHIPS   ENEMY: " + enemyFleet + " SHIPS");
+    let target = parseInt(await t.input("FIRE AT WHICH ENEMY SHIP (1-" + enemyFleet + ")"));
+    if (target < 1 || target > enemyFleet) continue;
+    let hit = Math.random() < 0.5;
+    if (hit) { t.print("HIT!"); enemyFleet--; }
+    else t.print("MISS!");
+    if (enemyFleet > 0) {
+      let eHit = Math.random() < 0.4;
+      if (eHit) { t.print("ENEMY HIT ONE OF YOUR SHIPS!"); yourFleet--; }
+      else t.print("ENEMY MISSED.");
+    }
+  }
+  if (enemyFleet <= 0) t.print("YOU WON THE BATTLE!");
+  else t.print("YOUR FLEET IS DESTROYED!");
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

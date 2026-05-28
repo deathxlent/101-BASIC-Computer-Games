@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CANAM - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CANAM.BAS - Can-Am Racing</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CANAM'});
+const drivers = ["WILDMAN WILLY","HOTSHOT HARRY","SLOWPOKE SAM"];
+const sections = [
+  ["STRAIGHT A",200,0.3],["CURVE 1",125,0.1],["STRAIGHT B",200,0.65],["CURVE 2",125,0.1],
+  ["STRAIGHT C",200,0.2],["CURVE 3",150,0.15],["STRAIGHT D",200,0.6],["CURVE 4",125,0.1],
+  ["STRAIGHT E",200,0.25],["HAIRPIN 5",100,0.15],["STRAIGHT F",200,0.45],["HAIRPIN 6",100,0.15],
+  ["STRAIGHT G",200,1.0],["CURVE 7",125,0.1],["CURVE 8",150,0.15],["STRAIGHT H",200,0.7]
+];
+function drawCourse() {
+  t.print("");
+  t.print("    ----------------");
+  t.print("   /1    B    2\\");
+  t.print("  /A          C\\");
+  t.print(" /              \\");
+  t.print("/              3I");
+  t.print("^-START*FINISH   I");
+  t.print("^                I");
+  t.print("^              DI");
+  t.print("^                I");
+  t.print("^                I");
+  t.print("^H               I");
+  t.print("^                I");
+  t.print("^              4I");
+  t.print("^          ______/");
+  t.print("^8        (5 E");
+  t.print("^          \\");
+  t.print("\\   -----------)  /PITS\\");
+  t.print(" \\7 G          F^     6I");
+  t.print("  \\________________________/");
+  t.print("");
+}
+async function run() {
+  await t.delay(300);
+  t.print("CAN-AM RACING");
+  t.print("");
+  let fam = await t.input("ARE YOU FAMILIAR WITH HOW THIS GAME WORKS");
+  if (fam.toUpperCase()!=="YES") {
+    t.print("YOU ARE ABOUT TO RACE ON ONE OF THE FASTEST COURSES");
+    t.print("IN THE WORLD. A ROAD COURSE. 5.3 MILES. SPEEDS UP TO 200 MPH.");
+    t.print("YOU CAN RACE FRIENDS OR THE COMPUTER.");
+    t.print("WHEN ASKED 'STRAIGHT A?' OR 'CURVE 1:', RESPOND WITH");
+    t.print("THE SPEED (IN MPH) YOU DESIRE TO TRAVEL AT.");
+  }
+  while (true) {
+    let skill = parseInt(await t.input("RATE YOURSELF (1-BEST, 3-WORST)"));
+    if (isNaN(skill)||skill<1||skill>3) skill=2;
+    let laps = Math.floor(Math.random()*3)+1;
+    let playerDead = false, cpuDead = [false,false,false];
+    let playerTime = 0, cpuTimes = [0,0,0];
+    let playerNum = Math.floor(Math.random()*900)+100;
+    t.print("YOUR DRIVING NUMBER IS "+playerNum);
+    let adhesion = Math.random()*0.05+0.05;
+    t.print("ADHESION FACTOR "+(adhesion*100-5).toFixed(1));
+    t.print("YOUR MAX SPEED IS 200 MPH. TO SEE STANDINGS INPUT 0.");
+    drawCourse();
+    t.print("NOTE: THIS IS A "+laps+" LAP RACE.");
+    t.print("GENTLEMEN, START YOUR ENGINES! THE GREEN GOES DOWN AND OFF YOU GO!");
+    for (let lap=0; lap<laps; lap++) {
+      if (playerDead) break;
+      for (let s=0; s<sections.length; s++) {
+        if (playerDead) break;
+        let [name, maxSpeed, length] = sections[s];
+        let cpuSpeeds = [];
+        for (let d=0; d<3; d++) {
+          let q = [0,0,0];
+          q[0]=-2.9; q[1]=-2.9; q[2]=-5;
+          let cs = maxSpeed*0.6+Math.random()*maxSpeed*0.3+q[d]*skill*0.5;
+          cs = Math.max(30, Math.min(maxSpeed, cs));
+          cpuSpeeds.push(cs);
+        }
+        t.print("");
+        let speed = await t.input(name+": ");
+        let ps = parseInt(speed);
+        if (ps===0) {
+          t.print("YOU'VE TAKEN "+playerTime.toFixed(1)+" SECONDS.");
+          for (let d=0; d<3; d++) {
+            if (!cpuDead[d]) t.print(drivers[d]+" IS "+(playerTime>cpuTimes[d]?playerTime-cpuTimes[d]:cpuTimes[d]-playerTime).toFixed(1)+" SECONDS "+(playerTime>cpuTimes[d]?"BEHIND YOU":"AHEAD OF YOU"));
+          }
+          continue;
+        }
+        if (isNaN(ps)||ps<20||ps>maxSpeed) { t.print("SPEED MUST BE 20-"+maxSpeed); continue; }
+        let threshold = maxSpeed * (1+adhesion+Math.random()*0.1);
+        if (ps > threshold) {
+          t.print("YOU CRASHED! CAR IS WRECKED!");
+          playerDead = true; break;
+        }
+        if (ps > maxSpeed*0.9) t.print("NEARLY HAD TO SAY GOODBYE.");
+        playerTime += length/(ps/3600);
+        for (let d=0; d<3; d++) {
+          if (!cpuDead[d]) cpuTimes[d] += length/(cpuSpeeds[d]/3600);
+        }
+        if (s>0) {
+          for (let d=0; d<3; d++) {
+            if (!cpuDead[d] && Math.abs(playerTime-cpuTimes[d])<0.5) {
+              t.print(playerTime>cpuTimes[d] ? drivers[d]+" JUST PASSED YOU" : "YOU JUST PASSED "+drivers[d]);
+            }
+          }
+        }
+      }
+    }
+    t.print("");
+    if (playerDead) {
+      let alive = cpuDead.filter(x=>!x).length;
+      if (alive===0) t.print("EVERYONE IS DEAD!");
+      else t.print("YOU WIPED OUT!");
+    } else {
+      t.print("YOU FINISHED IN "+playerTime.toFixed(1)+" SECONDS. AVG: "+(3600*5.3*laps/playerTime).toFixed(1)+" MPH");
+    }
+    for (let d=0; d<3; d++) {
+      if (!cpuDead[d]) t.print(drivers[d]+" TOOK "+cpuTimes[d].toFixed(1)+" SECONDS. AVG: "+(3600*5.3*laps/cpuTimes[d]).toFixed(1)+" MPH");
+    }
+    let best = Math.min(playerDead?Infinity:playerTime, ...cpuTimes.filter((_,i)=>!cpuDead[i]));
+    if (!playerDead && playerTime===best) t.print("YOU WIN!!!");
+    t.print("");
+    let again = await t.input("ANOTHER RACE (Y/N)");
+    if (again.toUpperCase()!=="Y") break;
+  }
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

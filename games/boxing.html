@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOXING - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BOXING.BAS - Olympic Boxing</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter punch (1-4)...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BOXING'
+        });
+
+        const punchNames = ["", "FULL SWING", "HOOK", "UPPERCUT", "JAB"];
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("OLYMPIC BOXING -- 3 ROUNDS");
+            terminal.print("");
+
+            while (true) {
+                let J = 0, L = 0;
+                let jName = await terminal.input("INPUT YOUR OPPONENT'S NAME");
+                let lName = await terminal.input("INPUT YOUR MAN'S NAME");
+
+                terminal.print("");
+                terminal.print("DIFFERENT PUNCHES ARE 1 FULL SWING 2 HOOK 3 UPPERCUT 4 JAB");
+                let B = parseInt(await terminal.input("WHAT IS YOUR MAN'S BEST"));
+                let D = parseInt(await terminal.input("AND WHAT IS HIS VULNERABILITY"));
+
+                let B1 = Math.floor(4 * Math.random()) + 1;
+                let D1;
+                do { D1 = Math.floor(4 * Math.random()) + 1; } while (B1 === D1);
+                terminal.print(jName + " ADVANTAGE IS " + B1 + " AND DISADVANTAGE IS SECRET");
+
+                for (let r = 1; r <= 3; r++) {
+                    if (J >= 2 || L >= 2) break;
+                    terminal.print("");
+                    terminal.print("ROUND " + r + " BEGINS...");
+
+                    for (let ri = 1; ri <= 7; ri++) {
+                        if (J >= 2 || L >= 2) break;
+                        let I = Math.floor(10 * Math.random()) + 1;
+
+                        if (I > 5) {
+                            let oppPunch = Math.floor(4 * Math.random()) + 1;
+                            if (oppPunch === B1) {
+                                terminal.print(jName + " LANDS A GOOD " + punchNames[oppPunch] + "!");
+                                J++;
+                            } else if (oppPunch === D1) {
+                                terminal.print(jName + " TRIES A " + punchNames[oppPunch] + " BUT YOU BLOCK IT!");
+                            } else {
+                                terminal.print(jName + " THROWS A " + punchNames[oppPunch] + " - NO DAMAGE");
+                            }
+                        } else {
+                            let P = parseInt(await terminal.input(lName + "'S PUNCH"));
+                            if (P < 1 || P > 4) { terminal.print("INVALID PUNCH!"); continue; }
+
+                            if (P === B) {
+                                let pts = Math.floor(Math.random() * 3) + 1;
+                                L += pts;
+                                terminal.print("GREAT " + punchNames[P] + "! YOU SCORE!");
+                            } else if (P === D) {
+                                terminal.print("YOUR " + punchNames[P] + " IS BLOCKED!");
+                            } else {
+                                let c = Math.floor(Math.random() * 5) + 1;
+                                if (c > 3) {
+                                    L++;
+                                    terminal.print("YOUR " + punchNames[P] + " LANDS!");
+                                } else {
+                                    terminal.print("YOUR " + punchNames[P] + " MISSES.");
+                                }
+                            }
+                        }
+                        terminal.print("SCORE: " + jName + " " + J + ", " + lName + " " + L);
+                    }
+                }
+
+                if (J > L) terminal.print(jName + " WINS!");
+                else if (L > J) terminal.print(lName + " WINS!");
+                else terminal.print("DRAW!");
+
+                terminal.print("");
+                let again = (await terminal.input("ANOTHER FIGHT (Y/N)")).toUpperCase();
+                if (again !== "Y") break;
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

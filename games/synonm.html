@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SYNONM - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">SYNONM.BAS - Synonym</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'SYNONM'});
+const qs = [
+  {w:"BIG",c:["LARGE","HUGE","GREAT"]},
+  {w:"SMALL",c:["TINY","MINI","MINUTE"]},
+  {w:"HAPPY",c:["GLAD","JOYFUL","MERRY"]},
+  {w:"SAD",c:["UNHAPPY","SORROWFUL","GLOOMY"]},
+  {w:"FAST",c:["SWIFT","RAPID","QUICK"]},
+  {w:"SLOW",c:["SLUGGISH","LAZY","LEISURELY"]},
+  {w:"PRETTY",c:["BEAUTIFUL","LOVELY","ATTRACTIVE"]},
+  {w:"UGLY",c:["HIDEOUS","UNSIGHTLY","GROTESQUE"]}
+];
+async function run() {
+  await t.delay(300);
+  t.print("SYNONYM QUIZ");
+  t.print("GIVE A SYNONYM FOR EACH WORD.");
+  let score = 0;
+  for (let q of qs) {
+    let ans = await t.input("SYNONYM FOR '" + q.w + "'");
+    if (q.c.map(c => c.toUpperCase()).includes(ans.toUpperCase().trim())) {
+      t.print("CORRECT!"); score++;
+    } else {
+      t.print("POSSIBLE ANSWERS: " + q.c.join(", "));
+    }
+  }
+  t.print("YOU GOT " + score + " OUT OF " + qs.length);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

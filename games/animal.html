@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIMAL - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">ANIMAL.BAS - Animal Guessing Game</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter yes or no...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'ANIMAL'
+        });
+
+        let A = [];
+        function initKnowledge() {
+            A = [
+                "4",
+                '\\QDOES IT SWIM\\Y2\\N3\\',
+                "\\AFISH",
+                "\\ABIRD"
+            ];
+        }
+        initKnowledge();
+
+        function getNode(index) {
+            return A[index] || "";
+        }
+
+        function nodeType(node) {
+            if (node.startsWith("\\Q")) return "Q";
+            if (node.startsWith("\\A")) return "A";
+            return "";
+        }
+
+        function questionText(node) {
+            let s = node.substring(2);
+            let end = s.indexOf("\\");
+            return end >= 0 ? s.substring(0, end) : s;
+        }
+
+        function animalName(node) {
+            return node.substring(2);
+        }
+
+        function followBranch(node, answer) {
+            let tag = "\\" + answer.toUpperCase();
+            let pos = node.indexOf(tag);
+            if (pos < 0) return -1;
+            pos += 2;
+            let end = node.indexOf("\\", pos);
+            if (end < 0) return parseInt(node.substring(pos));
+            return parseInt(node.substring(pos, end));
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("PLAY 'GUESS THE ANIMAL'");
+            terminal.print("THINK OF AN ANIMAL AND THE COMPUTER WILL TRY TO GUESS IT...");
+            terminal.print("");
+
+            while (true) {
+                let reply = await terminal.input("ARE YOU THINKING OF AN ANIMAL");
+                let first = reply.toUpperCase().substring(0, 1);
+
+                if (first === "S" && reply.toUpperCase() === "SAVE") {
+                    terminal.print("KNOWLEDGE SAVED (IN MEMORY)");
+                    continue;
+                }
+
+                if (first === "L" && reply.toUpperCase() === "LIST") {
+                    terminal.print("ANIMALS I ALREADY KNOW ARE:");
+                    let count = parseInt(A[0]);
+                    let list = [];
+                    for (let i = 1; i <= count; i++) {
+                        let node = A[i];
+                        if (node && node.startsWith("\\A")) {
+                            list.push(animalName(node));
+                        }
+                    }
+                    for (let a of list.sort()) {
+                        terminal.print("  " + a);
+                    }
+                    if (list.length === 0) terminal.print("  (none yet)");
+                    continue;
+                }
+
+                if (first !== "Y") {
+                    if (first !== "N") terminal.print("PLEASE ANSWER 'YES' OR 'NO'.");
+                    continue;
+                }
+
+                let K = 1;
+
+                while (true) {
+                    let node = getNode(K);
+                    if (!node) {
+                        terminal.print("I GIVE UP. YOU WIN.");
+                        break;
+                    }
+
+                    if (nodeType(node) === "Q") {
+                        let q = questionText(node);
+                        let ans = await terminal.input(q);
+                        let firstAns = ans.toUpperCase().substring(0, 1);
+                        if (firstAns !== "Y" && firstAns !== "N") {
+                            terminal.print("PLEASE ANSWER YES OR NO.");
+                            continue;
+                        }
+                        let nextK = followBranch(node, firstAns);
+                        if (nextK < 0) {
+                            terminal.print("I GIVE UP. YOU WIN.");
+                            break;
+                        }
+                        K = nextK;
+                        continue;
+                    }
+
+                    if (nodeType(node) === "A") {
+                        let animal = animalName(node);
+                        let guess = await terminal.input("IS IT A " + animal);
+                        let guessFirst = guess.toUpperCase().substring(0, 1);
+
+                        if (guessFirst === "Y") {
+                            terminal.print("WHY NOT TRY ANOTHER ANIMAL");
+                            terminal.print("");
+                            break;
+                        }
+
+                        let realAnimal = await terminal.input("THE ANIMAL YOU WERE THINKING OF WAS A ");
+                        terminal.print("");
+                        terminal.print("PLEASE TYPE IN A QUESTION THAT WOULD DISTINGUISH A");
+                        terminal.print(realAnimal + " FROM A " + animal);
+
+                        let newQ = await terminal.input("");
+
+                        let responseA = "";
+                        while (true) {
+                            responseA = await terminal.input("FOR A " + realAnimal + " THE ANSWER WOULD BE");
+                            let rFirst = responseA.toUpperCase().substring(0, 1);
+                            if (rFirst === "Y") {
+                                responseA = "Y";
+                                break;
+                            } else if (rFirst === "N") {
+                                responseA = "N";
+                                break;
+                            }
+                            terminal.print("PLEASE ANSWER 'YES' OR 'NO'.");
+                        }
+
+                        let responseB = (responseA === "Y") ? "N" : "Y";
+
+                        let Z1 = parseInt(A[0]);
+                        A[0] = (Z1 + 2).toString();
+
+                        let newAnimalNode = "\\A" + realAnimal;
+                        let oldAnimalNode = A[K];
+
+                        A[Z1] = oldAnimalNode;
+                        A[Z1 + 1] = newAnimalNode;
+
+                        let yesIdx = (responseA === "Y") ? (Z1 + 1) : Z1;
+                        let noIdx = (responseA === "Y") ? Z1 : (Z1 + 1);
+                        A[K] = "\\Q" + newQ + "\\" + responseA + yesIdx + "\\" + responseB + noIdx + "\\";
+
+                        terminal.print("");
+                        break;
+                    }
+
+                    terminal.print("I GIVE UP. YOU WIN.");
+                    break;
+                }
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

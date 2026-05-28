@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>LIFE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">LIFE.BAS - Game of Life</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'LIFE'});
+async function run() {
+  await t.delay(300);
+  t.print("GAME OF LIFE");
+  t.print("ENTER COORDINATES OF LIVE CELLS (X,Y ONE PER LINE)");
+  t.print("ENTER 0,0 TO END.");
+  let cells = new Set();
+  while (true) {
+    let inp = await t.input("CELL (X,Y)");
+    let parts = inp.split(',').map(s => parseInt(s.trim()));
+    if (parts.length < 2) continue;
+    let x = parts[0], y = parts[1];
+    if (x === 0 && y === 0) break;
+    cells.add(x + "," + y);
+  }
+  let gen = parseInt(await t.input("NUMBER OF GENERATIONS"));
+  for (let g = 0; g < gen; g++) {
+    let neighborCount = {};
+    for (let key of cells) {
+      let [x, y] = key.split(',').map(Number);
+      for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+          if (dx === 0 && dy === 0) continue;
+          let nk = (x+dx) + "," + (y+dy);
+          neighborCount[nk] = (neighborCount[nk] || 0) + 1;
+        }
+      }
+    }
+    let newCells = new Set();
+    for (let key in neighborCount) {
+      let n = neighborCount[key];
+      if (n === 3 || (n === 2 && cells.has(key))) newCells.add(key);
+    }
+    cells = newCells;
+    t.print("GENERATION " + (g+1) + ": " + cells.size + " CELLS");
+    for (let key of cells) t.print("  " + key);
+  }
+  t.print("DONE");
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

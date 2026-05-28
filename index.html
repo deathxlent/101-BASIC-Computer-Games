@@ -30,6 +30,18 @@
             padding: 20px;
             border: 2px solid #00ff00;
             background: #111;
+            position: relative;
+        }
+
+        .lang-switch {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .lang-switch a {
+            font-size: 0.8em;
+            padding: 4px 8px;
         }
 
         h1 {
@@ -136,6 +148,7 @@
 <body>
     <div class="container">
         <header>
+            <div class="lang-switch"><a href="index_zh.html">中文</a></div>
             <h1>101 BASIC COMPUTER GAMES</h1>
             <p class="subtitle">HTML Edition - Classic Games from the 1970s</p>
             <p class="stats">Total Games: 101 | Ported: <span id="ported-count">5</span></p>
@@ -148,7 +161,7 @@
                     <th>Game Name</th>
                     <th>HTML Version</th>
                     <th>Original BASIC</th>
-                    <th>Status</th>
+                    <th>Description</th>
                 </tr>
             </thead>
             <tbody id="game-list">
@@ -160,114 +173,114 @@
 
     <script>
         const games = [
-            { name: "1check", file: "1check.bas", ported: false },
-            { name: "23mtch", file: "23mtch.bas", ported: false },
-            { name: "3dplot", file: "3dplot.bas", ported: false },
-            { name: "aceydu", file: "aceydu.bas", ported: false },
-            { name: "amazin", file: "amazin.bas", ported: false },
-            { name: "animal", file: "animal.bas", ported: false },
-            { name: "awari", file: "awari.bas", ported: false },
-            { name: "bagels", file: "bagels.bas", ported: false },
-            { name: "banner", file: "banner.bas", ported: false },
-            { name: "basbal", file: "basbal.bas", ported: false },
-            { name: "basbl1", file: "basbl1.bas", ported: false },
-            { name: "basket", file: "basket.bas", ported: false },
-            { name: "batnum", file: "batnum.bas", ported: false },
-            { name: "battle", file: "battle.bas", ported: false },
-            { name: "bingo", file: "bingo.bas", ported: false },
-            { name: "blkjac", file: "blkjac.bas", ported: true },
-            { name: "blkjak", file: "blkjak.bas", ported: false },
-            { name: "boat", file: "boat.bas", ported: false },
-            { name: "bomber", file: "bomber.bas", ported: false },
-            { name: "bounce", file: "bounce.bas", ported: false },
-            { name: "bowl", file: "bowl.bas", ported: false },
-            { name: "boxing", file: "boxing.bas", ported: false },
-            { name: "bug", file: "bug.bas", ported: false },
-            { name: "buleye", file: "buleye.bas", ported: false },
-            { name: "bull", file: "bull.bas", ported: false },
-            { name: "bullcow", file: "bullcow.bas", ported: false },
-            { name: "buzzwd", file: "buzzwd.bas", ported: false },
-            { name: "calndr", file: "calndr.bas", ported: false },
-            { name: "canam", file: "canam.bas", ported: false },
-            { name: "change", file: "change.bas", ported: false },
-            { name: "checkr", file: "checkr.bas", ported: false },
-            { name: "chemst", file: "chemst.bas", ported: false },
-            { name: "chief", file: "chief.bas", ported: false },
-            { name: "chomp", file: "chomp.bas", ported: false },
-            { name: "civilw", file: "civilw.bas", ported: false },
-            { name: "craps", file: "craps.bas", ported: false },
-            { name: "cube", file: "cube.bas", ported: false },
-            { name: "diamnd", file: "diamnd.bas", ported: false },
-            { name: "dice", file: "dice.bas", ported: false },
-            { name: "digits", file: "digits.bas", ported: false },
-            { name: "dogs", file: "dogs.bas", ported: false },
-            { name: "even", file: "even.bas", ported: false },
-            { name: "even1", file: "even1.bas", ported: false },
-            { name: "fipfop", file: "fipfop.bas", ported: false },
-            { name: "footbl", file: "footbl.bas", ported: false },
-            { name: "fotbal", file: "fotbal.bas", ported: false },
-            { name: "furs", file: "furs.bas", ported: false },
-            { name: "golf", file: "golf.bas", ported: false },
-            { name: "gomoko", file: "gomoko.bas", ported: false },
-            { name: "guess", file: "guess.bas", ported: true },
-            { name: "guner1", file: "guner1.bas", ported: false },
-            { name: "gunner", file: "gunner.bas", ported: false },
-            { name: "hang", file: "hang.bas", ported: false },
-            { name: "hello", file: "hello.bas", ported: true },
-            { name: "hex", file: "hex.bas", ported: false },
-            { name: "hi-lo", file: "hi-lo.bas", ported: false },
-            { name: "hi-q", file: "hi-q.bas", ported: false },
-            { name: "hmrabi", file: "hmrabi.bas", ported: false },
-            { name: "hockey", file: "hockey.bas", ported: false },
-            { name: "horses", file: "horses.bas", ported: false },
-            { name: "hurkle", file: "hurkle.bas", ported: false },
-            { name: "kinema", file: "kinema.bas", ported: false },
-            { name: "king", file: "king.bas", ported: false },
-            { name: "letter", file: "letter.bas", ported: false },
-            { name: "life", file: "life.bas", ported: false },
-            { name: "life2", file: "life2.bas", ported: false },
-            { name: "litqz", file: "litqz.bas", ported: false },
-            { name: "mathd", file: "mathd.bas", ported: false },
-            { name: "mnopfl", file: "mnopfl.bas", ported: false },
-            { name: "mnoply", file: "mnoply.bas", ported: false },
-            { name: "mugwump", file: "mugwump.bas", ported: false },
-            { name: "nicoma", file: "nicoma.bas", ported: false },
-            { name: "nim", file: "nim.bas", ported: false },
-            { name: "number", file: "number.bas", ported: false },
-            { name: "orbit", file: "orbit.bas", ported: false },
-            { name: "pizza", file: "pizza.bas", ported: false },
-            { name: "poet", file: "poet.bas", ported: false },
-            { name: "poetry", file: "poetry.bas", ported: false },
-            { name: "poker", file: "poker.bas", ported: false },
-            { name: "qubic", file: "qubic.bas", ported: false },
-            { name: "queen", file: "queen.bas", ported: false },
-            { name: "reverse", file: "reverse.bas", ported: false },
-            { name: "rocket", file: "rocket.bas", ported: true },
-            { name: "rocksp", file: "rocksp.bas", ported: false },
-            { name: "rockt1", file: "rockt1.bas", ported: false },
-            { name: "rockt2", file: "rockt2.bas", ported: false },
-            { name: "roulet", file: "roulet.bas", ported: false },
-            { name: "rusrou", file: "rusrou.bas", ported: false },
-            { name: "salvo", file: "salvo.bas", ported: false },
-            { name: "salvo1", file: "salvo1.bas", ported: false },
-            { name: "slots", file: "slots.bas", ported: false },
-            { name: "spcwar", file: "spcwar.bas", ported: false },
-            { name: "splat", file: "splat.bas", ported: false },
-            { name: "stars", file: "stars.bas", ported: false },
-            { name: "stock", file: "stock.bas", ported: false },
-            { name: "synonm", file: "synonm.bas", ported: false },
-            { name: "target", file: "target.bas", ported: false },
-            { name: "tictac", file: "tictac.bas", ported: true },
-            { name: "tower", file: "tower.bas", ported: false },
-            { name: "train", file: "train.bas", ported: false },
-            { name: "trap", file: "trap.bas", ported: false },
-            { name: "ugly", file: "ugly.bas", ported: false },
-            { name: "war", file: "war.bas", ported: false },
-            { name: "war2", file: "war2.bas", ported: false },
-            { name: "wekday", file: "wekday.bas", ported: false },
-            { name: "word", file: "word.bas", ported: false },
-            { name: "yahtze", file: "yahtze.bas", ported: false },
-            { name: "zoop", file: "zoop.bas", ported: false }
+            { name: "1check", file: "1check.bas", ported: true, desc: "Puzzle - Solitaire Checker Puzzle - Remove checkers by diagonal jumps" },
+            { name: "23mtch", file: "23mtch.bas", ported: true, desc: "Game - 23 Matches - Take turns removing 1-3 matches; the one who takes the last match loses" },
+            { name: "3dplot", file: "3dplot.bas", ported: true, desc: "Demo - 3D Surface Plot - Renders a 3D mathematical surface as ASCII art" },
+            { name: "aceydu", file: "aceydu.bas", ported: true, desc: "Card - Acey-Duecy - Bet whether the next card falls between two dealt cards" },
+            { name: "amazin", file: "amazin.bas", ported: true, desc: "Puzzle - Amazing Maze - Generates a random maze using hunt-and-kill algorithm" },
+            { name: "animal", file: "animal.bas", ported: true, desc: "AI - Animal Guessing Game - Computer learns animals by asking yes/no questions" },
+            { name: "awari", file: "awari.bas", ported: true, desc: "Board - Awari (Mancala) - Capture seeds by sowing around the board" },
+            { name: "bagels", file: "bagels.bas", ported: true, desc: "Game - Bagels - Guess a 3-digit number using PICO/FERMI/BAGELS clues" },
+            { name: "banner", file: "banner.bas", ported: true, desc: "Demo - Banner/Poster Maker - Creates large ASCII art banners from your message" },
+            { name: "basbal", file: "basbal.bas", ported: true, desc: "Sports - Baseball Simulation - Pitch and bat through 5 innings of computer baseball" },
+            { name: "basbl1", file: "basbl1.bas", ported: true, desc: "Simulation - Baseball 1 - Manage your team with play codes" },
+            { name: "basket", file: "basket.bas", ported: true, desc: "Sports - Dartmouth Basketball - Call shots and defense in a basketball game" },
+            { name: "batnum", file: "batnum.bas", ported: true, desc: "Game - Battle of Numbers - Nim-style game with customizable rules" },
+            { name: "battle", file: "battle.bas", ported: true, desc: "Board - Battleship - Sink the enemy fleet on a 6x6 grid" },
+            { name: "bingo", file: "bingo.bas", ported: true, desc: "Game - BINGO - Match numbers on your card to win" },
+            { name: "blkjac", file: "blkjac.bas", ported: true, desc: "Card - Blackjack - Play blackjack against the dealer" },
+            { name: "blkjak", file: "blkjak.bas", ported: true, desc: "Card - Blackjack (alt) - Simplified blackjack with Petey P. Eight" },
+            { name: "boat", file: "boat.bas", ported: true, desc: "Simulation - Submarine vs Gun Boat - Fire torpedoes at a moving target" },
+            { name: "bomber", file: "bomber.bas", ported: true, desc: "Simulation - WWII Bomber - Fly bombing missions with side selection" },
+            { name: "bounce", file: "bounce.bas", ported: true, desc: "Demo - Bouncing Ball - Simulate a bouncing ball with ASCII art" },
+            { name: "bowl", file: "bowl.bas", ported: true, desc: "Sports - Bowling - Up to 4 players compete in 10 frames of bowling" },
+            { name: "boxing", file: "boxing.bas", ported: true, desc: "Sports - Olympic Boxing - Choose punches and spar for 3 rounds" },
+            { name: "bug", file: "bug.bas", ported: true, desc: "Game - Bug (Cootie) - Roll dice to build a bug before the computer does" },
+            { name: "buleye", file: "buleye.bas", ported: true, desc: "Game - Bullseye Darts - Up to 20 players throw darts at a target trying to reach 200 points" },
+            { name: "bull", file: "bull.bas", ported: true, desc: "Simulation - Bullfight - Face a bull in the ring with cape moves and kill attempts" },
+            { name: "bullcow", file: "bullcow.bas", ported: true, desc: "Game - Bulls and Cows - Guess a 5-digit number using bull/cow clues" },
+            { name: "buzzwd", file: "buzzwd.bas", ported: true, desc: "Demo - Buzzword Generator - Creates impressive-sounding nonsense phrases from 3 numbers" },
+            { name: "calndr", file: "calndr.bas", ported: true, desc: "Demo - Calendar Printer - Prints a calendar for any year" },
+            { name: "canam", file: "canam.bas", ported: true, desc: "Racing - Can-Am Racing - Race around a road course against computer drivers" },
+            { name: "change", file: "change.bas", ported: true, desc: "Utility - Change Maker - Calculates correct change in all denominations" },
+            { name: "checkr", file: "checkr.bas", ported: true, desc: "Board - Checkers - Play checkers against the computer" },
+            { name: "chemst", file: "chemst.bas", ported: true, desc: "Game - Chemical Dilution - Dilute acid correctly or explode" },
+            { name: "chief", file: "chief.bas", ported: true, desc: "Game - Chief Numbers Freek - A math mind-reading trick" },
+            { name: "chomp", file: "chomp.bas", ported: true, desc: "Puzzle - Chomp - Avoid the poison square in this cookie-eating game" },
+            { name: "civilw", file: "civilw.bas", ported: true, desc: "Simulation - Civil War - Fight 14 Civil War battles as the Confederacy" },
+            { name: "craps", file: "craps.bas", ported: true, desc: "Game - Craps - Roll dice against the computer in this casino classic" },
+            { name: "cube", file: "cube.bas", ported: true, desc: "Puzzle - Cube Game - Navigate a 3D cube from 1,1,1 to 3,3,3 avoiding mines" },
+            { name: "diamnd", file: "diamnd.bas", ported: true, desc: "Demo - Diamond Pattern - Generates a pretty diamond ASCII art pattern" },
+            { name: "dice", file: "dice.bas", ported: true, desc: "Demo - Dice Roll - Simulates rolling a pair of dice many times" },
+            { name: "digits", file: "digits.bas", ported: true, desc: "Game - Digits - Computer learns to predict your 0/1/2 digit sequences" },
+            { name: "dogs", file: "dogs.bas", ported: true, desc: "Racing - Dog Race - Bet on greyhound races with odds calculation" },
+            { name: "even", file: "even.bas", ported: true, desc: "Game - Even Wins - Take 1-4 marbles from a pile of 27; even total wins" },
+            { name: "even1", file: "even1.bas", ported: true, desc: "Game - Even Wins Cybernetic - Computer learns to play Even Wins over time" },
+            { name: "fipfop", file: "fipfop.bas", ported: true, desc: "Puzzle - Flip-Flop - Turn all X's to O's by selecting positions that flip" },
+            { name: "footbl", file: "footbl.bas", ported: true, desc: "Sports - Football - Play offense and defense in a football game" },
+            { name: "fotbal", file: "fotbal.bas", ported: true, desc: "Sports - NFU Football - 2-player football with play-calling strategy" },
+            { name: "furs", file: "furs.bas", ported: true, desc: "Simulation - Fur Trading - Trade furs at 18th century forts risking hazards" },
+            { name: "golf", file: "golf.bas", ported: true, desc: "Sports - Golf - Play up to 18 holes choosing clubs from driver to putter" },
+            { name: "gomoko", file: "gomoko.bas", ported: true, desc: "Board - Gomoko - Get 5 markers in a row on an NxN board" },
+            { name: "guess", file: "guess.bas", ported: true, desc: "Game - Guess the Number - I pick a number, you guess it" },
+            { name: "guner1", file: "guner1.bas", ported: true, desc: "Simulation - Artillery (Moving Target) - Fire at a moving target with variable range" },
+            { name: "gunner", file: "gunner.bas", ported: true, desc: "Simulation - Field Artillery - Zero in on a target with elevation adjustments" },
+            { name: "hang", file: "hang.bas", ported: true, desc: "Game - Hangman - Guess the word before the man is hung" },
+            { name: "hello", file: "hello.bas", ported: true, desc: "Demo - Hello - Prints a friendly greeting" },
+            { name: "hex", file: "hex.bas", ported: true, desc: "Board - Hexapawn - 3x3 pawn chess game with a learning AI" },
+            { name: "hi-lo", file: "hi-lo.bas", ported: true, desc: "Guess the jackpot amount (1-100) in 6 tries to win money" },
+            { name: "hi-q", file: "hi-q.bas", ported: true, desc: "Peg solitaire - clear all pegs from triangular board" },
+            { name: "hmrabi", file: "hmrabi.bas", ported: true, desc: "Govern ancient Sumeria for 10 years managing land, grain, and population" },
+            { name: "hockey", file: "hockey.bas", ported: true, desc: "Ice hockey simulation with slap/flick/wrist shots against Cornell" },
+            { name: "horses", file: "horses.bas", ported: true, desc: "Bet on 8 named horses with win/place/show wagers" },
+            { name: "hurkle", file: "hurkle.bas", ported: true, desc: "Find the hidden hurkle on a 10x10 grid with directional hints" },
+            { name: "kinema", file: "kinema.bas", ported: true, desc: "Math Drill - Kinetic Energy - Solve KE=(M*V^2)/2 problems" },
+            { name: "king", file: "king.bas", ported: true, desc: "Simulation - King of the Hill - Negotiate speed to pass the king" },
+            { name: "letter", file: "letter.bas", ported: true, desc: "Utility - Letter Count - Count letter frequency in a sentence" },
+            { name: "life", file: "life.bas", ported: true, desc: "Simulation - Game of Life - Conway's cellular automaton" },
+            { name: "life2", file: "life2.bas", ported: true, desc: "Simulation - Life Insurance - Compute premium based on age and habits" },
+            { name: "litqz", file: "litqz.bas", ported: true, desc: "Quiz - Literature Quiz - Name the authors of 10 classic works" },
+            { name: "mathd", file: "mathd.bas", ported: true, desc: "Math Drill - Math Dice - Add two random dice rolls" },
+            { name: "mnopfl", file: "mnopfl.bas", ported: true, desc: "Guessing - Mnopfl - Guess number 0-100 with score tracking" },
+            { name: "mnoply", file: "mnoply.bas", ported: true, desc: "Simulation - Mnoply (Monopoly) - Simplified Monopoly with dice and property buying" },
+            { name: "mugwump", file: "mugwump.bas", ported: true, desc: "Guessing - Mugwump - Find 4 hidden Mugwumps on 10x10 grid in 5 tries" },
+            { name: "nicoma", file: "nicoma.bas", ported: true, desc: "Guessing - Nicoma - Reverse words (spell 'amocin' backwards)" },
+            { name: "nim", file: "nim.bas", ported: true, desc: "Strategy - Nim - Classic Nim with 4 piles (1,3,5,7) - last stone loses" },
+            { name: "number", file: "number.bas", ported: true, desc: "Guessing - Number - Guess number between 1-100" },
+            { name: "orbit", file: "orbit.bas", ported: true, desc: "Simulation - Orbit - Compute orbital parameters from distance and velocity" },
+            { name: "pizza", file: "pizza.bas", ported: true, desc: "Simulation - Pizza Order - Order pizza with sizes, toppings, and delivery" },
+            { name: "poet", file: "poet.bas", ported: true, desc: "Creative - Poet - Generate random poetry from word lists" },
+            { name: "poetry", file: "poetry.bas", ported: true, desc: "Creative - Poetry - Generate random poem lines from templates" },
+            { name: "poker", file: "poker.bas", ported: true, desc: "Card - Poker - Five card draw vs computer with hand ranking" },
+            { name: "qubic", file: "qubic.bas", ported: true, desc: "Strategy - Qubic - 3D Tic-Tac-Toe on a 4x4x4 board vs computer" },
+            { name: "queen", file: "queen.bas", ported: true, desc: "Puzzle - Eight Queens - Place 8 queens safely on a chessboard" },
+            { name: "reverse", file: "reverse.bas", ported: true, desc: "Puzzle - Reverse - Sort numbers 1-9 by reversing prefixes" },
+            { name: "rocket", file: "rocket.bas", ported: true, desc: "Game - Rocket - Guess the rocket's distance and velocity" },
+            { name: "rocksp", file: "rocksp.bas", ported: true, desc: "Game - Rock, Scissors, Paper - Classic hand game vs computer" },
+            { name: "rockt1", file: "rockt1.bas", ported: true, desc: "Simulation - Rocket Intercept - Intercept incoming enemy rocket" },
+            { name: "rockt2", file: "rockt2.bas", ported: true, desc: "Simulation - Rocket Launch - Calculate thrust and altitude" },
+            { name: "roulet", file: "roulet.bas", ported: true, desc: "Casino - Roulette - Bet on numbers 0-36, pays 36:1" },
+            { name: "rusrou", file: "rusrou.bas", ported: true, desc: "Casino - Russian Roulette - Spin the cylinder, pull the trigger" },
+            { name: "salvo", file: "salvo.bas", ported: true, desc: "Strategy - Salvo - Naval battle on 10x10 grid, sink 5 ships" },
+            { name: "salvo1", file: "salvo1.bas", ported: true, desc: "Strategy - Salvo! - Simplified naval battle, sink 4 ships" },
+            { name: "slots", file: "slots.bas", ported: true, desc: "Casino - Slot Machine - Pull the lever with 7 symbols" },
+            { name: "spcwar", file: "spcwar.bas", ported: true, desc: "Strategy - Space War - Starship combat with attack/shields/repair" },
+            { name: "splat", file: "splat.bas", ported: true, desc: "Simulation - Splat - Pull the ripcord at the right altitude" },
+            { name: "stars", file: "stars.bas", ported: true, desc: "Guessing - Stars - Count the number of stars (1-20)" },
+            { name: "stock", file: "stock.bas", ported: true, desc: "Simulation - Stock Market - Buy and sell shares for profit" },
+            { name: "synonm", file: "synonm.bas", ported: true, desc: "Quiz - Synonym - Give synonyms for 8 words" },
+            { name: "target", file: "target.bas", ported: true, desc: "Guessing - Target - Hit random target with 5 artillery shots" },
+            { name: "tictac", file: "tictac.bas", ported: true, desc: "Game - Tic-Tac-Toe - Beat the computer at tic-tac-toe" },
+            { name: "tower", file: "tower.bas", ported: true, desc: "Puzzle - Tower of Hanoi - Move disks between pegs" },
+            { name: "train", file: "train.bas", ported: true, desc: "Guessing - Train - Predict if next number is higher or lower" },
+            { name: "trap", file: "trap.bas", ported: true, desc: "Simulation - Trap - Shoot clay pigeons in 5 rounds" },
+            { name: "ugly", file: "ugly.bas", ported: true, desc: "Creative - Ugly - Turtle graphics simulator on 20x20 grid" },
+            { name: "war", file: "war.bas", ported: true, desc: "Card - War - The classic card game of war vs computer" },
+            { name: "war2", file: "war2.bas", ported: true, desc: "Strategy - War 2 - Naval combat between two fleets" },
+            { name: "wekday", file: "wekday.bas", ported: true, desc: "Utility - Weekday - Calculate day of week for any date" },
+            { name: "word", file: "word.bas", ported: true, desc: "Puzzle - Word Jumble - Unscramble 5 random words" },
+            { name: "yahtze", file: "yahtze.bas", ported: true, desc: "Casino - Yahtzee - Roll 5 dice with 3 rolls per turn" },
+            { name: "zoop", file: "zoop.bas", ported: true, desc: "Guessing - Zoop - Guess the number or pass to the computer" }
         ];
 
         const tbody = document.getElementById('game-list');
@@ -286,7 +299,7 @@
                 <td class="game-name">${game.name.toUpperCase()}</td>
                 <td>${htmlLink}</td>
                 <td><a href="maurymarkowitz/101-BASIC-Computer-Games/${game.file}" class="basic-link" target="_blank">View Code</a></td>
-                <td class="${game.ported ? 'status-done' : 'status-pending'}">${game.ported ? '✓ PORTED' : '○ PENDING'}</td>
+                <td style="color: ${game.ported ? '#00ff00' : '#666'};">${game.desc || game.name.toUpperCase()}</td>
             `;
             tbody.appendChild(row);
         });

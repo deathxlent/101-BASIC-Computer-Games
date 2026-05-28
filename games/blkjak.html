@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLKJAK - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BLKJAK.BAS - Blackjack</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Y or N...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BLKJAK'
+        });
+
+        let deck, F, F1;
+
+        function cardName(c) {
+            if (c === 1) return "ACE";
+            if (c === 11) return "JACK";
+            if (c === 12) return "QUEEN";
+            if (c === 13) return "KING";
+            return c.toString();
+        }
+
+        function cardValue(c) {
+            if (c === 1) return 11;
+            if (c >= 11) return 10;
+            return c;
+        }
+
+        function draw() {
+            while (true) {
+                let i = Math.floor(13 * Math.random()) + 1;
+                deck[i]++;
+                if (deck[i] <= 4) {
+                    return { idx: i, name: cardName(i), value: cardValue(i) };
+                }
+            }
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("WELCOME TO DIGITAL EDUSYSTEM COMPUTER BLACKJACK!!!");
+            terminal.print("");
+            terminal.print("YOUR DEALER TONIGHT IS PETEY P. EIGHT.");
+            terminal.print("WATCH HIM CLOSELY. HE HAS A REPUTATION FOR");
+            terminal.print("DEALING OFF THE BOTTOM OF THE DECK.");
+            terminal.print("");
+            terminal.print("QUESTIONS REQUIRING A YES OR NO ANSWER");
+            terminal.print("SHOULD BE ANSWERED WITH A 'Y' FOR YES. 'N' FOR NO.");
+            terminal.print("");
+            terminal.print("DON'T START PLAYING WITH LESS THAN $100. HAVE FUN!");
+            terminal.print("");
+
+            F = parseInt(await terminal.input("HOW MANY DOLLARS ARE YOU STARTING WITH"));
+            F1 = F;
+
+            while (true) {
+                let W;
+                while (true) {
+                    W = parseInt(await terminal.input("WHAT IS YOUR WAGER THIS TIME"));
+                    if (isNaN(W)) continue;
+                    if (W > F) { terminal.print("YOUR BET EXCEEDS YOUR REMAINING DOLLARS."); continue; }
+                    if (W < 10) { terminal.print("MINIMUM WAGER IS $10."); continue; }
+                    break;
+                }
+
+                deck = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+                let c1 = draw();
+                let c2 = draw();
+                let P = c1.value + c2.value;
+                terminal.print("YOUR FIRST CARD IS " + c1.name);
+                terminal.print("YOUR SECOND CARD IS " + c2.name);
+
+                let d1 = draw();
+                let d2 = draw();
+                let D = d1.value + d2.value;
+                terminal.print("DEALER SHOWS A " + d1.name);
+
+                while (true) {
+                    let hit = await terminal.input("YOU HAVE " + P + " SHOWING. DO YOU WANT A HIT?");
+                    if (hit.toUpperCase() !== "Y") break;
+                    let c = draw();
+                    P += c.value;
+                    terminal.print("YOU GOT A " + c.name);
+                    if (P > 21) {
+                        terminal.print("YOU BUSTED!");
+                        break;
+                    }
+                }
+
+                let playerBust = P > 21;
+
+                if (!playerBust) {
+                    terminal.print("DEALER HAS " + D);
+                    while (D <= 16) {
+                        let c = draw();
+                        D += c.value;
+                        terminal.print("DEALER GETS A " + c.name);
+                        terminal.print("DEALER HAS " + D);
+                    }
+                }
+
+                let dealerBust = D > 21;
+
+                if (playerBust || (!dealerBust && D >= P)) {
+                    F = F - W;
+                    terminal.print("YOU LOSE. YOU NOW HAVE $" + F);
+                } else {
+                    F = F + W;
+                    terminal.print("YOU WIN. YOU NOW HAVE $" + F);
+                }
+
+                if (F < 10) {
+                    terminal.print("");
+                    terminal.print("SORRY, YOU DON'T HAVE ENOUGH TO CONTINUE.");
+                    break;
+                }
+
+                let again = await terminal.input("DO YOU WISH TO PLAY AGAIN");
+                if (again.toUpperCase() !== "Y") break;
+            }
+
+            if (F > F1) terminal.print("NOT BAD! YOU WON " + (F - F1) + " DOLLARS AT THE EDUSYSTEM CASINO.");
+            else terminal.print("TOO BAD! YOU LOST " + (F1 - F) + " DOLLARS AT THE EDUSYSTEM CASINO.");
+            terminal.print("");
+            terminal.print("HOPE YOU ENJOYED YOURSELF. THANKS FOR PLAYING.");
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

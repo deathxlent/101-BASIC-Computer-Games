@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CHECKR - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CHECKR.BAS - Checkers</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CHECKR'});
+function createBoard() {
+  let b = Array.from({length:9},()=>Array(9).fill(0));
+  for (let y=1;y<=8;y++) for (let x=1;x<=8;x++) {
+    if ((x+y)%2===1) {
+      if (y<=3) b[x][y]=-1;
+      else if (y>=6) b[x][y]=1;
+    }
+  }
+  return b;
+}
+function printBoard(b) {
+  for (let y=8;y>=1;y--) {
+    let line = y+" ";
+    for (let x=1;x<=8;x++) {
+      let p = b[x][y];
+      if (p===0) line += ".";
+      else if (p===1) line += "O";
+      else if (p===-1) line += "X";
+      else if (p===2) line += "O*";
+      else if (p===-2) line += "X*";
+      line += " ";
+    }
+    t.print(line);
+  }
+  t.print("  1 2 3 4 5 6 7 8");
+}
+function getMoves(b, x, y, player) {
+  let moves = [];
+  let dirs = player===1 ? [1] : [-1];
+  if (Math.abs(b[x][y])===2) dirs = [-1,1];
+  for (let d of dirs) {
+    for (let dx of [-1,1]) {
+      let nx = x+dx, ny = y+d;
+      if (nx<1||nx>8||ny<1||ny>8) continue;
+      if (b[nx][ny]===0) moves.push({fx:x,fy:y,tx:nx,ty:ny,jump:false});
+    }
+  }
+  for (let d of dirs) {
+    for (let dx of [-1,1]) {
+      let mx = x+dx, my = y+d;
+      let jx = x+2*dx, jy = y+2*d;
+      if (mx<1||mx>8||my<1||my>8||jx<1||jx>8||jy<1||jy>8) continue;
+      if (b[mx][my]!==0 && b[mx][my]*player<0 && b[jx][jy]===0) {
+        moves.push({fx:x,fy:y,tx:jx,ty:jy,jump:true,jx:mx,jy:my});
+      }
+    }
+  }
+  return moves;
+}
+function hasMoves(b, player) {
+  for (let x=1;x<=8;x++) for (let y=1;y<=8;y++) if (b[x][y]*player>0 && getMoves(b,x,y,player).length>0) return true;
+  return false;
+}
+let board, player;
+async function run() {
+  await t.delay(300);
+  t.print("THIS PROGRAM WILL PLAY CHECKERS. THE COMPUTER IS X,");
+  t.print("AND YOU ARE O. THE COMPUTER WILL GO FIRST.");
+  t.print("SQUARES ARE IN THE FORM (X,Y) AND SQ 1,1 IS THE BOTTOM LEFT!");
+  board = createBoard();
+  player = -1;
+  while (true) {
+    if (!hasMoves(board, player)) { t.print("YOU HAVE NO MOVES. YOU LOSE!"); break; }
+    printBoard(board);
+    if (player===-1) {
+      let best = null, bestScore = -999;
+      for (let x=1;x<=8;x++) for (let y=1;y<=8;y++) {
+        if (board[x][y]*player<=0) continue;
+        let moves = getMoves(board,x,y,player);
+        for (let m of moves) {
+          let score = 0;
+          if (m.jump) score += 5;
+          if (m.ty===1||m.ty===8) score += 3;
+          if (m.jump) { score += 2; }
+          score += Math.random();
+          if (score > bestScore) { bestScore = score; best = m; }
+        }
+      }
+      if (!best) { t.print("COMPUTER HAS NO MOVES. YOU WIN!"); break; }
+      t.print("I MOVE FROM ("+best.fx+","+best.fy+") TO ("+best.tx+","+best.ty+")");
+      board[best.tx][best.ty] = board[best.fx][best.fy];
+      board[best.fx][best.fy] = 0;
+      if (best.jump) board[best.jx][best.jy] = 0;
+      if (best.ty===1) board[best.tx][best.ty] = -2;
+      let show = await t.input("BOARD? (YES/NO)");
+      if (show.toUpperCase()==="YES") printBoard(board);
+    } else {
+      let fromX = parseInt(await t.input("FROM (X,Y) X?"));
+      let fromY = parseInt(await t.input("FROM Y?"));
+      if (board[fromX][fromY]*player<=0) { t.print("NOT YOUR PIECE!"); continue; }
+      let moves = getMoves(board,fromX,fromY,player);
+      if (moves.length===0) { t.print("NO MOVES FOR THAT PIECE!"); continue; }
+      let toX = parseInt(await t.input("TO X?"));
+      let toY = parseInt(await t.input("TO Y?"));
+      let found = moves.find(m => m.tx===toX && m.ty===toY);
+      if (!found) { t.print("ILLEGAL MOVE!"); continue; }
+      board[toX][toY] = board[fromX][fromY];
+      board[fromX][fromY] = 0;
+      if (found.jump) board[found.jx][found.jy] = 0;
+      if (toY===8) board[toX][toY] = 2;
+    }
+    player = -player;
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

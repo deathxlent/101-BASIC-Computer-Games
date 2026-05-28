@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1CHECK - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">1CHECK.BAS - Solitaire Checker Puzzle</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter square number...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: '1CHECK'
+        });
+
+        function printBoard(A) {
+            terminal.print("");
+            for (let J = 0; J < 64; J += 8) {
+                let line = "";
+                for (let I = J; I < J + 8; I++) {
+                    line += A[I] + " ";
+                }
+                terminal.print(line.trim());
+            }
+            terminal.print("");
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("SOLITAIRE CHECKER PUZZLE BY DAVID AHL");
+            terminal.print("");
+            terminal.print("48 CHECKERS ARE PLACED ON THE 2 OUTSIDE SPACES OF A");
+            terminal.print("STANDARD 64-SQUARE CHECKERBOARD.  THE OBJECT IS TO");
+            terminal.print("REMOVE AS MANY CHECKERS AS POSSIBLE BY DIAGONAL JUMPS");
+            terminal.print("(AS IN STANDARD CHECKERS).  USE THE NUMBERED BOARD TO");
+            terminal.print("INDICATE THE SQUARE YOU WISH TO JUMP FROM AND TO.  ON");
+            terminal.print("THE BOARD PRINTED OUT ON EACH TURN '1' INDICATES A");
+            terminal.print("CHECKER AND '0' AN EMPTY SQUARE.  WHEN YOU HAVE NO");
+            terminal.print("POSSIBLE JUMPS REMAINING, INPUT A '0' IN RESPONSE TO");
+            terminal.print("QUESTION 'JUMP FROM ?'");
+            terminal.print("");
+            terminal.print("HERE IS THE NUMERICAL BOARD:");
+            terminal.print("");
+
+            for (let J = 0; J < 64; J += 8) {
+                let line = "";
+                for (let I = J; I < J + 8; I++) {
+                    let n = I + 1;
+                    line += (n < 10 ? " " : "") + n + " ";
+                }
+                terminal.print(line.trim());
+            }
+
+            while (true) {
+                let A = new Array(64).fill(1);
+                for (let J = 18; J <= 42; J += 8) {
+                    for (let I = J; I <= J + 3; I++) {
+                        A[I] = 0;
+                    }
+                }
+                let M = 0;
+
+                terminal.print("");
+                terminal.print("AND HERE IS THE OPENING POSITION OF THE CHECKERS:");
+                printBoard(A);
+
+                while (true) {
+                    let F = parseInt(await terminal.input("JUMP FROM"));
+                    if (isNaN(F)) {
+                        terminal.print("PLEASE ENTER A NUMBER.");
+                        continue;
+                    }
+                    if (F === 0) break;
+
+                    let T = parseInt(await terminal.input("TO"));
+                    if (isNaN(T)) {
+                        terminal.print("PLEASE ENTER A NUMBER.");
+                        continue;
+                    }
+
+                    let F1 = Math.floor((F - 1) / 8);
+                    let F2 = F - 8 * F1;
+                    let T1 = Math.floor((T - 1) / 8);
+                    let T2 = T - 8 * T1;
+
+                    if (F1 > 7 || T1 > 7 || F2 > 8 || T2 > 8 ||
+                        Math.abs(F1 - T1) !== 2 || Math.abs(F2 - T2) !== 2 ||
+                        A[(T + F) / 2 - 1] === 0 || A[F - 1] === 0 || A[T - 1] === 1) {
+                        terminal.print("ILLEGAL MOVE.  TRY AGAIN...");
+                        terminal.print("");
+                        continue;
+                    }
+
+                    A[T - 1] = 1;
+                    A[F - 1] = 0;
+                    A[(T + F) / 2 - 1] = 0;
+                    M++;
+
+                    printBoard(A);
+                }
+
+                let S = A.reduce((sum, v) => sum + v, 0);
+                terminal.print("");
+                terminal.print("YOU MADE " + M + " JUMPS AND HAD " + S + " PIECES");
+                terminal.print("REMAINING ON THE BOARD.");
+                terminal.print("");
+
+                let again = (await terminal.input("TRY AGAIN")).toUpperCase();
+                if (again !== "YES" && again !== "Y") break;
+            }
+
+            terminal.print("");
+            terminal.print("O.K.  HOPE YOU HAD FUN!");
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

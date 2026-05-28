@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HURKLE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">HURKLE.BAS - Hurkle</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'HURKLE'});
+async function run() {
+  await t.delay(300);
+  let N = 5, G = 10;
+  t.print("A HURKLE IS HIDING ON A " + G + " BY " + G + " GRID. HOMEBASE");
+  t.print("ON THE GRID IS POINT 0,0 AND ANY GRIDPOINT IS A");
+  t.print("PAIR OF WHOLE NUMBERS SEPARATED BY A COMMA. TRY TO");
+  t.print("GUESS THE HURKLE'S GRIDPOINT. YOU GET " + N + " TRIES.");
+  t.print("AFTER EACH TRY, I WILL TELL YOU THE APPROXIMATE");
+  t.print("DIRECTION TO GO TO LOOK FOR THE HURKLE.");
+  while (true) {
+    let A = Math.floor(Math.random() * G);
+    let B = Math.floor(Math.random() * G);
+    let found = false;
+    for (let K = 1; K <= N; K++) {
+      let inp = await t.input("GUESS #" + K + " (X,Y)");
+      let parts = inp.split(',').map(s => parseInt(s.trim()));
+      if (parts.length < 2) { K--; continue; }
+      let X = parts[0], Y = parts[1];
+      if (Math.abs(X - A) + Math.abs(Y - B) === 0) {
+        t.print("YOU FOUND HIM IN " + K + " GUESSES!");
+        found = true;
+        break;
+      }
+      let dir = "";
+      if (Y < B) dir += "NORTH ";
+      else if (Y > B) dir += "SOUTH ";
+      if (X < A) dir += "EAST";
+      else if (X > A) dir += "WEST";
+      t.print("GO " + (dir || "SAME SPOT?"));
+    }
+    if (!found) t.print("SORRY, THAT'S " + N + " GUESSES. THE HURKLE IS AT " + A + "," + B);
+    t.print("LET'S PLAY AGAIN. HURKLE IS HIDING.");
+    t.print("");
+  }
+}
+run();
+</script>
+</body>
+</html>

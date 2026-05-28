@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CALNDR - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CALNDR.BAS - Calendar</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CALNDR'});
+const months = ["JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"];
+const daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
+async function run() {
+  await t.delay(300);
+  let year = 1973;
+  let inp = await t.input("YEAR (e.g. 1973)");
+  let y = parseInt(inp);
+  if (!isNaN(y) && y>0) year = y;
+  let isLeap = (year%4===0 && year%100!==0) || year%400===0;
+  if (isLeap) daysInMonth[1]=29;
+  let startDay = new Date(year,0,1).getDay(); // 0=Sun
+  let dayOfYear = 0;
+  for (let m=0; m<12; m++) {
+    t.print(""); t.print("");
+    let s = "** " + String(dayOfYear+1).padStart(3) + " ";
+    s += "*".repeat(15);
+    s += " " + months[m] + " ";
+    s += "*".repeat(15);
+    s += " " + (365+(isLeap?1:0)-dayOfYear-daysInMonth[m]) + " **";
+    t.print(s);
+    t.print("     S       M       T       W       T       F       S");
+    t.print("*".repeat(59));
+    let day = 1;
+    for (let w=0; w<6; w++) {
+      let line = "    ";
+      for (let d=0; d<7; d++) {
+        if (w===0 && d<startDay) { line += "        "; continue; }
+        if (day>daysInMonth[m]) { line += "        "; continue; }
+        line += String(day).padStart(2) + "      ";
+        day++;
+      }
+      if (line.trim()) t.print(line);
+    }
+    dayOfYear += daysInMonth[m];
+    startDay = (startDay + daysInMonth[m]) % 7;
+  }
+  t.print(""); t.print("");
+  await t.delay(5000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

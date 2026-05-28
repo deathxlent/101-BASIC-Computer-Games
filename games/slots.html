@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SLOTS - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">SLOTS.BAS - Slot Machine</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'SLOTS'});
+const symbols = ["CHERRY","LEMON","ORANGE","PLUM","BELL","BAR","SEVEN"];
+async function run() {
+  await t.delay(300);
+  t.print("SLOT MACHINE");
+  t.print("YOU START WITH $100. EACH PULL COSTS $1.");
+  t.print("THREE OF A KIND WINS $10, TWO OF A KIND WINS $2.");
+  t.print("THREE SEVENS WINS $100!");
+  let money = 100;
+  while (true) {
+    if (money < 1) { t.print("YOU'RE BROKE!"); break; }
+    t.print("YOU HAVE $" + money);
+    let inp = await t.input("PULL? (YES/NO)");
+    if (inp.toUpperCase() !== "YES") break;
+    money--;
+    let reels = [];
+    for (let i = 0; i < 3; i++) reels.push(symbols[Math.floor(Math.random() * symbols.length)]);
+    t.print(reels.join(" | "));
+    if (reels[0] === "SEVEN" && reels[1] === "SEVEN" && reels[2] === "SEVEN") { t.print("JACKPOT! $100!"); money += 100; }
+    else if (reels[0] === reels[1] && reels[1] === reels[2]) { t.print("THREE OF A KIND! WIN $10!"); money += 10; }
+    else if (reels[0] === reels[1] || reels[1] === reels[2] || reels[0] === reels[2]) { t.print("PAIR! WIN $2!"); money += 2; }
+    else t.print("NO WIN.");
+  }
+  t.print("YOU END WITH $" + money);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

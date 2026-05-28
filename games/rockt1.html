@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>ROCKT1 - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">ROCKT1.BAS - Rocket (Intercept)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'ROCKT1'});
+async function run() {
+  await t.delay(300);
+  t.print("ROCKET - INTERCEPT");
+  t.print("AN ENEMY ROCKET IS APPROACHING. YOU MUST INTERCEPT IT.");
+  let dist = Math.floor(Math.random() * 50000) + 10000;
+  let speed = Math.floor(Math.random() * 5000) + 2000;
+  let time = dist / speed;
+  t.print("DISTANCE: " + dist + " KM, SPEED: " + speed + " KM/S");
+  t.print("YOU HAVE " + time.toFixed(1) + " SECONDS.");
+  let launch = parseInt(await t.input("LAUNCH YOUR ROCKET IN HOW MANY SECONDS"));
+  if (launch >= time) { t.print("TOO LATE! THE ENEMY ROCKET HIT!"); }
+  else {
+    let travel = time - launch;
+    t.print("YOUR ROCKET TRAVELS FOR " + travel.toFixed(1) + " SECONDS.");
+    if (Math.random() < 0.7) t.print("INTERCEPTION SUCCESSFUL!");
+    else t.print("YOUR ROCKET MISSED!");
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

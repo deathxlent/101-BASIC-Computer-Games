@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>23MTCH - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">23MTCH.BAS - 23 Matches</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter 1, 2, or 3...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: '23MTCH'
+        });
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("LET'S PLAY 23 MATCHES.  WE START WITH 23 MATCHES.");
+            terminal.print("YOU MOVE FIRST. YOU MAY TAKE 1, 2 OR 3 MATCHES.");
+            terminal.print("THEN I MOVE... I MAY TAKE 1, 2 OR 3 MATCHES.");
+            terminal.print("YOU MOVE, I MOVE AND SO ON. THE ONE WHO HAS TO");
+            terminal.print("TAKE THE LAST MATCH LOSES.");
+            terminal.print("GOOD LUCK AND MAY THE BEST COMPUTER (HA HA) WIN.");
+            terminal.print("");
+
+            while (true) {
+                let M = 23;
+
+                while (true) {
+                    terminal.print("");
+                    terminal.print("THERE ARE NOW " + M + " MATCHES.");
+                    terminal.print("");
+
+                    let H = parseInt(await terminal.input("HOW MANY DO YOU TAKE"));
+                    if (isNaN(H) || H > M || H !== Math.floor(H) || H <= 0 || H >= 4) {
+                        terminal.print("YOU CHEATED! BUT I'LL GIVE YOU ANOTHER CHANCE.");
+                        continue;
+                    }
+
+                    M = M - H;
+
+                    if (M === 0) {
+                        terminal.print("");
+                        terminal.print("I WON!! BETTER LUCK NEXT TIME.");
+                        break;
+                    }
+
+                    if (M === 1) {
+                        terminal.print("");
+                        terminal.print("O.K. SO YOU WON. LET'S PLAY AGAIN.");
+                        break;
+                    }
+
+                    let R = M - 4 * Math.floor(M / 4);
+                    let C;
+                    if (R === 1) {
+                        C = Math.floor(3 * Math.random()) + 1;
+                    } else {
+                        C = (R + 3) - 4 * Math.floor((R + 3) / 4);
+                    }
+
+                    M = M - C;
+
+                    if (M === 0) {
+                        terminal.print("");
+                        terminal.print("O.K. SO YOU WON. LET'S PLAY AGAIN.");
+                        break;
+                    }
+
+                    terminal.print("");
+                    terminal.print("I TOOK " + C + "...");
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("PLAY AGAIN")).toUpperCase();
+                if (again !== "YES" && again !== "Y") break;
+                terminal.print("");
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

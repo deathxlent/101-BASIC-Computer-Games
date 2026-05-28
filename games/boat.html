@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOAT - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BOAT.BAS - Submarine vs Gun Boat</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter angle in degrees...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BOAT'
+        });
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            while (true) {
+                terminal.print("THIS IS THE GAME OF WAR BETWEEN A SUBMARINE AND A");
+                terminal.print("NAVAL GUN BOAT. WOULD YOU LIKE INSTRUCTIONS");
+                let instr = await terminal.input();
+                if (instr.toUpperCase() !== "NO") {
+                    terminal.print("YOU ARE THE CAPTAIN OF THE SUBMARINE AND THE");
+                    terminal.print("COMPUTER IS THE CAPTAIN OF THE GUN BOAT.");
+                    terminal.print("THE SPEED OF THE GUN BOAT WILL BE GIVEN AT THE BEGINNING OF");
+                    terminal.print("THE GAME AND YOU HAVE TO HIT THE GUN BOAT TWICE");
+                    terminal.print("IN AT LEAST TWO VULNERABLE PLACES, OR ONCE IN A");
+                    terminal.print("VULNERABLE PLACE AND TWICE IN ANY OTHER PART OF THE");
+                    terminal.print("HULL OF THE GUN BOAT. BUT IF YOU MISS ANY ONE TIME THE");
+                    terminal.print("GUN BOAT WILL OPEN FIRE ON YOU UNTIL IT SINKS YOU OR YOU");
+                    terminal.print("SINK THE GUN BOAT! YOU WILL BE ALLOWED TO TAKE TURNS FIRE-");
+                    terminal.print("ING AT THE GUN BOAT .........GOOD LUCK , MEIN FUHRER!!!!!!!!!");
+                }
+
+                let A = 0, B = 0;
+                let gameOver = false;
+
+                while (!gameOver) {
+                    let R;
+                    for (let i = 0; i < 5; i++) {
+                        R = 100 * Math.random();
+                        if (R >= 10) break;
+                    }
+                    if (R < 10 || R > 40) continue;
+
+                    terminal.print("THE SPEED OF THE GUN BOAT IS NOW " + Math.floor(R) + " KNOTS");
+
+                    let S;
+                    for (let f = 0; f < 5; f++) {
+                        S = 10000 * Math.random();
+                        if (S >= 1000) break;
+                    }
+                    if (S < 1000) continue;
+
+                    terminal.print("THE RANGE FROM THE GUN BOAT TO THE SUBMARINE IS");
+                    terminal.print("NOW " + Math.floor(S) + " YARDS.");
+
+                    let Z = Math.atan(S / R);
+                    let D3 = Z * (180 / 3.14159);
+                    terminal.print("THE APPROXIMATE ANGLE YOU SHOULD FIRE YOUR TORPEDO IS");
+                    terminal.print("BETWEEN " + Math.floor(D3 - 2) + " AND " + Math.floor(D3 + 2) + " DEGREES.");
+
+                    let D = parseFloat(await terminal.input(""));
+                    let T = D * 3.14159 / 180;
+                    let R8 = R * Math.cos(T);
+                    let Y3 = R8 * Math.sin(T);
+                    let Y9 = R8 * Math.sin(T);
+                    let Y2 = Y3 - 20;
+                    let Y0 = Y3 - 40;
+                    let Y4 = Y3 + 20;
+                    let Y5 = Y3 + 40;
+
+                    if (Y9 >= Y0) {
+                        terminal.print("        *********     **+     !");
+                        terminal.print("          *********  ***+*+*  !");
+                        terminal.print("                         HHH  !");
+                        terminal.print("                         UUU  ! +++++]");
+                        terminal.print("                         \\\\===0=0=0");
+                        terminal.print("                          L---------I");
+                        terminal.print("                    --/DR IIIIIIIIII   /DD\\--");
+                        terminal.print("                     [=======================]");
+                        terminal.print("      ----/DDDR     /HHHHH  O  O  O   O  O  HHHH\\  /PDDD\\----");
+
+                        if (Y9 < Y2) {
+                            terminal.print("            EEEEEEEEEEE\\.................../EEEEEEEEEEEEEEEEEEE/");
+                            terminal.print("            EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  O  EEEEEEEEEE/");
+                            terminal.print("      *      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE/");
+                            terminal.print("");
+                            terminal.print("******** YOU MADE A VULNERABLE STRIKE! ********");
+                            A++;
+                            if (A >= 2) {
+                                terminal.print("I AM SUNK!........GOOD BYE CRUEL WORLD....(GLUB..GLUB..)");
+                                gameOver = true;
+                                break;
+                            }
+                        } else {
+                            terminal.print("\\EEEEEEEEEEEEEEEEEEEEEEE\\.................../EEEEEEEEEEEEEEEEEEE/");
+                            terminal.print("   EEEEEEEEEEE         EEEEEEEEEEEEEEEEEEEEEEEEEE  0   EEEEEEE/");
+                            terminal.print("    \\EEEEEE        *      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE/");
+                            terminal.print("");
+                            terminal.print("******** YOU DAMAGED THE GUN BOAT! ********");
+                            B++;
+                            if (B >= 3 || A + B >= 3) {
+                                terminal.print("I AM SUNK!........GOOD BYE CRUEL WORLD....(GLUB..GLUB..)");
+                                gameOver = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        terminal.print("YOU MISSED!");
+                        let W = 10000 * Math.random();
+                        terminal.print("THE SHOT FIRED FROM THE GUN BOAT TO THE SUBMARINE");
+                        terminal.print("WAS WITHIN " + Math.abs(W - S) * 2 / 1000 + " YARDS......");
+                        if (Math.abs(W - S) < 2000) {
+                            terminal.print("YOU ARE SUNK MEIN FRIEND!");
+                            terminal.print("                                 /!");
+                            terminal.print("                              //HH!");
+                            terminal.print("                      X>    T/HHHH!");
+                            terminal.print("                  *******************************");
+                            gameOver = true;
+                            break;
+                        }
+                    }
+                }
+
+                terminal.print("WOULD YOU LIKE TO TRY AGAIN");
+                let again = await terminal.input();
+                if (again.toUpperCase() !== "YES") break;
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

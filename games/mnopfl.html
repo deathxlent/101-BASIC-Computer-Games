@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MNOPFL - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">MNOPFL.BAS - Mnopfl (Number Guessing)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'MNOPFL'});
+async function run() {
+  await t.delay(300);
+  t.print("MNOPFL - MNOPFL");
+  t.print("I WILL THINK OF A NUMBER BETWEEN 0 AND 100.");
+  t.print("YOU TRY TO GUESS IT IN AS FEW GUESSES AS POSSIBLE.");
+  let score = 0;
+  while (true) {
+    let N = Math.floor(Math.random() * 101);
+    let count = 0;
+    while (true) {
+      let G = parseInt(await t.input("YOUR GUESS"));
+      count++;
+      if (G < 0 || G > 100) { t.print("BETWEEN 0 AND 100!"); count--; continue; }
+      if (G === N) { t.print("YOU GOT IT IN " + count + " GUESSES!"); score += count; break; }
+      if (G < N) t.print("TOO LOW");
+      else t.print("TOO HIGH");
+    }
+    let again = await t.input("ANOTHER (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("YOUR TOTAL SCORE IS " + score);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CHANGE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CHANGE.BAS - Change Maker</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CHANGE'});
+async function run() {
+  await t.delay(300);
+  t.print("I, YOUR FRIENDLY EDUSYSTEM COMPUTER, WILL DETERMINE");
+  t.print("THE CORRECT CHANGE FOR ITEMS COSTING UP TO $100.");
+  t.print("");
+  while (true) {
+    let cost = parseFloat(await t.input("COST OF ITEM"));
+    let pay = parseFloat(await t.input("AMOUNT OF PAYMENT"));
+    let change = pay - cost;
+    if (Math.abs(change) < 0.005) { t.print("CORRECT AMOUNT, THANK YOU"); t.print(""); continue; }
+    if (change < 0) { t.print("SORRY, YOU HAVE SHORT CHANGED ME $" + Math.abs(change).toFixed(2)); t.print(""); continue; }
+    t.print("YOUR CHANGE, $" + change.toFixed(2));
+    let c = Math.round(change * 100);
+    let d = Math.floor(c / 1000); c %= 1000;
+    if (d > 0) t.print(d + " TEN DOLLAR BILL(S)");
+    let e = Math.floor(c / 500); c %= 500;
+    if (e > 0) t.print(e + " FIVE DOLLAR BILL(S)");
+    let f = Math.floor(c / 100); c %= 100;
+    if (f > 0) t.print(f + " ONE DOLLAR BILL(S)");
+    let g = Math.floor(c / 50); c %= 50;
+    if (g > 0) t.print(g + " HALF DOLLAR(S)");
+    let h = Math.floor(c / 25); c %= 25;
+    if (h > 0) t.print(h + " QUARTER(S)");
+    let i = Math.floor(c / 10); c %= 10;
+    if (i > 0) t.print(i + " DIME(S)");
+    let j = Math.floor(c / 5); c %= 5;
+    if (j > 0) t.print(j + " NICKEL(S)");
+    if (c > 0) t.print(c + " PENNY(S)");
+    t.print("THANK YOU, COME AGAIN"); t.print(""); t.print("");
+  }
+}
+run();
+</script>
+</body>
+</html>

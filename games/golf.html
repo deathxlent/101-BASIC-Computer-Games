@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GOLF - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">GOLF.BAS - Golf</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'GOLF'});
+const holes = [
+  {y:360,p:4},{y:585,p:5},{y:400,p:4},{y:185,p:3},{y:415,p:4},{y:375,p:4},{y:219,p:3},
+  {y:395,p:4},{y:630,p:5},{y:330,p:4},{y:610,p:5},{y:440,p:4},{y:180,p:3},{y:420,p:4},{y:595,p:5},{y:195,p:3},
+  {y:450,p:4},{y:370,p:4}
+];
+const clubs = [
+  {name:"DRIVER", min:150, max:270},
+  {name:"3 WOOD", min:150, max:220},
+  {name:"5 IRON", min:140, max:180},
+  {name:"6 IRON", min:120, max:180},
+  {name:"7 IRON", min:100, max:130},
+  {name:"8 IRON", min:70, max:100},
+  {name:"9 IRON", min:30, max:70},
+  {name:"WEDGE", min:1, max:30},
+  {name:"PUTTER", min:1, max:3}
+];
+async function run() {
+  await t.delay(300);
+  let z = await t.input("DO YOU WANT DIRECTIONS (Y/N)");
+  if (z.toUpperCase() === "Y") {
+    t.print("YOU HAVE A CHOICE OF 9 CLUBS");
+    t.print("1=DRIVER  (150-270 YARDS)  2=3 WOOD  (150-220)");
+    t.print("3=5 IRON  (140-180)  4=6 IRON  (120-180, GOOD FROM ROUGH)");
+    t.print("5=7 IRON  (100-130, GOOD FROM ROUGH)  6=8 IRON (70-100, GOOD FROM TRAP)");
+    t.print("7=9 IRON  (30-70, GOOD FROM TRAP)  8=WEDGE (UP TO 30, GOOD FROM TRAP)");
+    t.print("9=PUTTER (USE WHEN ON GREEN)");
+  }
+  let u = parseInt(await t.input("HOW MANY PLAYERS (MAX 4)"));
+  if (u>4) u=4;
+  let v = parseInt(await t.input("HOW MANY HOLES UP TO 18"));
+  let scores = Array.from({length:u},()=>0);
+  for (let j=0;j<v;j++) {
+    let hole = holes[j];
+    for (let q=0;q<u;q++) {
+      let h = hole.y, strokes = 0, trapStrokes = 0, penalty = 0, onGreen = false;
+      t.print("HOLE "+(j+1)+" IS "+hole.y+" YARDS PAR "+hole.p);
+      t.print("PLAYER "+(q+1));
+      while (true) {
+        let x = parseInt(await t.input("CHOSE YOUR CLUB (1-9)"));
+        if (x<1||x>9) continue;
+        if (x===9 && !onGreen) { t.print("YOU ARE NOT ON THE GREEN. CHOSE ANOTHER CLUB."); continue; }
+        strokes++;
+        let dist;
+        if (x===9) { dist = Math.floor(Math.random()*3)+1; t.print(dist+" PUTTS"); break; }
+        else { dist = clubs[x-1].min + Math.floor(Math.random()*(clubs[x-1].max-clubs[x-1].min+1)); }
+        let c = Math.abs(h - dist);
+        let r = Math.floor(Math.random()*100);
+        if (r===99||r===43||r===88) {
+          t.print("IN TRAP");
+          let l8 = Math.floor(Math.random()*10);
+          if (l8>3) l8=3;
+          for (let zz=0;zz<l8;zz++) {
+            trapStrokes++;
+            let cx = parseInt(await t.input("CHOSE YOUR CLUB"));
+            t.print("STILL IN TRAP");
+          }
+        } else if (r===13||r===88) { t.print("IN ROUGH"); }
+        else if (r===69||r===73||r===41) { t.print("IN WATER. YOU LOSE 1 STROKE."); penalty++; }
+        else if (r===75) { t.print("IN ROUGH"); }
+        if (c<=30) onGreen = true;
+        h = c;
+        t.print("DISTANCE REMAINING: "+c+" YARDS");
+      }
+      let total = strokes + trapStrokes + penalty;
+      scores[q] += total;
+      t.print("STROKES FOR HOLE "+(j+1)+": "+total);
+      t.print("");
+    }
+  }
+  let par = 0; for (let j=0;j<v;j++) par += holes[j].p;
+  for (let s=0;s<u;s++) t.print("PLAYER "+(s+1)+" SHOT "+scores[s]+" FOR "+v+" HOLES. PAR IS "+par);
+  await t.delay(4000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

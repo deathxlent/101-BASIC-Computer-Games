@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WAR - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">WAR.BAS - War (Card Game)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'WAR'});
+const ranks = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
+const suits = ["H","D","C","S"];
+function deck() {
+  let d = [];
+  for (let r of ranks) for (let s of suits) d.push(r+s);
+  return d;
+}
+async function run() {
+  await t.delay(300);
+  t.print("WAR - THE CARD GAME");
+  t.print("HIGHER CARD WINS. ACE IS HIGH. TIE = WAR!");
+  let d = deck();
+  for (let i = d.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [d[i], d[j]] = [d[j], d[i]]; }
+  let p = d.slice(0, 26);
+  let c = d.slice(26, 52);
+  let pScore = 0, cScore = 0;
+  while (p.length > 0 && c.length > 0) {
+    let pc = p.shift();
+    let cc = c.shift();
+    let pv = ranks.indexOf(pc.slice(0,-1));
+    let cv = ranks.indexOf(cc.slice(0,-1));
+    t.print("YOU: " + pc + "  ME: " + cc);
+    if (pv > cv) { t.print("YOU WIN!"); pScore++; p.push(pc, cc); }
+    else if (cv > pv) { t.print("I WIN!"); cScore++; c.push(pc, cc); }
+    else {
+      t.print("WAR! DRAW THREE CARDS EACH...");
+      let pw = [], cw = [];
+      for (let i = 0; i < 3 && p.length > 0; i++) pw.push(p.shift());
+      for (let i = 0; i < 3 && c.length > 0; i++) cw.push(c.shift());
+      let pwv = pw.length > 0 ? ranks.indexOf(pw[pw.length-1].slice(0,-1)) : -1;
+      let cwv = cw.length > 0 ? ranks.indexOf(cw[cw.length-1].slice(0,-1)) : -1;
+      t.print("WAR CARDS: YOU " + pw.join(" ") + "  ME " + cw.join(" "));
+      if (pwv > cwv) { t.print("YOU WIN WAR!"); p.push(pc, cc, ...pw, ...cw); pScore += 3; }
+      else { t.print("I WIN WAR!"); c.push(pc, cc, ...pw, ...cw); cScore += 3; }
+    }
+    await t.input("PRESS ENTER FOR NEXT ROUND");
+  }
+  if (pScore > cScore) t.print("YOU WIN THE WAR!");
+  else t.print("I WIN THE WAR!");
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

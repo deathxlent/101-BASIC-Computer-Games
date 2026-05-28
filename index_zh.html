@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>101款BASIC电脑游戏 - HTML版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Courier New', monospace; background: #0a0a0a; color: #00ff00; line-height: 1.6; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; padding: 20px; border: 2px solid #00ff00; background: #111; position: relative; }
+        .lang-switch { position: absolute; top: 10px; right: 10px; }
+        .lang-switch a { font-size: 0.8em; padding: 4px 8px; color: #00ffff; text-decoration: none; border: 1px solid #00ffff; }
+        .lang-switch a:hover { background: #00ffff; color: #000; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 0 0 10px #00ff00; }
+        .subtitle { color: #00cc00; font-size: 1.1em; }
+        .stats { margin-top: 15px; font-size: 0.9em; color: #00aa00; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #111; }
+        th { background: #003300; color: #00ff00; padding: 12px 15px; text-align: left; border: 1px solid #00ff00; font-weight: bold; position: sticky; top: 0; }
+        td { padding: 10px 15px; border: 1px solid #004400; }
+        tr:nth-child(even) { background: #0a0a0a; }
+        tr:hover { background: #002200; }
+        .game-name { font-weight: bold; }
+        a { color: #00ffff; text-decoration: none; padding: 4px 10px; border: 1px solid #00ffff; transition: all 0.3s; }
+        a:hover { background: #00ffff; color: #000; }
+        a.basic-link { color: #ffff00; border-color: #ffff00; }
+        a.basic-link:hover { background: #ffff00; color: #000; }
+        .status-done { color: #00ff00; }
+        .status-pending { color: #666; }
+        .scroll-indicator { text-align: center; color: #006600; margin-top: 10px; font-size: 0.9em; }
+        @media (max-width: 768px) { h1 { font-size: 1.5em; } th, td { padding: 8px 5px; font-size: 0.9em; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="lang-switch"><a href="index.html">English</a></div>
+            <h1>101款BASIC电脑游戏</h1>
+            <p class="subtitle">HTML版 - 来自1970年代的经典游戏</p>
+            <p class="stats">游戏总数: 101 | 已移植: <span id="ported-count">5</span></p>
+        </header>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>游戏名称</th>
+                    <th>HTML版</th>
+                    <th>原始BASIC</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody id="game-list">
+            </tbody>
+        </table>
+
+        <p class="scroll-indicator">↑ 滚动查看所有游戏 ↑</p>
+    </div>
+
+    <script>
+        const games = [
+            { name: "1check", nameZh: "单人跳棋", file: "1check.bas", ported: true, desc: "益智 - 单人跳棋 - 通过斜线跳跃移除棋子" },
+            { name: "23mtch", nameZh: "23根火柴", file: "23mtch.bas", ported: true, desc: "游戏 - 23根火柴 - 轮流取1-3根火柴，取最后一根者输" },
+            { name: "3dplot", nameZh: "3D曲面图", file: "3dplot.bas", ported: true, desc: "演示 - 3D曲面图 - 用ASCII字符渲染3D数学曲面" },
+            { name: "aceydu", nameZh: "艾斯杜西", file: "aceydu.bas", ported: true, desc: "纸牌 - 艾斯杜西 - 猜下一张牌是否在两张牌之间" },
+            { name: "amazin", nameZh: "神奇迷宫", file: "amazin.bas", ported: true, desc: "益智 - 神奇迷宫 - 使用回溯算法生成随机迷宫" },
+            { name: "animal", nameZh: "猜动物", file: "animal.bas", ported: true, desc: "AI - 猜动物 - 电脑通过是非问题学习动物知识" },
+            { name: "awari", nameZh: "非洲棋", file: "awari.bas", ported: true, desc: "棋盘 - 非洲棋（曼卡拉）- 播种并捕获种子" },
+            { name: "bagels", nameZh: "猜数字", file: "bagels.bas", ported: true, desc: "游戏 - 猜数字 - 用PICO/FERMI/BAGELS线索猜3位数" },
+            { name: "banner", nameZh: "横幅制作", file: "banner.bas", ported: true, desc: "演示 - 横幅制作 - 用大字ASCII字符显示信息" },
+            { name: "basbal", nameZh: "棒球", file: "basbal.bas", ported: true, desc: "体育 - 棒球模拟 - 投打对决5局电脑棒球" },
+            { name: "basbl1", nameZh: "棒球1", file: "basbl1.bas", ported: true, desc: "模拟 - 棒球1 - 用游戏编码管理球队攻防" },
+            { name: "basket", nameZh: "篮球", file: "basket.bas", ported: true, desc: "体育 - 达特茅斯篮球 - 投篮和防守的篮球比赛" },
+            { name: "batnum", nameZh: "数字对战", file: "batnum.bas", ported: true, desc: "游戏 - 数字对战 - 可自定义规则的尼姆游戏" },
+            { name: "battle", nameZh: "海战", file: "battle.bas", ported: true, desc: "棋盘 - 海战 - 在6x6网格上击沉敌方舰队" },
+            { name: "bingo", nameZh: "宾果", file: "bingo.bas", ported: true, desc: "游戏 - 宾果 - 匹配卡片上的数字获胜" },
+            { name: "blkjac", nameZh: "21点", file: "blkjac.bas", ported: true, desc: "纸牌 - 21点 - 与庄家玩21点" },
+            { name: "blkjak", nameZh: "21点(简化)", file: "blkjak.bas", ported: true, desc: "纸牌 - 21点简化版 - 与电脑玩简化21点" },
+            { name: "boat", nameZh: "潜艇战", file: "boat.bas", ported: true, desc: "模拟 - 潜艇vs炮艇 - 向移动目标发射鱼雷" },
+            { name: "bomber", nameZh: "轰炸机", file: "bomber.bas", ported: true, desc: "模拟 - 二战轰炸机 - 选择阵营执行轰炸任务" },
+            { name: "bounce", nameZh: "弹跳球", file: "bounce.bas", ported: true, desc: "演示 - 弹跳球 - 用ASCII模拟弹跳球" },
+            { name: "bowl", nameZh: "保龄球", file: "bowl.bas", ported: true, desc: "体育 - 保龄球 - 最多4人打10局保龄球" },
+            { name: "boxing", nameZh: "拳击", file: "boxing.bas", ported: true, desc: "体育 - 奥运拳击 - 选择出拳类型进行3回合比赛" },
+            { name: "bug", nameZh: "小虫游戏", file: "bug.bas", ported: true, desc: "游戏 - 小虫游戏 - 掷骰子拼装小虫" },
+            { name: "buleye", nameZh: "靶心飞镖", file: "buleye.bas", ported: true, desc: "游戏 - 靶心飞镖 - 最多20人投飞镖争夺200分" },
+            { name: "bull", nameZh: "斗牛", file: "bull.bas", ported: true, desc: "模拟 - 斗牛 - 用斗篷动作和刺杀面对公牛" },
+            { name: "bullcow", nameZh: "公牛与奶牛", file: "bullcow.bas", ported: true, desc: "游戏 - 公牛与奶牛 - 用牛/奶牛线索猜5位数" },
+            { name: "buzzwd", nameZh: "流行语生成器", file: "buzzwd.bas", ported: true, desc: "演示 - 流行语生成器 - 用3个数字生成高大上的废话" },
+            { name: "calndr", nameZh: "日历打印", file: "calndr.bas", ported: true, desc: "演示 - 日历打印 - 打印任何年份的日历" },
+            { name: "canam", nameZh: "赛车", file: "canam.bas", ported: true, desc: "赛车 - 加拿大赛车 - 与电脑车手环道竞速" },
+            { name: "change", nameZh: "找零", file: "change.bas", ported: true, desc: "工具 - 找零计算 - 计算各面额的正确找零" },
+            { name: "checkr", nameZh: "跳棋", file: "checkr.bas", ported: true, desc: "棋盘 - 跳棋 - 与电脑对弈跳棋" },
+            { name: "chemst", nameZh: "化学稀释", file: "chemst.bas", ported: true, desc: "游戏 - 化学稀释 - 正确稀释酸液否则会爆炸" },
+            { name: "chief", nameZh: "数字魔术", file: "chief.bas", ported: true, desc: "游戏 - 数字魔术 - 一个数学读心术" },
+            { name: "chomp", nameZh: "咬饼干", file: "chomp.bas", ported: true, desc: "益智 - 咬饼干 - 避免吃到毒块" },
+            { name: "civilw", nameZh: "南北战争", file: "civilw.bas", ported: true, desc: "模拟 - 南北战争 - 指挥南方军打14场战役" },
+            { name: "craps", nameZh: "双骰子", file: "craps.bas", ported: true, desc: "游戏 - 双骰子 - 与电脑玩经典赌场骰子游戏" },
+            { name: "cube", nameZh: "立方体", file: "cube.bas", ported: true, desc: "益智 - 立方体游戏 - 从1,1,1到3,3,3避开地雷" },
+            { name: "diamnd", nameZh: "钻石图案", file: "diamnd.bas", ported: true, desc: "演示 - 钻石图案 - 生成漂亮的钻石ASCII图案" },
+            { name: "dice", nameZh: "掷骰子", file: "dice.bas", ported: true, desc: "演示 - 掷骰子 - 模拟多次掷一对骰子" },
+            { name: "digits", nameZh: "数字预测", file: "digits.bas", ported: true, desc: "游戏 - 数字预测 - 电脑学习预测你的0/1/2序列" },
+            { name: "dogs", nameZh: "赛狗", file: "dogs.bas", ported: true, desc: "赛狗 - 赛狗 - 在灰狗赛上下注并计算赔率" },
+            { name: "even", nameZh: "偶数胜", file: "even.bas", ported: true, desc: "游戏 - 偶数胜 - 从27颗中取1-4颗，偶数总数赢" },
+            { name: "even1", nameZh: "偶数胜(学习版)", file: "even1.bas", ported: true, desc: "游戏 - 偶数胜AI版 - 电脑学习玩偶数胜游戏" },
+            { name: "fipfop", nameZh: "翻转", file: "fipfop.bas", ported: true, desc: "益智 - 翻转 - 选择位置翻转将X全变O" },
+            { name: "footbl", nameZh: "橄榄球", file: "footbl.bas", ported: true, desc: "体育 - 橄榄球 - 进攻和防守的橄榄球比赛" },
+            { name: "fotbal", nameZh: "足球", file: "fotbal.bas", ported: true, desc: "体育 - NFU足球 - 双人足球策略游戏" },
+            { name: "furs", nameZh: "毛皮贸易", file: "furs.bas", ported: true, desc: "模拟 - 毛皮贸易 - 在18世纪堡垒间进行毛皮交易" },
+            { name: "golf", nameZh: "高尔夫", file: "golf.bas", ported: true, desc: "体育 - 高尔夫 - 最多打18洞，选择从发球杆到推杆" },
+            { name: "gomoko", nameZh: "五子棋", file: "gomoko.bas", ported: true, desc: "棋盘 - 五子棋 - 在NxN棋盘上连成5子" },
+            { name: "guess", nameZh: "猜数字", file: "guess.bas", ported: true, desc: "游戏 - 猜数字 - 我想一个数你来猜" },
+            { name: "guner1", nameZh: "火炮(移动靶)", file: "guner1.bas", ported: true, desc: "模拟 - 移动靶火炮 - 向移动目标开火" },
+            { name: "gunner", nameZh: "火炮", file: "gunner.bas", ported: true, desc: "模拟 - 野战火炮 - 调整仰角瞄准目标" },
+            { name: "hang", nameZh: "绞刑游戏", file: "hang.bas", ported: true, desc: "游戏 - 绞刑游戏 - 猜出单词否则小人被绞死" },
+            { name: "hello", nameZh: "你好", file: "hello.bas", ported: true, desc: "演示 - 你好 - 显示友好的问候" },
+            { name: "hex", nameZh: "六角棋", file: "hex.bas", ported: true, desc: "棋盘 - 六角棋 - 3x3棋盘上的学习型兵棋AI" },
+            { name: "hi-lo", nameZh: "高低猜", file: "hi-lo.bas", ported: true, desc: "猜奖池金额(1-100美元)，6次机会赢钱" },
+            { name: "hi-q", nameZh: "孔明棋", file: "hi-q.bas", ported: true, desc: "孔明棋 - 从三角棋盘上清除所有钉子" },
+            { name: "hmrabi", nameZh: "汉谟拉比", file: "hmrabi.bas", ported: true, desc: "模拟治理古代苏美尔10年，管理土地、粮食和人口" },
+            { name: "hockey", nameZh: "冰球", file: "hockey.bas", ported: true, desc: "冰球模拟 - 用拉射/弹射/腕射与康奈尔队对抗" },
+            { name: "horses", nameZh: "赛马", file: "horses.bas", ported: true, desc: "在8匹名马上押注独赢/位置/展示" },
+            { name: "hurkle", nameZh: "找怪物", file: "hurkle.bas", ported: true, desc: "在10x10网格上用方向提示找到隐藏的怪物" },
+            { name: "kinema", nameZh: "动能计算", file: "kinema.bas", ported: true, desc: "数学练习 - 动能计算 - 解决KE=(M*V^2)/2问题" },
+            { name: "king", nameZh: "山丘之王", file: "king.bas", ported: true, desc: "模拟 - 山丘之王 - 通过协商速度超越国王" },
+            { name: "letter", nameZh: "字母统计", file: "letter.bas", ported: true, desc: "工具 - 字母统计 - 统计句子中的字母频率" },
+            { name: "life", nameZh: "生命游戏", file: "life.bas", ported: true, desc: "模拟 - 生命游戏 - 康威的细胞自动机" },
+            { name: "life2", nameZh: "人寿保险", file: "life2.bas", ported: true, desc: "模拟 - 人寿保险 - 根据年龄和习惯计算保费" },
+            { name: "litqz", nameZh: "文学问答", file: "litqz.bas", ported: true, desc: "问答 - 文学问答 - 说出10部经典作品的作者" },
+            { name: "mathd", nameZh: "数学骰子", file: "mathd.bas", ported: true, desc: "数学练习 - 数学骰子 - 相加两个随机骰子点数" },
+            { name: "mnopfl", nameZh: "猜数", file: "mnopfl.bas", ported: true, desc: "猜数字0-100，跟踪得分" },
+            { name: "mnoply", nameZh: "大富翁简化版", file: "mnoply.bas", ported: true, desc: "模拟 - 大富翁简化版 - 掷骰子买地产" },
+            { name: "mugwump", nameZh: "找怪物", file: "mugwump.bas", ported: true, desc: "猜谜 - 找怪物 - 在10x10网格上5次内找到4只怪物" },
+            { name: "nicoma", nameZh: "反拼词", file: "nicoma.bas", ported: true, desc: "猜谜 - 反拼词 - 反转单词拼写('amocin'倒着拼)" },
+            { name: "nim", nameZh: "尼姆游戏", file: "nim.bas", ported: true, desc: "策略 - 尼姆游戏 - 4堆石子(1,3,5,7)，取最后者输" },
+            { name: "number", nameZh: "猜数字", file: "number.bas", ported: true, desc: "猜谜 - 猜数字 - 猜1-100之间的数字" },
+            { name: "orbit", nameZh: "轨道计算", file: "orbit.bas", ported: true, desc: "模拟 - 轨道计算 - 根据距离和速度计算轨道参数" },
+            { name: "pizza", nameZh: "订披萨", file: "pizza.bas", ported: true, desc: "模拟 - 订披萨 - 选择尺寸、配料和配送方式" },
+            { name: "poet", nameZh: "诗人", file: "poet.bas", ported: true, desc: "创意 - 诗人 - 从词库随机生成诗歌" },
+            { name: "poetry", nameZh: "诗歌生成", file: "poetry.bas", ported: true, desc: "创意 - 诗歌生成 - 从模板生成随机诗句" },
+            { name: "poker", nameZh: "扑克", file: "poker.bas", ported: true, desc: "纸牌 - 扑克 - 与电脑玩5张换牌赌局" },
+            { name: "qubic", nameZh: "三维井字棋", file: "qubic.bas", ported: true, desc: "策略 - 三维井字棋 - 在4x4x4立体棋盘上与电脑对战" },
+            { name: "queen", nameZh: "八皇后", file: "queen.bas", ported: true, desc: "益智 - 八皇后 - 在国际象棋棋盘上安全放置8个皇后" },
+            { name: "reverse", nameZh: "反转排序", file: "reverse.bas", ported: true, desc: "益智 - 反转排序 - 通过反转前缀对数字1-9排序" },
+            { name: "rocket", nameZh: "火箭", file: "rocket.bas", ported: true, desc: "游戏 - 火箭 - 猜测火箭的距离和速度" },
+            { name: "rocksp", nameZh: "石头剪刀布", file: "rocksp.bas", ported: true, desc: "游戏 - 石头剪刀布 - 经典手势游戏对战电脑" },
+            { name: "rockt1", nameZh: "火箭拦截", file: "rockt1.bas", ported: true, desc: "模拟 - 火箭拦截 - 拦截来袭的敌方火箭" },
+            { name: "rockt2", nameZh: "火箭发射", file: "rockt2.bas", ported: true, desc: "模拟 - 火箭发射 - 计算推力和高度" },
+            { name: "roulet", nameZh: "轮盘赌", file: "roulet.bas", ported: true, desc: "赌场 - 轮盘赌 - 在0-36号上下注，赔率36:1" },
+            { name: "rusrou", nameZh: "俄罗斯轮盘", file: "rusrou.bas", ported: true, desc: "赌场 - 俄罗斯轮盘 - 转动弹巢，扣动扳机" },
+            { name: "salvo", nameZh: "齐射海战", file: "salvo.bas", ported: true, desc: "策略 - 齐射海战 - 在10x10网格上击沉5艘敌舰" },
+            { name: "salvo1", nameZh: "齐射海战(简化)", file: "salvo1.bas", ported: true, desc: "策略 - 齐射海战简化版 - 击沉4艘敌舰" },
+            { name: "slots", nameZh: "老虎机", file: "slots.bas", ported: true, desc: "赌场 - 老虎机 - 拉下摇杆，7种符号匹配赢钱" },
+            { name: "spcwar", nameZh: "太空战", file: "spcwar.bas", ported: true, desc: "策略 - 太空战 - 飞船战斗：攻击/护盾/修理" },
+            { name: "splat", nameZh: "自由落体", file: "splat.bas", ported: true, desc: "模拟 - 自由落体 - 在正确高度拉开降落伞" },
+            { name: "stars", nameZh: "数星星", file: "stars.bas", ported: true, desc: "猜谜 - 数星星 - 数出星星数量(1-20)" },
+            { name: "stock", nameZh: "股票模拟", file: "stock.bas", ported: true, desc: "模拟 - 股票市场 - 低买高卖赚取利润" },
+            { name: "synonm", nameZh: "同义词", file: "synonm.bas", ported: true, desc: "问答 - 同义词 - 给出8个单词的同义词" },
+            { name: "target", nameZh: "打靶", file: "target.bas", ported: true, desc: "猜谜 - 打靶 - 5发炮弹击中随机靶标" },
+            { name: "tictac", nameZh: "井字棋", file: "tictac.bas", ported: true, desc: "游戏 - 井字棋 - 与电脑对战井字棋" },
+            { name: "tower", nameZh: "汉诺塔", file: "tower.bas", ported: true, desc: "益智 - 汉诺塔 - 将圆盘从A柱移到C柱" },
+            { name: "train", nameZh: "思维列车", file: "train.bas", ported: true, desc: "猜谜 - 思维列车 - 预测下一个数字比当前高还是低" },
+            { name: "trap", nameZh: "飞碟射击", file: "trap.bas", ported: true, desc: "模拟 - 飞碟射击 - 5轮射击飞碟比赛" },
+            { name: "ugly", nameZh: "乌龟绘图", file: "ugly.bas", ported: true, desc: "创意 - 乌龟绘图 - 在20x20网格上画图" },
+            { name: "war", nameZh: "战争(纸牌)", file: "war.bas", ported: true, desc: "纸牌 - 战争 - 经典纸牌对战游戏" },
+            { name: "war2", nameZh: "海战2", file: "war2.bas", ported: true, desc: "策略 - 海战2 - 两支舰队的海战" },
+            { name: "wekday", nameZh: "星期计算", file: "wekday.bas", ported: true, desc: "工具 - 星期计算 - 计算任意日期的星期" },
+            { name: "word", nameZh: "单词拼写", file: "word.bas", ported: true, desc: "益智 - 单词拼写 - 重组5个乱序单词" },
+            { name: "yahtze", nameZh: "快艇骰子", file: "yahtze.bas", ported: true, desc: "赌场 - 快艇骰子 - 每轮3次掷5个骰子" },
+            { name: "zoop", nameZh: "猜数交换", file: "zoop.bas", ported: true, desc: "猜谜 - 猜数交换 - 猜数字或让电脑猜" }
+        ];
+
+        const tbody = document.getElementById('game-list');
+        let portedCount = 0;
+
+        games.forEach((game, index) => {
+            const row = document.createElement('tr');
+            const htmlLink = game.ported
+                ? `<a href="games/${game.name}.html">开始游戏</a>`
+                : `<span style="color: #444;">即将推出</span>`;
+
+            if (game.ported) portedCount++;
+
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td class="game-name">${game.name.toUpperCase()}（${game.nameZh}）</td>
+                <td>${htmlLink}</td>
+                <td><a href="maurymarkowitz/101-BASIC-Computer-Games/${game.file}" class="basic-link" target="_blank">查看源码</a></td>
+                <td style="color: ${game.ported ? '#00ff00' : '#666'};">${game.desc || game.name.toUpperCase()}</td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('ported-count').textContent = portedCount;
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>UGLY - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">UGLY.BAS - Ugly (Turtle Graphics)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'UGLY'});
+async function run() {
+  await t.delay(300);
+  t.print("UGLY - A TURTLE GRAPHICS SIMULATOR");
+  t.print("COMMANDS: U=UP, D=DOWN, L=LEFT, R=RIGHT, P=PRINT, E=END");
+  let grid = Array(20).fill().map(() => Array(20).fill('.'));
+  let x = 10, y = 10;
+  let pen = true;
+  grid[y][x] = '*';
+  while (true) {
+    let cmd = await t.input("CMD (U/D/L/R/P/E)");
+    let c = cmd.toUpperCase();
+    if (c === "U") { pen = false; t.print("PEN UP"); }
+    else if (c === "D") { pen = true; t.print("PEN DOWN"); }
+    else if (c === "L") { x--; if (x < 0) x = 0; if (pen) grid[y][x] = '*'; }
+    else if (c === "R") { x++; if (x >= 20) x = 19; if (pen) grid[y][x] = '*'; }
+    else if (c === "P") { for (let row of grid) t.print(row.join(' ')); }
+    else if (c === "E") break;
+    else t.print("INVALID");
+  }
+  t.print("FINAL DRAWING:");
+  for (let row of grid) t.print(row.join(' '));
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

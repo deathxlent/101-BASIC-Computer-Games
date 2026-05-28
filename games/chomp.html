@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CHOMP - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CHOMP.BAS - Chomp</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CHOMP'});
+function printBoard(board, rows, cols) {
+  t.print("      1 2 3 4 5 6 7 8 9");
+  for (let i = 1; i <= rows; i++) {
+    let line = i + "     ";
+    for (let j = 1; j <= cols; j++) {
+      if (board[i][j] === -1) line += "P ";
+      else if (board[i][j] === 1) line += "* ";
+      else line += "  ";
+    }
+    t.print(line);
+  }
+  t.print("");
+}
+async function run() {
+  await t.delay(300);
+  t.print("THIS IS THE GAME OF CHOMP (SCIENTIFIC AMERICAN, JAN 1973)");
+  let r = await t.input("WANT THE RULES (1=YES, 0=NO)");
+  if (r === "1") {
+    t.print("CHOMP IS FOR 1 OR MORE PLAYERS (HUMANS ONLY).");
+    t.print("THE BOARD IS A BIG COOKIE - R ROWS HIGH AND C COLUMNS");
+    t.print("WIDE. YOU INPUT R AND C AT THE START. IN THE UPPER LEFT");
+    t.print("CORNER OF THE COOKIE IS A POISON SQUARE (P). THE ONE WHO");
+    t.print("CHOMPS THE POISON SQUARE LOSES. TO TAKE A CHOMP, TYPE THE");
+    t.print("ROW AND COLUMN OF ONE OF THE SQUARES ON THE COOKIE.");
+    t.print("ALL OF THE SQUARES BELOW AND TO THE RIGHT OF THAT SQUARE");
+    t.print("(INCLUDING THAT SQUARE, TOO) DISAPPEAR -- CHOMP!!");
+    t.print("NO FAIR CHOMPING SQUARES THAT HAVE ALREADY BEEN CHOMPED,");
+    t.print("OR THAT ARE OUTSIDE THE ORIGINAL DIMENSIONS OF THE COOKIE.");
+    t.print("");
+    let demo = Array.from({length:6},()=>Array(8).fill(1));
+    demo[1][1] = -1;
+    t.print("HERE'S HOW A BOARD LOOKS (THIS ONE IS 5 BY 7).");
+    printBoard(demo, 5, 7);
+  }
+  while (true) {
+    t.print("HERE WE GO...");
+    let players = parseInt(await t.input("HOW MANY PLAYERS"));
+    if (isNaN(players)||players<1) players=1;
+    let rows = parseInt(await t.input("HOW MANY ROWS"));
+    if (rows>9) { t.print("TOO MANY ROWS (9 IS MAXIMUM)."); continue; }
+    let cols = parseInt(await t.input("HOW MANY COLUMNS"));
+    if (cols>9) { t.print("TOO MANY COLUMNS (9 IS MAXIMUM)."); continue; }
+    let board = Array.from({length:rows+1},()=>Array(cols+1).fill(1));
+    board[1][1] = -1;
+    let turn = 0;
+    while (true) {
+      printBoard(board, rows, cols);
+      let p = (turn % players) + 1;
+      t.print("PLAYER " + p);
+      let r1 = parseInt(await t.input("COORDINATES OF CHOMP (ROW,COL) ROW?"));
+      let c1 = parseInt(await t.input("COL?"));
+      if (r1 < 1 || r1 > rows || c1 < 1 || c1 > cols || board[r1][c1] === 0) {
+        t.print("NO FAIR. YOU'RE TRYING TO CHOMP ON EMPTY SPACE!");
+        continue;
+      }
+      if (board[r1][c1] === -1) {
+        printBoard(board, rows, cols);
+        t.print("YOU LOSE, PLAYER " + p);
+        break;
+      }
+      for (let i = r1; i <= rows; i++) {
+        for (let j = c1; j <= cols; j++) {
+          board[i][j] = 0;
+        }
+      }
+      turn++;
+    }
+    let again = await t.input("AGAIN (1=YES; 0=NO)");
+    if (again !== "1") break;
+  }
+  await t.delay(2000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

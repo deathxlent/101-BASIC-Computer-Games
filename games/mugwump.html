@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MUGWUMP - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">MUGWUMP.BAS - Mugwump</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'MUGWUMP'});
+async function run() {
+  await t.delay(300);
+  t.print("MUGWUMP - FIND THE 4 MUGWUMPS!");
+  t.print("THE MUGWUMPS ARE HIDING ON A 10X10 GRID.");
+  t.print("YOU GET 5 TRIES TO FIND ALL OF THEM.");
+  while (true) {
+    let mugs = [];
+    for (let i = 0; i < 4; i++) {
+      mugs.push({x: Math.floor(Math.random() * 10), y: Math.floor(Math.random() * 10)});
+    }
+    let found = [false, false, false, false];
+    for (let turn = 1; turn <= 5; turn++) {
+      let inp = await t.input("GUESS " + turn + " (X,Y)");
+      let parts = inp.split(',').map(s => parseInt(s.trim()));
+      if (parts.length < 2) { turn--; continue; }
+      let x = parts[0], y = parts[1];
+      let any = false;
+      for (let i = 0; i < 4; i++) {
+        if (found[i]) continue;
+        if (mugs[i].x === x && mugs[i].y === y) {
+          t.print("YOU FOUND MUGWUMP " + (i+1) + "!");
+          found[i] = true;
+          any = true;
+          break;
+        }
+      }
+      if (!any) {
+        let dists = [];
+        for (let i = 0; i < 4; i++) {
+          if (!found[i]) dists.push(Math.sqrt((mugs[i].x - x) ** 2 + (mugs[i].y - y) ** 2).toFixed(1));
+        }
+        t.print("DISTANCES TO UNFOUND MUGWUMPS: " + dists.join(", "));
+      }
+      if (found.every(f => f)) {
+        t.print("ALL MUGWUMPS FOUND IN " + turn + " GUESSES!");
+        break;
+      }
+      if (turn === 5) {
+        t.print("SORRY, YOU RAN OUT OF TRIES.");
+        for (let i = 0; i < 4; i++) t.print("MUGWUMP " + (i+1) + " WAS AT " + mugs[i].x + "," + mugs[i].y);
+      }
+    }
+    let again = await t.input("PLAY AGAIN (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("OK");
+  await t.delay(1500);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

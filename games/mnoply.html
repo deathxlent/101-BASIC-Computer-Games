@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MNOPLY - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">MNOPLY.BAS - Mnoply (Monopoly)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'MNOPLY'});
+async function run() {
+  await t.delay(300);
+  t.print("MNOPLY - LET'S PLAY A SIMPLIFIED VERSION OF MONOPOLY.");
+  t.print("YOU START WITH $1500. LAND ON PROPERTIES TO BUY THEM.");
+  let money = 1500;
+  let properties = {};
+  let names = ["GO","MED AVE","BALTI AVE","READ RR","ORIENT AVE","VERM AVE","CONN AVE","ST CHAS PL","STATE AVE","VIRG AVE","JAIL","TENN AVE","NY AVE","KY AVE","IN AVE","ILL AVE","ATL AVE","VENT AVE","MARV GARD","PAC AVE","GO TO JAIL"];
+  let prices = [0,60,60,200,100,100,120,140,140,160,0,180,200,220,220,240,260,260,280,300,0];
+  let pos = 0;
+  while (true) {
+    let roll = Math.floor(Math.random() * 6) + 1 + Math.floor(Math.random() * 6) + 1;
+    pos = (pos + roll) % names.length;
+    t.print("YOU ROLLED " + roll + ". YOU ARE ON " + names[pos] + ".");
+    if (names[pos] === "GO") { t.print("COLLECT $200"); money += 200; }
+    else if (names[pos] === "JAIL" || names[pos] === "JUST VISITING") { t.print("JUST VISITING."); }
+    else if (names[pos] === "GO TO JAIL") { t.print("GO TO JAIL"); pos = 10; }
+    else {
+      let prop = names[pos];
+      if (properties[prop]) {
+        t.print("OWNED BY YOU.");
+      } else if (prices[pos] > 0 && money >= prices[pos]) {
+        let buy = await t.input("BUY " + prop + " FOR $" + prices[pos] + "? (YES/NO)");
+        if (buy.toUpperCase() === "YES") { money -= prices[pos]; properties[prop] = true; t.print("YOU BOUGHT " + prop); }
+      }
+    }
+    t.print("MONEY: $" + money);
+    if (money <= 0) { t.print("YOU'RE BROKE!"); break; }
+    if (pos === 0) continue;
+    let again = await t.input("ROLL AGAIN? (YES/NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("GAME OVER. YOU ENDED WITH $" + money);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

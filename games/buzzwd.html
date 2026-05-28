@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BUZZWD - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">BUZZWD.BAS - Buzzword Generator</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'BUZZWD'});
+const first = ["INTEGRATED","TOTAL","SYSTEMATIZED","PARALLEL","FUNCTIONAL","RESPONSIVE","OPTIMAL","SYNCHRONIZED","COMPATIBLE","BALANCED"];
+const second = ["MANAGEMENT","ORGANIZATIONAL","MONITORED","RECIPROCAL","DIGITAL","LOGISTICAL","TRANSITIONAL","INCREMENTAL","THIRD-GENERATION","POLICY"];
+const third = ["OPTIONS","FLEXIBILITY","CAPABILITY","MOBILITY","PROGRAMMING","CONCEPT","TIME-PHASE","PROJECTION","HARDWARE","CONTINGENCY"];
+async function run() {
+  await t.delay(300);
+  t.print("THIS COMPUTER DEMONSTRATION IS A NEW AID FOR");
+  t.print("PREPARING SPEECHES AND BRIEFINGS. IT'S A BUZZWORD");
+  t.print("GENERATOR WHICH PROVIDES YOU WITH A SET OF 3 HIGHLY");
+  t.print("ACCEPTABLE WORDS TO WORK INTO YOUR MATERIAL. THE WORDS");
+  t.print("DON'T ACTUALLY MEAN ANYTHING, BUT THEY SOUND GREAT.");
+  t.print("");
+  t.print("THE PROCEDURE:");
+  t.print("     THINK OF ANY THREE NUMBERS BETWEEN 0 AND 9. ENTER");
+  t.print("     THEM AFTER THE '?' SEPARATED BY COMMAS. YOUR");
+  t.print("     BUZZWORD WILL BE PRINTED OUT. TYPING '100' FOR");
+  t.print("     EACH OF YOUR CHOICES STOPS THIS PROGRAM.");
+  while (true) {
+    t.print("");
+    let inp = await t.input("WHAT ARE YOUR THREE NUMBERS (N,M,P)");
+    let parts = inp.split(',').map(s=>parseInt(s.trim()));
+    if (parts.length<3) { t.print("ENTER THREE NUMBERS"); continue; }
+    let [n,m,p] = parts;
+    if (n===100||m===100||p===100) { t.print("GOODBYE FOR NOW!"); break; }
+    if (n<0||n>9||m<0||m>9||p<0||p>9) { t.print("NUMBERS MUST BE BETWEEN 0 AND 9."); continue; }
+    t.print(""); t.print(first[n]+" "+second[m]+" "+third[p]);
+  }
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

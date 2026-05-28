@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BASBL1 - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">BASBL1.BAS - Baseball 1</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'BASBL1'});
+async function run() {
+  await t.delay(300);
+  t.print("BASEBALL - TWO TEAMS, 4 INNINGS");
+  t.print("YOU MANAGE. ENTER A PLAY CODE:");
+  t.print(" 141=SWING, 141+OTHER=BAD, 19713=BUNT, 19993=HIT AWAY");
+  t.print(" 19613=BATTER SUB, 19700=CHECK, 21312=STEAL");
+  let myScore = 0, yourScore = 0;
+  let inning = 1;
+  let myBat = false;
+  let errors = 0, hits = 0, runs = 0;
+  for (let I = 1; I <= 4; I++) {
+    for (let half = 0; half < 2; half++) {
+      let outs = 0, balls = 0, strikes = 0;
+      let b1 = 0, b2 = 0, b3 = 0;
+      let runsThis = 0;
+      myBat = (half === 1);
+      if (myBat && half === 0) continue;
+      if (myBat) t.print("YOU'RE UP NOW. SCORE: ME " + myScore + " YOU " + yourScore);
+      else t.print("I'M UP NOW. SCORE: ME " + myScore + " YOU " + yourScore);
+      while (outs < 3) {
+        if (balls >= 4) { t.print("THE BATTER WALKS."); balls = 0; strikes = 0; }
+        else if (strikes >= 3) { t.print("THE BATTER STRUCK OUT."); outs++; balls = 0; strikes = 0; if (outs >= 3) break; }
+        let play;
+        if (myBat) {
+          play = parseInt(await t.input("YOUR PLAY?"));
+        } else {
+          play = 141;
+          await t.delay(300);
+        }
+        let d = Math.random();
+        if (play === 19713) { // bunt
+          if (d < 0.6) { t.print("BUNT FOUL - STRIKE."); strikes++; }
+          else { t.print("BUNT PUT OUT AT FIRST."); outs++; }
+        } else if (play === 19993) { // hit away
+          let r = Math.random();
+          if (r < 0.3) { t.print("SINGLE!"); hits++; }
+          else if (r < 0.5) { t.print("DOUBLE!"); hits++; }
+          else if (r < 0.6) { t.print("TRIPLE!"); hits++; }
+          else if (r < 0.65) { t.print("HOME RUN!!"); runsThis += b1+b2+b3+1; runs += runsThis; hits++; b1=b2=b3=0; }
+          else if (r < 0.8) { t.print("FLY OUT."); outs++; }
+          else { t.print("GROUND OUT."); outs++; }
+          // score runners
+          if (b3 > 0 && r < 0.6) { runsThis++; b3 = 0; }
+          if (b2 > 0 && r < 0.55) { if (r < 0.5) { runsThis++; b2 = 1; } else { b3 = 1; b2 = 0; } }
+          if (b1 > 0 && r < 0.55) { if (r < 0.5) { b2 = 1; b1 = 0; } else { b3 = 1; b1 = 0; } }
+          if (r < 0.5) { // new man on first
+            if (b1 === 0) b1 = 1;
+            else if (b2 === 0) b2 = 1;
+            else b3 = 1;
+          }
+        } else if (play === 19613) { // batter sub
+          t.print("BATTER SUBSTITUTED.");
+        } else if (play === 19700) { // check
+          t.print("CHECK NOT YET IN.");
+        } else if (play === 21312) { // steal
+          if (b1 > 0 && Math.random() < 0.4) { t.print("STEAL SUCCESSFUL!"); b2 = 1; b1 = 0; }
+          else if (b2 > 0 && Math.random() < 0.3) { t.print("STEAL SUCCESSFUL!"); b3 = 1; b2 = 0; }
+          else t.print("STEAL FAILED - OUT!"), outs++;
+        } else { // swing
+          if (d < 0.4) { t.print("STRIKE!"); strikes++; }
+          else if (d < 0.55) { t.print("BALL!"); balls++; }
+          else if (d < 0.8) { t.print("FOUL!"); if (strikes < 2) strikes++; }
+          else { t.print("HIT!"); let r2 = Math.random(); if (r2 < 0.4) { t.print("SINGLE!"); hits++; } else if (r2 < 0.6) { t.print("DOUBLE!"); hits++; } else if (r2 < 0.7) { t.print("TRIPLE!"); hits++; } else { t.print("HOME RUN!!"); runsThis += b1+b2+b3+1; runs += runsThis; b1=b2=b3=0; } }
+        }
+        t.print("OUTS: " + outs + " BALLS: " + balls + " STRIKES: " + strikes);
+        if (outs >= 3) break;
+      }
+      if (myBat) {
+        for (let r = 0; r < runsThis; r++) t.print("RUN SCORED!");
+        yourScore += runs;
+      } else {
+        myScore += runs;
+      }
+    }
+  }
+  t.print("FINAL SCORE: ME " + myScore + " YOU " + yourScore);
+  if (myScore > yourScore) t.print("I WON!");
+  else if (yourScore > myScore) t.print("YOU WON!");
+  else t.print("A DRAW!");
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

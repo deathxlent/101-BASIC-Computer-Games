@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GOMOKO - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">GOMOKO.BAS - Gomoko</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'GOMOKO'});
+async function run() {
+  await t.delay(300);
+  t.print("WELCOME TO THE ORIENTAL GAME OF GOMOKO");
+  t.print("THE GAME IS PLAYED ON AN N BY N GRID. DURING YOUR PLAY,");
+  t.print("YOU MAY COVER ONE GRID INTERSECTION WITH A MARKER.");
+  t.print("THE OBJECT OF THE GAME IS TO GET 5 ADJACENT MARKERS IN");
+  t.print("A ROW -- HORIZONTALLY, VERTICALLY, OR DIAGONALLY.");
+  t.print("YOUR MOVES ARE '1', COMPUTER MOVES ARE '2'.");
+  t.print("TO END THE GAME, TYPE -1,-1 FOR YOUR MOVE.");
+  let N = parseInt(await t.input("BOARD SIZE (MIN=7, MAX=19)"));
+  if (N<7||N>19) { t.print("7 TO 19 ONLY."); return; }
+  let A = Array.from({length:N+1},()=>Array(N+1).fill(0));
+  t.print("WE ALTERNATE MOVES. YOU GO FIRST...");
+  while (true) {
+    t.print("");
+    for (let i=1;i<=N;i++) { let line=""; for (let j=1;j<=N;j++) line+= (A[i][j]||".")+" "; t.print(line); }
+    let I = parseInt(await t.input("YOUR PLAY (I,J) I?"));
+    let J = parseInt(await t.input("J?"));
+    if (I===-1&&J===-1) break;
+    if (I<1||I>N||J<1||J>N) { t.print("ILLEGAL MOVE"); continue; }
+    if (A[I][J]!==0) { t.print("SQUARE OCCUPIED"); continue; }
+    A[I][J] = 1;
+    let placed = false;
+    for (let e=-1;e<=1&&!placed;e++) for (let f=-1;f<=1&&!placed;f++) {
+      if (e===0&&f===0) continue;
+      let x=I+e, y=J+f;
+      if (x>=1&&x<=N&&y>=1&&y<=N&&A[x][y]===1) {
+        let nx=I-e, ny=J-f;
+        if (nx>=1&&nx<=N&&ny>=1&&ny<=N&&A[nx][ny]===0) {
+          A[nx][ny]=2; placed=true; t.print("COMPUTER MOVES TO ("+nx+","+ny+")");
+        }
+      }
+    }
+    if (!placed) {
+      let x,y;
+      do { x=Math.floor(Math.random()*N)+1; y=Math.floor(Math.random()*N)+1; } while (A[x][y]!==0);
+      A[x][y]=2; t.print("COMPUTER MOVES TO ("+x+","+y+")");
+    }
+  }
+  t.print("THANKS FOR THE GAME!!!");
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

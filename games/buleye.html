@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BULEYE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">BULEYE.BAS - Bullseye</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'BULEYE'});
+async function run() {
+  await t.delay(300);
+  t.print("GAME OF BULLSEYE");
+  t.print("");
+  t.print("IN THIS GAME, UP TO 20 PLAYERS THROW DARTS AT A TARGET");
+  t.print("WITH 10, 20, 30, AND 40 POINT ZONES. THE OBJECTIVE IS");
+  t.print("TO GET 200 POINTS.");
+  t.print("");
+  t.print("THROW","DESCRIPTION","PROBABLE SCORE");
+  t.print("  1","FAST OVERARM","BULLSEYE OR COMPLETE MISS");
+  t.print("  2","CONTROLLED OVERARM","10, 20, OR 30 POINTS");
+  t.print("  3","UNDERARM","ANYTHING");
+  t.print("");
+  let n = parseInt(await t.input("HOW MANY PLAYERS"));
+  if (isNaN(n)||n<1) n=1; if (n>20) n=20;
+  let names = [], scores = Array(n).fill(0);
+  for (let i=0;i<n;i++) names.push(await t.input("NAME OF PLAYER "+(i+1)));
+  let round = 0;
+  while (true) {
+    round++;
+    t.print(""); t.print("ROUND "+round);
+    for (let i=0;i<n;i++) {
+      if (scores[i]>=200) continue;
+      t.print("");
+      let thr = parseInt(await t.input(names[i]+"'S THROW (1, 2, OR 3)"));
+      if (thr<1||thr>3) { t.print("INPUT 1, 2, OR 3"); i--; continue; }
+      let p1,p2,p3,p4;
+      if (thr===1) { p1=.65; p2=.55; p3=.5; p4=.5; }
+      else if (thr===2) { p1=.99; p2=.77; p3=.43; p4=.01; }
+      else { p1=.95; p2=.75; p3=.45; p4=.05; }
+      let u = Math.random();
+      let b = 0;
+      if (u>=p1) { t.print("BULLSEYE!! 40 POINTS!"); b=40; }
+      else if (u>=p2) { t.print("30-POINT ZONE!"); b=30; }
+      else if (u>=p3) { t.print("20-POINT ZONE"); b=20; }
+      else if (u>=p4) { t.print("WHEW! 10 POINTS."); b=10; }
+      else { t.print("MISSED THE TARGET. TOO BAD!"); b=0; }
+      scores[i] += b;
+      t.print("TOTAL SCORE = "+scores[i]);
+      if (scores[i]>=200) {
+        t.print(""); t.print("WE HAVE A WINNER!!"); t.print("");
+        t.print(names[i]+" SCORED "+scores[i]+" POINTS.");
+        t.print(""); t.print("THANKS FOR THE GAME!");
+        await t.delay(3000);
+        window.location.href="../index.html";
+        return;
+      }
+    }
+  }
+}
+run();
+</script>
+</body>
+</html>

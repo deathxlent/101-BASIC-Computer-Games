@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BASBAL - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BASBAL.BAS - Baseball Simulation</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter your choice...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BASBAL'
+        });
+
+        const pitcherNames = ["HUISMAN","HOEREN","BACCUS","SMITH","SCHNEIDER","ROSENBAUM","POULSEN","KILGOUR","JOHNSON","WHITNEY"];
+        const batterNames = ["KLOOS","ANDREWS","MAYER","HANSEN","MICHEL","P. D. PEATE","WILLIAMS","NELSON","ANKCORN","IVEY"];
+        const pitcherAvgs = [.412,.263,.236,.316,.241,.321,.367,.386,.295,.296];
+        const batterAvgs = [.285,.319,.295,.295,.218,.139,.238,.231,.295,.250];
+
+        let S1, S2, S3, I, C1, C2, C3, B1, B2, B3;
+        let I1, I2, I3, inningHalf, lineupSpotP, lineupSpotB;
+
+        function resetGame() {
+            S1 = 0; S2 = 0; S3 = 0;
+            I = 2; C1 = 0; C2 = 0; C3 = 0;
+            B1 = 0; B2 = 0; B3 = 0;
+            I1 = 0; I2 = 0; I3 = 0;
+            inningHalf = 0; lineupSpotP = 0; lineupSpotB = 0;
+        }
+
+        function scoreRun(who) {
+            if (who === 1) S2++;
+            else S3++;
+            I2++;
+        }
+
+        function printField() {
+            let bases = "";
+            bases += B3 ? " 3RD● " : " 3RD○ ";
+            bases += B2 ? " 2ND● " : " 2ND○ ";
+            bases += B1 ? " 1ST● " : " 1ST○ ";
+            terminal.print(bases);
+        }
+
+        function atBat() {
+            let pitcherIdx = lineupSpotP % 10;
+            let batterIdx = lineupSpotB % 10;
+            lineupSpotP++;
+            lineupSpotB++;
+
+            let pAvg = pitcherAvgs[pitcherIdx];
+            let bAvg = batterAvgs[batterIdx];
+            let mod = (pAvg + bAvg) / 2;
+
+            terminal.print("PITCHER: " + pitcherNames[pitcherIdx] + "  BATTER: " + batterNames[batterIdx]);
+            printField();
+            terminal.print("COUNT: " + C2 + "-" + C1);
+
+            terminal.print("PITCH (fastball, curve, slider, knuckle, spitball)");
+            let pitch = (await terminal.input()).toLowerCase();
+            terminal.print("SWING (bunt, swing, hitaway, fly, kill)");
+            let swing = (await terminal.input()).toLowerCase();
+
+            let outcome = Math.random() * mod * 10;
+            let result = "";
+
+            if (swing === "kill" && pitch === "spitball") {
+                terminal.print("PITCHER THROWN OUT FOR ILLEGAL PITCH!");
+                C3++;
+                return "out";
+            }
+
+            let hitChance = 0.3 + (bAvg - 0.2) * 2;
+            if (pitch === "fastball") hitChance -= 0.05;
+            if (pitch === "curve") hitChance -= 0.03;
+            if (pitch === "knuckle") hitChance -= 0.08;
+            if (pitch === "spitball") hitChance -= 0.12;
+            if (swing === "bunt") hitChance -= 0.1;
+            if (swing === "hitaway") hitChance += 0.05;
+            if (swing === "fly") hitChance -= 0.02;
+            if (swing === "kill") hitChance += 0.1;
+
+            if (Math.random() > hitChance) {
+                let r = Math.random();
+                if (r < 0.35) {
+                    terminal.print("STRIKE!");
+                    C1++;
+                    if (C1 >= 3) {
+                        terminal.print("STRIKE OUT!");
+                        C3++; return "out";
+                    }
+                    return "continue";
+                } else if (r < 0.65) {
+                    terminal.print("BALL!");
+                    C2++;
+                    if (C2 >= 4) {
+                        terminal.print("WALK!");
+                        advanceRunner(1); return "safe";
+                    }
+                    return "continue";
+                } else {
+                    terminal.print("FOUL!");
+                    if (C1 < 2) C1++;
+                    return "continue";
+                }
+            }
+
+            let hitType = Math.random();
+            if (hitType < 0.45) {
+                result = "SINGLE!";
+                advanceRunner(1);
+            } else if (hitType < 0.70) {
+                result = "DOUBLE!";
+                advanceRunner(2);
+            } else if (hitType < 0.85) {
+                result = "TRIPLE!";
+                advanceRunner(3);
+            } else {
+                if (B1 + B2 + B3 === 3) result = "GRAND SLAM!!!";
+                else result = "HOME RUN!!!";
+                advanceRunner(4);
+            }
+
+            terminal.print(result);
+            I1++;
+            return "safe";
+        }
+
+        function advanceRunner(bases) {
+            if (bases >= 4) {
+                if (B3) { scoreRun(inningHalf); B3 = 0; }
+                if (B2) { scoreRun(inningHalf); B2 = 0; }
+                if (B1) { scoreRun(inningHalf); B1 = 0; }
+                scoreRun(inningHalf);
+                return;
+            }
+            if (bases === 3) {
+                if (B3) { scoreRun(inningHalf); }
+                B3 = B2 ? 1 : 0;
+                B2 = B1 ? 1 : 0;
+                B1 = 1;
+                return;
+            }
+            if (bases === 2) {
+                if (B3) { scoreRun(inningHalf); B3 = 0; }
+                if (B2) { scoreRun(inningHalf); B2 = 0; }
+                B3 = B1 ? 1 : 0;
+                B2 = 1;
+                B1 = 0;
+                return;
+            }
+            if (bases === 1) {
+                if (B3) { scoreRun(inningHalf); B3 = 0; }
+                if (B2) { B3 = 1; B2 = 0; }
+                if (B1) { B2 = 1; }
+                B1 = 1;
+            }
+        }
+
+        function inningEnd() {
+            terminal.print("THAT WAS OUT NUMBER 3");
+            terminal.print("AFTER " + (I - 1) + " INNINGS");
+            terminal.print(I2 + " RUNS, " + I1 + " HITS, " + I3 + " ERRORS");
+            terminal.print("SCORE: ME " + S2 + " YOU " + S3);
+            terminal.print("");
+            C1 = 0; C2 = 0; C3 = 0;
+            B1 = 0; B2 = 0; B3 = 0;
+            inningHalf = inningHalf === 0 ? 1 : 0;
+            if (inningHalf === 0) I++;
+            if (I > 5) return true;
+            return false;
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("WELCOME TO HUISMAN STADIUM!");
+            terminal.print("TODAY'S GAME: PDP-8 PANTHERS vs YOU");
+            terminal.print("");
+
+            let teamName = await terminal.input("WHAT IS YOUR TEAM NAME");
+
+            terminal.print("");
+            terminal.print("A HIGHLY PARTISAN CROWD OF " + Math.floor(70000 * Math.random()) + " FANS IS ANXIOUSLY AWAITING THE START OF THE GAME.");
+            terminal.print("");
+
+            terminal.print("HERE IS MY TEAM AND HERE IS YOURS:");
+            terminal.print("NAME           AVG     NAME           AVG");
+            terminal.print("----------------------------------------");
+            for (let i = 0; i < 10; i++) {
+                terminal.print(pitcherNames[i].padEnd(14) + pitcherAvgs[i].toFixed(3) + "   " + batterNames[i].padEnd(14) + batterAvgs[i].toFixed(3));
+            }
+            terminal.print("");
+            terminal.print("PITCHER'S OPTIONS: fastball, curve, slider, knuckle, spitball");
+            terminal.print("BATTER'S OPTIONS: bunt, swing, hitaway, fly, kill");
+            terminal.print("");
+
+            resetGame();
+
+            let gameOver = false;
+            while (!gameOver) {
+                let inningStr = inningHalf === 0 ? "TOP" : "BOTTOM";
+                terminal.print("--- " + inningStr + " OF INNING " + (I - 1) + " ---");
+                terminal.print("");
+
+                while (C3 < 3) {
+                    if (inningHalf === 1) {
+                        terminal.print("YOUR BATTER IS UP");
+                    } else {
+                        terminal.print("MY BATTER IS UP");
+                    }
+
+                    let result = await atBat();
+                    if (result === "out") {
+                        if (C3 >= 3) break;
+                        terminal.print("THAT WAS OUT NUMBER " + C3);
+                        C1 = 0; C2 = 0;
+                        continue;
+                    }
+                    if (result === "safe") {
+                        C1 = 0; C2 = 0;
+                    }
+                }
+
+                gameOver = await inningEnd();
+            }
+
+            terminal.print("FINAL SCORE: ME " + S2 + " YOU " + S3);
+            if (S2 > S3) terminal.print("I WON!");
+            else if (S3 > S2) terminal.print("YOU WON!");
+            else terminal.print("A DRAW!");
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

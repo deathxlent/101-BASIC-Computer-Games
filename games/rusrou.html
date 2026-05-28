@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>RUSROU - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">RUSROU.BAS - Russian Roulette</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'RUSROU'});
+async function run() {
+  await t.delay(300);
+  t.print("RUSSIAN ROULETTE");
+  t.print("A SINGLE BULLET IS PLACED IN A 6-CHAMBER REVOLVER.");
+  t.print("THE CYLINDER IS SPUN. YOU PULL THE TRIGGER.");
+  t.print("LET'S SEE IF YOU'RE LUCKY...");
+  let bullet = Math.floor(Math.random() * 6);
+  for (let pull = 0; pull < 6; pull++) {
+    let inp = await t.input("PULL THE TRIGGER? (YES/NO)");
+    if (inp.toUpperCase() !== "YES") { t.print("CHICKEN!"); break; }
+    if (pull === bullet) { t.print("BANG! YOU'RE DEAD!"); break; }
+    else t.print("CLICK... YOU'RE STILL ALIVE.");
+    if (pull === 5) t.print("ALL CHAMBERS EMPTY. YOU SURVIVE!");
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

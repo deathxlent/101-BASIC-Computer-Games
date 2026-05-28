@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KING - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">KING.BAS - King of the Hill</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'KING'});
+async function run() {
+  await t.delay(300);
+  t.print("KING OF THE HILL");
+  t.print("WELCOME TO THE HILL. I'M KING. YOU'RE A TRAVELER.");
+  t.print("I GET TO SET THE PACE, BUT YOU CAN NEGOTIATE.");
+  t.print("YOU CAN ASK ME TO GO FASTER OR SLOWER BY 1 MPH.");
+  t.print("IF I CATCH YOU CHEATING, THAT'S THE END.");
+  let speed = Math.floor(Math.random() * 5) + 1;
+  let dist = 0;
+  let time = 0;
+  let kingDist = 0;
+  t.print("STARTING SPEED: " + speed + " MPH");
+  while (true) {
+    let cmd = await t.input("(F)ASTER, (S)LOWER, OR (C)OAST");
+    let c = cmd.toUpperCase();
+    if (c === "F") { speed++; }
+    else if (c === "S") { speed--; if (speed < 0) speed = 0; }
+    else if (c === "C") { /* coast */ }
+    else { t.print("INVALID"); continue; }
+    let travel = speed * 0.1;
+    dist += travel;
+    if (Math.random() < 0.3) {
+      t.print("KING IS UNHAPPY. HE SPEEDS UP.");
+      speed += Math.floor(Math.random() * 5) + 1;
+    }
+    time += 0.1;
+    kingDist += speed * 0.1;
+    t.print("TIME: " + time.toFixed(1) + " HRS, DISTANCE: " + dist.toFixed(1) + " MI");
+    if (Math.random() < 0.1) {
+      t.print("KING ACCUSES YOU OF CHEATING! THE GAME IS OVER.");
+      t.print("YOU COVERED " + dist.toFixed(1) + " MILES.");
+      await t.delay(3000); window.location.href="../index.html"; return;
+    }
+    if (time >= 10) {
+      if (dist > kingDist) {
+        t.print("YOU'RE OFF THE HILL! YOU WIN!");
+        t.print("DISTANCE: " + dist.toFixed(1) + " MILES");
+      } else {
+        t.print("TIME'S UP. KING BEAT YOU THIS TIME.");
+      }
+      await t.delay(3000); window.location.href="../index.html"; return;
+    }
+  }
+}
+run();
+</script>
+</body>
+</html>

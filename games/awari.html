@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWARI - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">AWARI.BAS - Awari (Mancala)</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter pit 1-6...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'AWARI'
+        });
+
+        let B, C, N, F;
+
+        function initBoard() {
+            B = new Array(14).fill(3);
+            B[6] = 0;
+            B[13] = 0;
+            C = 0;
+            N = -1;
+            F = [0];
+        }
+
+        function sow(M) {
+            let P = B[M];
+            B[M] = 0;
+            for (let i = P; i >= 1; i--) {
+                M = M + 1;
+                if (M > 13) M = M - 14;
+                B[M] = B[M] + 1;
+            }
+            if (B[M] === 1 && M !== 6 && M !== 13 && B[12 - M] !== 0) {
+                B[M] = B[M] + B[12 - M] + 1;
+                B[M] = 0;
+                B[12 - M] = 0;
+            }
+            return M;
+        }
+
+        function checkEnd() {
+            let playerEmpty = true;
+            for (let i = 0; i <= 5; i++) {
+                if (B[i] !== 0) { playerEmpty = false; break; }
+            }
+            if (playerEmpty) {
+                for (let i = 7; i <= 12; i++) {
+                    if (B[i] !== 0) return 1;
+                }
+                return 0;
+            }
+            let cpuEmpty = true;
+            for (let i = 7; i <= 12; i++) {
+                if (B[i] !== 0) { cpuEmpty = false; break; }
+            }
+            if (cpuEmpty) return 1;
+            return 1;
+        }
+
+        function printBoard() {
+            terminal.print("");
+            let top = "   ";
+            for (let i = 12; i >= 7; i--) {
+                top += " " + B[i] + "  ";
+            }
+            terminal.print(top);
+            terminal.print("     13                6");
+            let mid = "           " + B[13] + "         " + B[6];
+            terminal.print(mid);
+            let bot = "   ";
+            for (let i = 0; i <= 5; i++) {
+                bot += " " + B[i] + "  ";
+            }
+            terminal.print(bot);
+            terminal.print("      1  2  3  4  5  6");
+            terminal.print("");
+        }
+
+        function playerMove(pit) {
+            if (pit < 1 || pit > 6 || B[pit - 1] === 0) {
+                terminal.print("ILLEGAL MOVE");
+                return -1;
+            }
+            let m = pit - 1;
+            let last = sow(m);
+            C++;
+            if (C < 9) {
+                N++;
+                F[N] = (N > 0 ? F[N - 1] : 0) + 6 + (last > 6 ? last - 7 : last);
+            }
+            return checkEnd();
+        }
+
+        function cpuMove() {
+            let bestScore = -999;
+            let bestMove = 7;
+            let backup = [...B];
+
+            for (let j = 7; j <= 12; j++) {
+                if (B[j] === 0) continue;
+                let m = j;
+                sow(m);
+                let score = B[13] - B[6];
+                for (let i = 0; i <= 5; i++) {
+                    if (B[i] !== 0) {
+                        let target = B[i] + i;
+                        let wrap = 0;
+                        while (target > 13) { target -= 14; wrap = 1; }
+                        if (target !== 6 && target !== 13 && B[target] === 0) {
+                            score += B[12 - target] * 0.5;
+                        }
+                    }
+                }
+                for (let k = 0; k < B.length; k++) B[k] = backup[k];
+                if (score > bestScore || (score === bestScore && Math.random() > 0.5)) {
+                    bestScore = score;
+                    bestMove = j;
+                }
+            }
+
+            let m = bestMove;
+            terminal.print("MY MOVE IS " + (bestMove - 6));
+            sow(m);
+            let last = m;
+            if (last > 6) last = last - 7;
+            C++;
+            if (C < 9) {
+                N++;
+                F[N] = (N > 0 ? F[N - 1] : 0) + 6 + last;
+            }
+            return checkEnd();
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("GAME OF *** AWARI ***");
+            terminal.print("");
+
+            while (true) {
+                initBoard();
+                let gameover = false;
+
+                while (true) {
+                    printBoard();
+                    terminal.print("YOUR MOVE");
+                    let input = await terminal.input();
+                    let pit = parseInt(input);
+                    if (isNaN(pit)) continue;
+
+                    let result = playerMove(pit);
+                    if (result === -1) continue;
+                    if (result === 0) { gameover = true; break; }
+
+                    let result2 = cpuMove();
+                    if (result2 === 0) { gameover = true; break; }
+                }
+
+                printBoard();
+                terminal.print("GAME OVER");
+                let diff = B[6] - B[13];
+                if (diff < 0) {
+                    terminal.print("I WIN BY " + (-diff) + " POINTS");
+                } else if (diff === 0) {
+                    terminal.print("DRAWN GAME");
+                } else {
+                    terminal.print("YOU WIN BY " + diff + " POINTS");
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("AGAIN")).toUpperCase();
+                if (again !== "Y" && again !== "YES") break;
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

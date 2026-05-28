@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>FOOTBL - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">FOOTBL.BAS - Football</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'FOOTBL'});
+const plays = ["","RUN","PASS","SWEEP","SCREEN PASS","LONG PASS","DRAW PLAY","PUNT","FIELD GOAL"];
+const defenses = ["","NORMAL","HOLD","BLITZ","INTERCEPT","BLOCK"];
+async function run() {
+  await t.delay(300);
+  t.print("THIS IS A DEMONSTRATION OF PDP-11 BASIC FOOTBALL");
+  let i = await t.input("IF YOU NEED INSTRUCTIONS, TYPE 1");
+  if (i === "1") {
+    t.print("ON OFFENSE YOU HAVE THE FOLLOWING PERMITTED PLAYS:");
+    t.print("PLAY         CODE");
+    t.print("RUN          10"); t.print("PASS         11"); t.print("SWEEP        12");
+    t.print("SCREEN PASS  13"); t.print("LONG PASS    14"); t.print("DRAW PLAY    15");
+    t.print("PUNT         16"); t.print("FIELD GOAL   17");
+    t.print("ON DEFENSE, YOU MAY TRY ONE OF THE FOLLOWING:");
+    t.print("DEFENSE    CODE"); t.print("NORMAL     4"); t.print("HOLD       5");
+    t.print("BLITZ      6"); t.print("INTERCEPT  7"); t.print("BLOCK      8");
+    t.print("TO CALL A PLAY TYPE ITS CODE NUMBER.");
+    t.print("YOU MAY CALL TIME OUT BY TYPING 2 (3 PER HALF).");
+  }
+  let P = [0,0]; let C = 900; let B = 50; let S = 1; let D = 1; let B1 = 60;
+  let X = 1; let F = 0; let T1 = 120; let U = 3; let L = 0; let O = 0;
+  let K = S; let down = 1;
+  while (true) {
+    if (C <= 0) {
+      t.print("END OF PERIOD " + X + "  SCORE: ME " + P[0] + " YOU " + P[1]);
+      C = 900; X++; if (X > 4) break;
+    }
+    let mins = Math.floor(C/60), secs = C % 60;
+    let msg = (mins > 0 ? mins + " MIN " : "") + secs + " SEC. ";
+    t.print(msg + "BALL ON " + (B <= 50 ? "YOUR " : "MY ") + Math.abs(B-50));
+    let q = parseInt(await t.input(down + (down===1?"ST":down===2?"ND":down===3?"RD":"TH") + " AND " + (B1-B) + ". YOUR PLAY"));
+    if (q === 2) { if (U > 0) { U--; t.print("TIMEOUT"); } else t.print("NO TIMEOUTS LEFT"); continue; }
+    if (q < 10 || q > 17) { t.print("INVALID PLAY"); continue; }
+    let m = q - 9;
+    let def = 4 + Math.floor(Math.random() * 5);
+    let gain = Math.floor(Math.random() * 15) - 3;
+    if (m <= 6) {
+      let succ = Math.random();
+      if (m === 1) { if (succ < 0.55) gain = Math.floor(Math.random()*4)+1; else gain = -2+Math.floor(Math.random()*3); }
+      else if (m === 2) { if (succ < 0.45) gain = Math.floor(Math.random()*20)+5; else { t.print("PASS INCOMPLETE"); gain = 0; } }
+      else if (m === 3) { if (succ < 0.5) gain = Math.floor(Math.random()*8)+2; else gain = -3+Math.floor(Math.random()*3); }
+      else if (m === 4) { if (succ < 0.35) gain = Math.floor(Math.random()*12)+3; else { t.print("PASS INCOMPLETE"); gain = 0; } }
+      else if (m === 5) { if (succ < 0.3) gain = Math.floor(Math.random()*35)+10; else { t.print("PASS INCOMPLETE"); gain = 0; } }
+      else if (m === 6) { if (succ < 0.5) gain = Math.floor(Math.random()*5)+1; else gain = -2+Math.floor(Math.random()*3); }
+    } else if (m === 7) {
+      gain = 30 + Math.floor(Math.random() * 15);
+      B += gain;
+      t.print("THE KICK IS ... " + (B >= 100 ? "TOUCHBACK" : ""));
+      if (B >= 100) {
+        t.print("**TOUCHDOWN**"); P[S-1] += 6;
+        t.print("SCORE: ME " + P[0] + " YOU " + P[1]);
+        B = 20; S = 3 - S + 1;
+      }
+      C -= 4 + Math.floor(Math.random() * 4);
+      continue;
+    } else if (m === 8) {
+      gain = 30 + Math.floor(Math.random() * 10);
+      B += gain;
+      t.print("THE KICK IS ... " + (B >= 100 ? "GOOD! " + 3 + " POINTS!" : "NO GOOD"));
+      if (B >= 100) { P[S-1] += 3; t.print("SCORE: ME " + P[0] + " YOU " + P[1]); }
+      B = 20; S = 3 - S + 1;
+      C -= 4 + Math.floor(Math.random() * 4);
+      continue;
+    }
+    if (gain > 0) t.print("GAIN OF " + gain);
+    else if (gain < 0) t.print("LOSS OF " + (-gain));
+    else t.print("NO GAIN");
+    B += gain;
+    if (B >= 100) { t.print("**TOUCHDOWN**"); P[S-1] += 6; t.print("SCORE: ME " + P[0] + " YOU " + P[1]); B = 20; S = 3 - S + 1; down = 1; B1 = B + 10; C -= 10; continue; }
+    if (B <= 0) { t.print("**SAFETY**"); P[2-S] += 2; t.print("SCORE: ME " + P[0] + " YOU " + P[1]); B = 20; S = 3 - S + 1; down = 1; B1 = B + 10; continue; }
+    if (B >= B1) { t.print("FIRST DOWN!"); down = 1; B1 = B + 10; C -= 10; continue; }
+    down++;
+    if (down > 4) { t.print("TURNOVER ON DOWNS"); S = 3 - S + 1; B = 100 - B; down = 1; B1 = B + 10; C -= 10; continue; }
+    C -= 10;
+  }
+  t.print("FINAL SCORE: ME " + P[0] + " YOU " + P[1]);
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

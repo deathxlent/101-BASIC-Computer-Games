@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MATHD - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">MATHD.BAS - Math Dice</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'MATHD'});
+async function run() {
+  await t.delay(300);
+  t.print("MATH DICE");
+  t.print("I WILL ROLL TWO DICE AND YOU ADD THEM.");
+  let correct = 0;
+  let total = 0;
+  while (true) {
+    let d1 = Math.floor(Math.random() * 6) + 1;
+    let d2 = Math.floor(Math.random() * 6) + 1;
+    total++;
+    let ans = parseInt(await t.input(d1 + " + " + d2 + " ="));
+    if (ans === d1 + d2) {
+      t.print("RIGHT!");
+      correct++;
+    } else {
+      t.print("WRONG. IT'S " + (d1 + d2));
+    }
+    let again = await t.input("ANOTHER (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("YOU GOT " + correct + " RIGHT OUT OF " + total);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

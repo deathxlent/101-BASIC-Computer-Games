@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>STARS - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">STARS.BAS - Stars</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'STARS'});
+async function run() {
+  await t.delay(300);
+  t.print("STARS");
+  t.print("I WILL GIVE YOU A NUMBER OF STARS (1-20).");
+  t.print("YOU GUESS HOW MANY.");
+  while (true) {
+    let N = Math.floor(Math.random() * 20) + 1;
+    let line = "";
+    for (let i = 0; i < N; i++) line += "*";
+    t.print(line);
+    let g = parseInt(await t.input("HOW MANY STARS"));
+    if (g === N) t.print("RIGHT!");
+    else t.print("WRONG. THERE ARE " + N + " STARS.");
+    let again = await t.input("AGAIN (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("OK");
+  await t.delay(1500);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

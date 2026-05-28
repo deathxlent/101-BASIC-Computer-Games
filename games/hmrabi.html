@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HMRABI - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">HMRABI.BAS - Hammurabi</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'HMRABI'});
+async function run() {
+  await t.delay(300);
+  t.print("TRY YOUR HAND AT GOVERNING ANCIENT SUMERIA");
+  t.print("SUCCESSFULLY FOR A 10-YR TERM OF OFFICE.");
+  let D1 = 0, P1 = 0;
+  while (true) {
+    let P = 95, S = 2800, H = 3000, A = 3, B = 0, I = 5;
+    let D = 0, Z = 0;
+    while (Z < 10) {
+      Z++;
+      t.print(""); t.print("HAMURABI: I BEG TO REPORT TO YOU,");
+      t.print("IN YEAR " + Z + ", " + D + " PEOPLE STARVED, " + I + " CAME TO THE CITY.");
+      P += I;
+      if (P <= 0) P = 1;
+      t.print("POPULATION IS NOW " + P);
+      t.print("THE CITY NOW OWNS " + A + " ACRES.");
+      t.print("YOU HARVESTED " + B + " BUSHELS PER ACRE.");
+      let rats = Math.floor(Math.random() * 500);
+      t.print("RATS ATE " + rats + " BUSHELS.");
+      t.print("YOU NOW HAVE " + S + " BUSHELS IN STORE.");
+      let price = Math.floor(Math.random() * 10) + 17;
+      t.print("LAND IS TRADING AT " + price + " BUSHELS PER ACRE.");
+      let buy = parseInt(await t.input("HOW MANY ACRES DO YOU WISH TO BUY"));
+      if (buy < 0) { t.print("I CANNOT DO WHAT YOU WISH."); continue; }
+      if (buy * price > S) { t.print("THINK AGAIN, YOU HAVE ONLY " + S + " BUSHELS."); continue; }
+      A += buy; S -= buy * price;
+      if (buy > 0) { t.print(""); }
+      let sell = parseInt(await t.input("HOW MANY ACRES DO YOU WISH TO SELL"));
+      if (sell < 0) { continue; }
+      if (sell > A) { t.print("YOU OWN ONLY " + A + " ACRES."); continue; }
+      A -= sell; S += sell * price;
+      let feed = parseInt(await t.input("HOW MANY BUSHELS TO FEED YOUR PEOPLE"));
+      if (feed < 0) continue;
+      if (feed > S) { t.print("THINK AGAIN, YOU HAVE ONLY " + S + " BUSHELS."); continue; }
+      S -= feed;
+      let plant = parseInt(await t.input("HOW MANY ACRES TO PLANT WITH SEED"));
+      if (plant < 0) continue;
+      if (plant > A) { t.print("YOU OWN ONLY " + A + " ACRES."); continue; }
+      if (Math.floor(plant/2) > S) { t.print("NOT ENOUGH BUSHELS."); continue; }
+      if (plant > 10 * P) { t.print("YOU HAVE ONLY " + P + " PEOPLE TO TEND THE FIELDS."); continue; }
+      S -= Math.floor(plant / 2);
+      B = Math.floor(Math.random() * 5) + 1;
+      let harvest = plant * B;
+      rats = Math.floor(Math.random() * 10) < 5 ? Math.floor(S / B) : 0;
+      S = S - rats + harvest;
+      I = Math.floor(B * (20 * A + S) / P / 100 + 1);
+      let fed = Math.floor(feed / 20);
+      if (fed > P) fed = P;
+      D = P - fed;
+      if (D > 0.45 * P) {
+        t.print("YOU STARVED " + D + " PEOPLE IN ONE YEAR!!!");
+        t.print("DUE TO THIS EXTREME MISMANAGEMENT YOU HAVE NOT ONLY");
+        t.print("BEEN IMPEACHED AND THROWN OUT OF OFFICE BUT YOU HAVE");
+        t.print("ALSO BEEN DECLARED 'NATIONAL FINK' !!");
+        await t.delay(3000); window.location.href = "../index.html"; return;
+      }
+      if (D > 0) P1 = ((Z - 1) * P1 + D * 100 / P) / Z;
+      P = fed;
+      D1 += D;
+      let plague = Math.floor(Math.random() * 100);
+      if (plague < 15) { P = Math.floor(P / 2); t.print("A HORRIBLE PLAGUE STRUCK! HALF THE PEOPLE DIED."); }
+    }
+    t.print("IN YOUR 10-YEAR TERM OF OFFICE, " + P1.toFixed(1) + "% OF THE");
+    t.print("POPULATION STARVED PER YEAR ON AVERAGE, I.E., A TOTAL OF");
+    t.print(D1 + " PEOPLE DIED!!");
+    let L = A / P;
+    t.print("YOU STARTED WITH 10 ACRES PER PERSON AND ENDED WITH");
+    t.print(L.toFixed(1) + " ACRES PER PERSON.");
+    if (P1 > 33 || L < 7) {
+      t.print("YOUR HEAVY-HANDED PERFORMANCE SMACKS OF NERO AND IVAN IV...");
+    } else if (P1 > 10 || L < 9) {
+      t.print("YOUR PERFORMANCE COULD HAVE BEEN SOMEWHAT BETTER...");
+    } else {
+      t.print("A FANTASTIC PERFORMANCE!!! CHARLEMAGNE, DISRAELI, AND");
+      t.print("JEFFERSON COMBINED COULD NOT HAVE DONE BETTER!");
+    }
+    let again = await t.input("PLAY AGAIN (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("SO LONG FOR NOW.");
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

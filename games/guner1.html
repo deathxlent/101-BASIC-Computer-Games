@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>GUNER1 - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">GUNER1.BAS - Artillery</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'GUNER1'});
+async function run() {
+  await t.delay(300);
+  let instr = await t.input("DO YOU WANT INSTRUCTIONS");
+  if (instr.toUpperCase() !== "NO") {
+    t.print("THIS GAME TESTS YOUR ABILITY TO HIT A MOVING TARGET.");
+    t.print("YOU MUST DESTROY IT BEFORE IT DESTROYS YOU OR MOVES OUT OF RANGE.");
+    t.print("ENTER SPEED (1-100) - RELATIVE SPEED OF TARGET.");
+    t.print("ENTER DISTANCE - KILL RADIUS (5000 SUGGESTED).");
+    t.print("ELEVATION IS YOUR GUN'S ELEVATION IN DEGREES. MAX RANGE AT 45 DEG.");
+  }
+  let speed = parseInt(await t.input("ENTER SPEED (1-100)"));
+  if (speed<1||speed>100) speed=50;
+  let killR = parseInt(await t.input("ENTER DISTANCE (KILL RADIUS)"));
+  if (killR<0||killR>10000) killR=5000;
+  let maxR = 100000 - 75000 * Math.random();
+  t.print("MAXIMUM RANGE OF YOUR GUN IS "+Math.floor(maxR)+" YARDS");
+  for (let k=0;k<maxR/10000;k++) Math.random();
+  let R = 0.95*maxR - 0.6*maxR*Math.random();
+  let N=0;
+  while (true) {
+    if (R>maxR) { t.print("* TARGET OUT OF RANGE *"); break; }
+    if (R<=maxR/2.5) { t.print("THE TARGET HAS DESTROYED YOU!"); break; }
+    t.print("TARGET RANGE IS "+Math.floor(R)+" YARDS");
+    let E = parseFloat(await t.input("ELEVATION (1-89 DEGREES)"));
+    if (E<0) { t.print("OUT OF RANGE"); break; }
+    if (E>89) { t.print("MAXIMUM ELEVATION IS 89 DEGREES"); continue; }
+    if (E<1) { t.print("MINIMUM ELEVATION IS 1 DEGREE"); continue; }
+    N++;
+    let K = Math.floor(R - maxR * Math.sin(2*E/57.3));
+    let K1 = Math.abs(K);
+    if (K1 < killR) {
+      t.print("*** TARGET DESTROYED ***");
+      if (N===1) t.print("***** DIRECT HIT *****");
+      else t.print(N+" ROUNDS EXPENDED");
+      break;
+    }
+    if (K>0) t.print("SHORT OF TARGET BY "+K1+" YARDS");
+    else t.print("OVER TARGET BY "+K1+" YARDS");
+    let C = Math.random()<0.5 ? 1 : -1;
+    let C1 = maxR * speed / 100 * Math.random();
+    R += C * C1;
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

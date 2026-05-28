@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOMBER - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BOMBER.BAS - WWII Bomber</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter number...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BOMBER'
+        });
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            while (true) {
+                terminal.print("YOU ARE NOW A PILOT IN A WORLD WAR II BOMBER");
+                let A = parseInt(await terminal.input("WHAT SIDE -- ITALY(1), ALLIES(2), JAPANESE(3), GERMANY(4)"));
+                if (A < 1 || A > 4) { terminal.print("TRY AGAIN....."); continue; }
+
+                let sideText = ["", "ITALY", "ALLIES", "JAPANESE", "GERMANY"];
+
+                if (A === 1) {
+                    let B = parseInt(await terminal.input("WHAT IS YOUR TARGET -- ALBANIA(1), GREECE(2), NORTH AFRICA(3)"));
+                    if (B < 1 || B > 3) { terminal.print("TRY AGAIN....."); continue; }
+                    if (B === 1) terminal.print("SHOULD BE EASY,YOU'RE FLYING A NAZI-MADE PLANE.");
+                    if (B === 2) terminal.print("BE CAREFUL!!!");
+                    if (B === 3) await terminal.input("YOU'RE GOING FOR THE OIL. EH?");
+                }
+
+                if (A === 2) {
+                    let G = parseInt(await terminal.input("AIRCRAFT -- LIBERATOR(1), B-29(2), B-17(3), LANCASTER(4)"));
+                    if (G < 1 || G > 4) { terminal.print("TRY AGAIN....."); continue; }
+                    if (G === 1) terminal.print("YOU'VE GOT 2 TONS OF BOMBS FLYING FOR PLOESTI");
+                    if (G === 2) terminal.print("YOU'RE DROPPING THE A-BOMB ON HIROSHIMA.");
+                    if (G === 3) terminal.print("YOU'RE CHASING THE BISMARK IN THE NORTH SEA.");
+                    if (G === 4) terminal.print("YOU'RE HUNTING A GERMAN HEAVY WATER PLANT IN THE RUHR.");
+                }
+
+                if (A === 3) {
+                    terminal.print("YOU'RE FLYING A KAMIKAZE (SUICIDE BOMBER) OVER THE USS LEXINGTON.");
+                    let F = (await terminal.input("YOUR FIRST KAMIKAZE MISSION (Y OR N)")).toUpperCase();
+                    if (F === "N") { if (Math.random() > 0.65) { terminal.print("DIRECT HIT!!!!"); } }
+                    else if (Math.random() > 0.65) { terminal.print("DIRECT HIT!!!! MISSION SUCCESSFUL."); }
+                }
+
+                if (A === 4) {
+                    let M = parseInt(await terminal.input("ARE YOU GOING FOR RUSSIA(1), ENGLAND(2) OR FRANCE(3)"));
+                    if (M < 1 || M > 3) { terminal.print("WHAT??"); continue; }
+                    if (M === 1) terminal.print("YOU'RE HEADING FOR STALINGRAD.....");
+                    if (M === 2) terminal.print("NEARING LONDON. BE CAREFUL. THEY'VE GOT A GOOD AIR-RAID DEFENCE.");
+                    if (M === 3) terminal.print("NEARING VERSAILLES. DUCK SOUP. THEY'RE NEARLY DEFENSELESS.");
+                }
+
+                terminal.print("");
+                let D = parseInt(await terminal.input("HOW MANY MISSIONS HAVE YOU FLOWN"));
+                if (D >= 160) { terminal.print("MISSIONS, NOT MILES...."); terminal.print("150 MISSIONS IS HIGH EVEN FOR OLD-TIMERS. NOW THEN."); continue; }
+                if (D < 25) terminal.print("FRESH OUT OF TRAINING, EH?");
+                else if (D < 100) terminal.print("");
+                else terminal.print("THAT'S PUSHING THE ODDS!");
+
+                if (D < 160 * Math.random()) {
+                    terminal.print("DIRECT HIT!!!! " + Math.floor(100 * Math.random()) + " KILLED!! MISSION SUCCESSFUL.");
+                } else {
+                    terminal.print("MISSED TARGET BY " + Math.floor(2 + 30 * Math.random()) + " MILES!!");
+                    terminal.print("NOW YOU'RE REALLY IN FOR IT !!");
+                    terminal.print("");
+
+                    let R = parseInt(await terminal.input("DOES THE ENEMY HAVE GUNS(1), MISSILES(2), OR BOTH(3)"));
+                    if (R < 1 || R > 3) { terminal.print("TRY AGAIN...."); continue; }
+
+                    let S = 0, T = 0;
+                    if (R !== 2) {
+                        S = parseInt(await terminal.input("WHAT IS THE PERCENT HIT RATE OF THE ENEMY GUNNERS (10 TO 50)"));
+                        if (S < 10) { terminal.print("YOU LIE, BUT YOU'LL PAY....."); }
+                    }
+                    if (R > 1) T = 35;
+
+                    if (S + T > 100 * Math.random()) {
+                        terminal.print("* * * * * BOOM * * * * *");
+                        terminal.print("YOU HAVE BEEN SHOT DOWN.......");
+                        terminal.print("DEARLY BELOVED, WE ARE GATHERED HERE TODAY TO PAY OUR LAST TRIBUTE..");
+                    } else {
+                        terminal.print("YOU MADE IT THROUGH TREMENDOUS FLAK!");
+                    }
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("PLAY AGAIN (Y OR N)")).toUpperCase();
+                if (again !== "Y") break;
+            }
+
+            terminal.print("CHICKEN!!!!!");
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

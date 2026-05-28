@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SPCWAR - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">SPCWAR.BAS - Space War</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'SPCWAR'});
+async function run() {
+  await t.delay(300);
+  t.print("SPACE WAR");
+  t.print("YOU COMMAND A STARSHIP. AN ENEMY SHIP APPROACHES.");
+  let yourHull = 100, enemyHull = 100;
+  let yourShields = 50, enemyShields = 50;
+  function status() {
+    t.print("YOUR HULL: " + yourHull + " SHIELDS: " + yourShields);
+    t.print("ENEMY HULL: " + enemyHull + " SHIELDS: " + enemyShields);
+  }
+  while (yourHull > 0 && enemyHull > 0) {
+    status();
+    let action = await t.input("(A)TTACK, (S)HIELDS, (R)EPAIR");
+    if (action.toUpperCase() === "A") {
+      let dmg = Math.floor(Math.random() * 30) + 10;
+      dmg = Math.max(0, dmg - Math.floor(enemyShields * 0.3));
+      enemyHull -= dmg;
+      t.print("YOU DEAL " + dmg + " DAMAGE");
+    } else if (action.toUpperCase() === "S") {
+      yourShields += 20;
+      if (yourShields > 100) yourShields = 100;
+      t.print("SHIELDS RAISED TO " + yourShields);
+    } else if (action.toUpperCase() === "R") {
+      let heal = Math.floor(Math.random() * 20) + 5;
+      yourHull += heal;
+      if (yourHull > 100) yourHull = 100;
+      t.print("REPAIRED " + heal + " HULL");
+    } else continue;
+    // enemy turn
+    let eDmg = Math.floor(Math.random() * 25) + 5;
+    eDmg = Math.max(0, eDmg - Math.floor(yourShields * 0.3));
+    yourHull -= eDmg;
+    t.print("ENEMY DEALS " + eDmg + " DAMAGE");
+    yourShields = Math.max(0, yourShields - 5);
+  }
+  if (enemyHull <= 0) t.print("YOU DESTROYED THE ENEMY!");
+  else t.print("YOUR SHIP IS DESTROYED!");
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

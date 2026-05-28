@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>HI-Q - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">HI-Q.BAS - Hi-Q (Peg Solitaire)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'HI-Q'});
+async function run() {
+  await t.delay(300);
+  t.print("THIS IS THE GAME OF HI-Q");
+  t.print("HERE IS THE BOARD:");
+  t.print(""); t.print("     !    !    !"); t.print("    13   14   15"); t.print("     !    !    !"); t.print("    22   23   24");
+  t.print("!    !    !    !    !    !    !"); t.print("29  30   31   32   33   34   35");
+  t.print("!    !    !    !    !    !    !"); t.print("38  39   40   41   42   43   44");
+  t.print("!    !    !    !    !    !    !"); t.print("47  48   49   50   51   52   53");
+  t.print("     !    !    !"); t.print("    58   59   60"); t.print("     !    !    !"); t.print("    67   68   69");
+  t.print(""); t.print("TO SAVE TYPING TIME, A COMPRESSED VERSION WILL BE USED.");
+  t.print("REFER TO THE ABOVE FOR PEG NUMBERS.");
+  while (true) {
+    let board = Array(74).fill(-7);
+    board[41] = -3;
+    let positions = [13,14,15,22,23,24,29,30,31,32,33,34,35,38,39,40,41,42,43,44,47,48,49,50,51,52,53,58,59,60,67,68,69];
+    positions.forEach(p => board[p] = -7);
+    board[41] = -3;
+    t.print("BOARD (O=peg, !=empty):");
+    function printBoard() {
+      let lines = [
+        "       " + (board[13]===-7?"O":board[13]===-3?".":" ") + "   " + (board[14]===-7?"O":".") + "   " + (board[15]===-7?"O":"."),
+        "       " + (board[22]===-7?"O":".") + "   " + (board[23]===-7?"O":".") + "   " + (board[24]===-7?"O":"."),
+        (board[29]===-7?"O":".")+"   "+(board[30]===-7?"O":".")+"   "+(board[31]===-7?"O":".")+"   "+(board[32]===-7?"O":".")+"   "+(board[33]===-7?"O":".")+"   "+(board[34]===-7?"O":".")+"   "+(board[35]===-7?"O":"."),
+        (board[38]===-7?"O":".")+"   "+(board[39]===-7?"O":".")+"   "+(board[40]===-7?"O":".")+"   "+(board[41]===-7?"O":board[41]===-3?".":" ")+"   "+(board[42]===-7?"O":".")+"   "+(board[43]===-7?"O":".")+"   "+(board[44]===-7?"O":"."),
+        (board[47]===-7?"O":".")+"   "+(board[48]===-7?"O":".")+"   "+(board[49]===-7?"O":".")+"   "+(board[50]===-7?"O":".")+"   "+(board[51]===-7?"O":".")+"   "+(board[52]===-7?"O":".")+"   "+(board[53]===-7?"O":"."),
+        "       " + (board[58]===-7?"O":".") + "   " + (board[59]===-7?"O":".") + "   " + (board[60]===-7?"O":"."),
+        "       " + (board[67]===-7?"O":".") + "   " + (board[68]===-7?"O":".") + "   " + (board[69]===-7?"O":".")
+      ];
+      lines.forEach(l => t.print(l));
+    }
+    printBoard();
+    let pieces = positions.filter(p => board[p]===-7).length + 1;
+    while (true) {
+      let Z = parseInt(await t.input("MOVE WHICH PIECE"));
+      if (board[Z] !== -7) { t.print("ILLEGAL MOVE"); continue; }
+      let P = parseInt(await t.input("TO WHERE"));
+      if (board[P] !== -3) { t.print("ILLEGAL"); continue; }
+      if (Z === P) { t.print("ILLEGAL"); continue; }
+      let mid = (Z + P) / 2;
+      if (mid !== Math.floor(mid)) { t.print("ILLEGAL"); continue; }
+      let diff = Math.abs(Z - P);
+      if (diff !== 2 && diff !== 18) { t.print("ILLEGAL"); continue; }
+      if (board[mid] !== -7) { t.print("NO PEG TO JUMP"); continue; }
+      board[Z] = -3; board[mid] = -3; board[P] = -7;
+      printBoard();
+      pieces--;
+      let canMove = false;
+      for (let p of positions) {
+        if (board[p] !== -7) continue;
+        for (let d of [-2, 2, -18, 18]) {
+          let t = p + d;
+          let m = (p + t) / 2;
+          if (t >= 0 && t < 74 && m === Math.floor(m) && board[m]===-7 && board[t]===-3) { canMove = true; break; }
+        }
+        if (canMove) break;
+      }
+      if (!canMove) {
+        t.print("THE GAME IS OVER.");
+        t.print("YOU HAD " + pieces + " PIECES REMAINING.");
+        if (pieces === 1) t.print("BRAVO! YOU MADE A PERFECT SCORE!!");
+        break;
+      }
+    }
+    let again = await t.input("PLAY AGAIN (YES OR NO)");
+    if (again.toUpperCase() === "NO") break;
+  }
+  t.print("SO LONG FOR NOW.");
+  await t.delay(2000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

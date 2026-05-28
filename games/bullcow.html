@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BULLCOW - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">BULLCOW.BAS - Bulls and Cows</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'BULLCOW'});
+function genSecret() {
+  let d = [];
+  while (d.length<5) { let n = Math.floor(Math.random()*10); if (!d.includes(n)) d.push(n); }
+  return d;
+}
+function score(secret, guess) {
+  let bulls = 0, cows = 0;
+  for (let i=0;i<5;i++) {
+    if (guess[i]===secret[i]) bulls++;
+    for (let j=0;j<5;j++) if (guess[i]===secret[j] && i!==j) cows++;
+  }
+  return [bulls, cows+bullls];
+}
+function score2(secret, guess) {
+  let bulls=0, cows=0;
+  for (let i=0;i<5;i++) {
+    if (guess[i]===secret[i]) bulls++;
+    for (let j=0;j<5;j++) if (i!==j && guess[i]===secret[j]) { cows++; break; }
+  }
+  return [bulls, cows];
+}
+async function run() {
+  await t.delay(300);
+  t.print(""); t.print("BRADFORD UNIVERSITY BULLS AND COWS GAME"); t.print("");
+  while (true) {
+    let secret = genSecret();
+    t.print("I HAVE A 5-DIGIT NUMBER. (NO REPEATED DIGITS)");
+    let mySecret = genSecret();
+    let guesses = [], myGuesses = [];
+    let done = false;
+    while (!done) {
+      t.print("");
+      let gs = await t.input("YOUR GUESS (5 DIGITS)");
+      if (gs.length!==5||isNaN(gs)) { t.print("ENTER 5 DIGITS"); continue; }
+      let guess = gs.split('').map(Number);
+      if (new Set(guess).size!==5) { t.print("REPEATED DIGITS NOT ALLOWED"); continue; }
+      let [b,c] = score2(secret, guess);
+      t.print(b+" BULL"+(b!==1?"S":"")+", "+c+" COW"+(c!==1?"S":""));
+      if (b===5) { t.print("YOU WIN!"); done=true; break; }
+      if (guesses.length<10) {
+        let mg = genSecret();
+        myGuesses.push(mg);
+        t.print("MY GUESS IS "+mg.join(''));
+        let mb = parseInt(await t.input("MY BULLS?"));
+        let mc = parseInt(await t.input("MY COWS?"));
+        if (mb===5) { t.print("I WIN - MY NUMBER WAS "+mySecret.join('')); done=true; break; }
+      }
+    }
+    t.print("");
+    let again = await t.input("PLAY AGAIN? (Y/N)");
+    if (again.toUpperCase()!=="Y") break;
+  }
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

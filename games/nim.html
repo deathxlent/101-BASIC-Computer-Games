@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NIM - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">NIM.BAS - Nim</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'NIM'});
+async function run() {
+  await t.delay(300);
+  t.print("NIM");
+  t.print("WE START WITH 5 PILES OF STONES:");
+  t.print("PILE 1: 1   PILE 2: 3   PILE 3: 5   PILE 4: 7");
+  t.print("ON EACH TURN, PICK A PILE AND REMOVE SOME STONES.");
+  t.print("THE PLAYER WHO TAKES THE LAST STONE LOSES.");
+  while (true) {
+    let piles = [1, 3, 5, 7];
+    while (true) {
+      t.print("PILES: " + piles.join(" "));
+      let p = parseInt(await t.input("YOUR TURN - PILE NUMBER (1-4)"));
+      let n = parseInt(await t.input("NUMBER OF STONES TO REMOVE"));
+      if (p < 1 || p > 4 || n < 1 || n > piles[p-1]) { t.print("ILLEGAL MOVE"); continue; }
+      piles[p-1] -= n;
+      if (piles.every(v => v === 0)) { t.print("YOU TOOK THE LAST STONE! YOU LOSE!"); break; }
+      // AI move: try to make all piles XOR to 0, else random
+      let xorAll = piles.reduce((a,b) => a ^ b, 0);
+      let moved = false;
+      if (xorAll !== 0) {
+        for (let i = 0; i < 4; i++) {
+          let target = piles[i] ^ xorAll;
+          if (target < piles[i]) {
+            let remove = piles[i] - target;
+            piles[i] = target;
+            t.print("I TAKE " + remove + " FROM PILE " + (i+1));
+            moved = true;
+            break;
+          }
+        }
+      }
+      if (!moved) {
+        // remove 1 from largest pile
+        let maxI = 0;
+        for (let i = 1; i < 4; i++) if (piles[i] > piles[maxI]) maxI = i;
+        if (piles[maxI] > 0) { piles[maxI]--; t.print("I TAKE 1 FROM PILE " + (maxI+1)); moved = true; }
+      }
+      if (piles.every(v => v === 0)) { t.print("I TOOK THE LAST STONE! YOU WIN!"); break; }
+    }
+    let again = await t.input("PLAY AGAIN (YES OR NO)");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  t.print("OK");
+  await t.delay(1500);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

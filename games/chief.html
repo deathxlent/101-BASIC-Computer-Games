@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CHIEF - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CHIEF.BAS - Chief Numbers Freek</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CHIEF'});
+async function run() {
+  await t.delay(300);
+  t.print("I AM CHIEF NUMBERS FREEK, THE GREAT INDIAN MATH GOD.");
+  let ready = await t.input("ARE YOU READY TO TAKE THE TEST YOU CALLED ME OUT FOR");
+  if (ready.toUpperCase() !== "YES") t.print("SHUT UP PALEFACE WITH WISE TOUNGUE.");
+  t.print("TAKE A NUMBER AND ADD 3. DIVIDE THIS NUMBER BY 5 AND");
+  t.print("MULTIPLY BY 8. DIVIDE BY 5 AND ADD THE SAME. SUBTRACT 1.");
+  let b = parseFloat(await t.input("WHAT DO YOU HAVE"));
+  let c = ((b + 1 - 5) * 5 / 8 * 5) - 3;
+  let ans = "I BET YOUR NUMBER WAS " + c + " WAS I RIGHT";
+  let d = await t.input(ans);
+  if (d.toUpperCase() === "YES") {
+    t.print("BYE!!!!!");
+  } else {
+    let k = parseFloat(await t.input("WHAT WAS YOUR ORIGINAL NUMBER"));
+    let f = k + 3;
+    let g = f / 5;
+    let h = g * 8;
+    let i = h / 5 + 5;
+    let j = i - 1;
+    t.print("SO YOU THINK YOU'RE SO SMART, EH?");
+    t.print("NOW WATCH....");
+    t.print(k + " PLUS 3 EQUALS " + f + ". THIS DIVIDED BY 5 EQUALS " + g + ",");
+    t.print("THIS TIMES 8 EQUALS " + h + ". IF WE DIVIDE BY 5 AND ADD THE SAME,");
+    t.print("WE GET " + i + ". MINUS 1 EQUALS " + j + ".");
+    let z = await t.input("NOW DO YOU BELIEVE ME");
+    if (z.toUpperCase() !== "YES") {
+      t.print("YOU HAVE MADE ME MAD!!!");
+      t.print("THERE MUST NOW BE A GREAT LIGHTNING BOLT!");
+      t.print("");
+      for (let x = 30; x >= 22; x--) t.print(" ".repeat(x) + "X X");
+      t.print(" ".repeat(21) + "X XXX");
+      t.print(" ".repeat(20) + "X  X");
+      t.print(" ".repeat(19) + "XX X");
+      for (let y = 20; y >= 13; y--) t.print(" ".repeat(y) + "X X");
+      t.print(" ".repeat(12) + "XX");
+      t.print(" ".repeat(11) + "X");
+      t.print(" ".repeat(10) + "*");
+      t.print("");
+      t.print("##################################");
+      t.print("I HOPE YOU BELIEVE ME NOW, FOR YOUR SAKE!!");
+    } else {
+      t.print("BYE!!!!!");
+    }
+  }
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

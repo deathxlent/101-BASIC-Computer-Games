@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CIVILW - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">CIVILW.BAS - Civil War</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'CIVILW'});
+const battles = [
+  {name:"BULL RUN",date:"JULY 21, 1861",m1:18000,m2:18500,c1:1967,c2:2708,off:1,desc:"GEN. BEAUREGARD COMMANDING THE SOUTH MET THE UNION FORCES WITH GEN MCDOWELL IN A PREMATURE BATTLE AT BULL RUN. GEN. JACKSON HELPED PUSH BACK THE UNION ATTACK."},
+  {name:"SHILOH",date:"APRIL 6-7, 1862",m1:40000,m2:44894,c1:10699,c2:13047,off:3,desc:"THE CONFEDERATE SURPRISE ATTACK AT SHILOH FAILED DUE TO POOR ORGANIZATION."},
+  {name:"SEVEN DAYS",date:"JUNE 25-JULY 1, 1862",m1:95000,m2:115000,c1:20614,c2:15849,off:3,desc:"GEN. LEE UPHELD THE OFFENSIVE AND FORCED GEN. MCCLELLAN AWAY FROM RICHMOND."},
+  {name:"SECOND BULL RUN",date:"AUG 29-30, 1862",m1:54000,m2:63000,c1:10000,c2:14400,off:2,desc:"THE COMBINED FORCES UNDER LEE AND JACKSON DROVE THE UNION BACK INTO WASHINGTON."},
+  {name:"ANTIETAM",date:"SEPT 17, 1862",m1:40000,m2:50000,c1:10000,c2:12000,off:3,desc:"THE SOUTH FAILED TO INCORPORATE MARYLAND INTO THE CONFEDERACY."},
+  {name:"FREDERICKSBURG",date:"DEC 13, 1862",m1:75000,m2:120000,c1:5377,c2:12853,off:1,desc:"THE CONFEDERACY UNDER LEE SUCCESSFULLY REPULSED AN ATTACK BY THE UNION UNDER GEN. BURNSIDE."},
+  {name:"MURFREESBORO",date:"DEC 31, 1862",m1:38000,m2:45000,c1:11000,c2:12000,off:1,desc:"THE SOUTH UNDER GEN. BRAGG WON A CLOSE BATTLE."},
+  {name:"CHANCELLORSVILLE",date:"MAY 1-4, 1863",m1:32000,m2:90000,c1:13000,c2:17197,off:2,desc:"THE SOUTH HAD A COSTLY VICTORY AND LOST ONE OF THEIR OUTSTANDING GENERALS, 'STONEWALL' JACKSON."},
+  {name:"VICKSBURG",date:"JULY 4, 1863",m1:50000,m2:70000,c1:12000,c2:19000,off:1,desc:"VICKSBURG WAS A COSTLY DEFEAT FOR THE SOUTH BECAUSE IT GAVE THE UNION ACCESS TO THE MISSISSIPPI."},
+  {name:"GETTYSBURG",date:"JUNE 30, 1863",m1:72500,m2:85000,c1:20000,c2:23000,off:3,desc:"A SOUTHERN MISTAKE BY GEN. LEE AT GETTYSBURG COST THEM ONE OF THE MOST CRUCIAL BATTLES OF THE WAR."},
+  {name:"CHICKAMAUGA",date:"NOV 25, 1863",m1:65000,m2:60000,c1:18000,c2:16000,off:2,desc:"AFTER THE SOUTH HAD SIEGED GEN. ROSENCRANS' ARMY FOR THREE MONTHS, GEN. GRANT BROKE THE SIEGE."},
+  {name:"CHATTANOOGA",date:"SEPT 15, 1863",m1:37000,m2:60000,c1:5700,c2:5800,off:2,desc:"CONFUSION IN A FOREST NEAR CHICKAMAUGA LED TO A COSTLY SOUTHERN VICTORY."},
+  {name:"SPOTSYLVANIA",date:"MAY 5, 1864",m1:62000,m2:110000,c1:17723,c2:18000,off:2,desc:"GRANT'S PLAN TO KEEP LEE ISOLATED BEGAN TO FAIL HERE, AND CONTINUED AT COLD HARBOR AND PETERSBURG."},
+  {name:"ATLANTA",date:"AUGUST, 1864",m1:65000,m2:100000,c1:8500,c2:3700,off:1,desc:"SHERMAN AND THREE VETERAN ARMIES CONVERGED ON ATLANTA AND DEALT THE DEATH BLOW TO THE CONFEDERACY."}
+];
+async function run() {
+  await t.delay(300);
+  let z = await t.input("DO YOU WANT DESCRIPTIONS (0=YES, 1=NO)");
+  let W=0, L=0, P1=0, T1=0, P2=0, T2=0, M3=0, M4=0, Q1=0, R1=0;
+  if (z!=="1") {
+    t.print("THIS IS A CIVIL WAR SIMULATION.");
+    t.print("TO PLAY, TYPE A RESPONSE WHEN THE COMPUTER ASKS.");
+    t.print("REMEMBER THAT ALL FACTORS ARE INTERRELATED AND THAT YOUR");
+    t.print("RESPONSES COULD CHANGE HISTORY.");
+    t.print("THE OBJECT OF THE GAME IS TO WIN AS MANY BATTLES AS POSSIBLE");
+    t.print("YOUR CHOICES FOR DEFENSIVE STRATEGY ARE:");
+    t.print("  (1) ARTILLERY ATTACK  (2) FORTIFICATION AGAINST FRONTAL ATTACK");
+    t.print("  (3) FORTIFICATION AGAINST FLANKING  (4) FALLING BACK");
+    t.print("YOUR CHOICES FOR OFFENSIVE STRATEGY ARE:");
+    t.print("  (1) ARTILLERY ATTACK  (2) FRONTAL ATTACK");
+    t.print("  (3) FLANKING MANEUVERS  (4) ENCIRCLEMENT");
+    t.print("YOU MAY SURRENDER BY TYPING A '5' FOR YOUR STRATEGY.");
+    t.print("YOU ARE THE CONFEDERACY. GOOD LUCK!");
+  }
+  for (let b = 0; b < battles.length; b++) {
+    let bat = battles[b];
+    let I1 = 10*(L-W)+2, I2 = 10*(W-L)+2;
+    let D1 = Math.floor(bat.m1*100*(1+(100-I1)/2000)*(1+(R1-Q1)/(R1+1||1)));
+    let D2 = Math.floor(bat.m2*100*(1+(100-I2)/2000));
+    let men1 = Math.floor(bat.m1*(1+(P1-T1)/(M3+1||1)));
+    let men2 = Math.floor(bat.m2*(1+(P2-T2)/(M4+1||1)));
+    let off = bat.off;
+    for (let u=0;u<4;u++) t.print("");
+    t.print("THIS IS THE BATTLE OF " + bat.name);
+    t.print(bat.date);
+    t.print("MEN: CONFEDERACY " + men1 + ", UNION " + men2);
+    t.print("MONEY: CONFEDERACY $" + D1 + ", UNION $" + D2);
+    t.print("INFLATION: " + (I1+15) + "%, " + I2 + "%");
+    t.print("");
+    let F, S, B;
+    while (true) {
+      F = parseFloat(await t.input("HOW MUCH FOR FOOD"));
+      if (F<0) { t.print("GO TO JAIL. GO DIRECTLY TO JAIL."); continue; }
+      S = parseFloat(await t.input("HOW MUCH FOR SALARIES"));
+      if (S<0) { t.print("GO TO JAIL. GO DIRECTLY TO JAIL."); continue; }
+      B = parseFloat(await t.input("HOW MUCH FOR AMMUNITION"));
+      if (B<0) { t.print("GO TO JAIL. GO DIRECTLY TO JAIL."); continue; }
+      if (F+S+B > D1) { t.print("THINK AGAIN! YOU HAVE ONLY $" + D1); continue; }
+      break;
+    }
+    let O = (2*F*F+S*S)/Math.pow(bat.m1/6,2)+1;
+    if (O>=10) t.print("MORALE IS HIGH");
+    else if (O>=5) t.print("MORALE IS FAIR");
+    else t.print("MORALE IS POOR");
+    if (off===3) t.print("YOU ARE ON THE OFFENSIVE");
+    else if (off===1) t.print("YOU ARE ON THE DEFENSIVE");
+    else t.print("BOTH SIDES ARE ON THE OFFENSIVE");
+    let Y = parseInt(await t.input("YOUR STRATEGY (1-5)"));
+    if (Y===5) { t.print("THE CONFEDERACY HAS SURRENDERED"); break; }
+    if (off<=2 && (Y<1||Y>4)) { t.print("USE DEFENSIVE STRATEGY (1-4)!"); b--; continue; }
+    if (off>=3 && (Y<1||Y>4)) { t.print("USE OFFENSIVE STRATEGY (1-4)!"); b--; continue; }
+    let C5 = Math.floor((2*bat.c1/5)*(1+1/(2*(Math.abs(Math.floor(4*Math.random()+1)-Y)+1))));
+    let unionCas = Math.floor(17*bat.c2+bat.c1/(C5+20)+0.5);
+    t.print("CASUALTIES: CONFEDERACY " + C5 + ", UNION " + unionCas);
+    if (C5 < bat.c1) t.print("YOUR CASUALTIES WERE " + Math.floor(100*(bat.c1-C5)/bat.c1) + "% LESS THAN THE ACTUAL CASUALTIES AT " + bat.name);
+    else t.print("YOUR CASUALTIES WERE " + Math.floor(100*(C5-bat.c1)/bat.c1) + "% MORE THAN THE ACTUAL CASUALTIES AT " + bat.name);
+    if (C5 < unionCas) { t.print("YOU WIN " + bat.name); W++; }
+    else { t.print("YOU LOSE " + bat.name); L++; }
+    T1 += C5; T2 += unionCas; P1 += bat.c1; P2 += bat.c2;
+    Q1 += F+S+B; R1 += men1; M3 += bat.m1; M4 += bat.m2;
+    t.print("WINS: " + W + ", LOSSES: " + L);
+    if (W===8) { t.print("THE UNION HAS SURRENDERED!"); break; }
+    t.print("");
+  }
+  t.print("YOU HAVE WON " + W + " BATTLES AND LOST " + L + " BATTLES.");
+  if (W > L) t.print("THE CONFEDERACY HAS WON THE WAR!");
+  else t.print("THE UNION HAS WON THE WAR.");
+  await t.delay(3000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

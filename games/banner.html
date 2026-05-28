@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BANNER - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BANNER.BAS - Banner/Poster Maker</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Enter message...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BANNER'
+        });
+
+        const font = {
+            'A': ["  ##  ", " #  # ", "#    #", "#    #", "######", "#    #", "#    #"],
+            'B': ["##### ", "#    #", "#    #", "##### ", "#    #", "#    #", "##### "],
+            'C': [" #### ", "#    #", "#     ", "#     ", "#     ", "#    #", " #### "],
+            'D': ["##### ", "#    #", "#    #", "#    #", "#    #", "#    #", "##### "],
+            'E': ["######", "#     ", "#     ", "##### ", "#     ", "#     ", "######"],
+            'F': ["######", "#     ", "#     ", "##### ", "#     ", "#     ", "#     "],
+            'G': [" #### ", "#    #", "#     ", "#  ###", "#    #", "#    #", " #### "],
+            'H': ["#    #", "#    #", "#    #", "######", "#    #", "#    #", "#    #"],
+            'I': [" #####", "   #  ", "   #  ", "   #  ", "   #  ", "   #  ", " #####"],
+            'J': ["  ####", "   #  ", "   #  ", "   #  ", "   #  ", "#  #  ", " ##   "],
+            'K': ["#    #", "#   # ", "#  #  ", "###   ", "#  #  ", "#   # ", "#    #"],
+            'L': ["#     ", "#     ", "#     ", "#     ", "#     ", "#     ", "######"],
+            'M': ["#    #", "##  ##", "# ## #", "#    #", "#    #", "#    #", "#    #"],
+            'N': ["#    #", "##   #", "# #  #", "#  # #", "#   ##", "#    #", "#    #"],
+            'O': [" #### ", "#    #", "#    #", "#    #", "#    #", "#    #", " #### "],
+            'P': ["##### ", "#    #", "#    #", "##### ", "#     ", "#     ", "#     "],
+            'Q': [" #### ", "#    #", "#    #", "#    #", "#  # #", "#   # ", " ### #"],
+            'R': ["##### ", "#    #", "#    #", "##### ", "#  #  ", "#   # ", "#    #"],
+            'S': [" #### ", "#    #", "#     ", " #### ", "     #", "#    #", " #### "],
+            'T': ["#######", "   #   ", "   #   ", "   #   ", "   #   ", "   #   ", "   #   "],
+            'U': ["#    #", "#    #", "#    #", "#    #", "#    #", "#    #", " #### "],
+            'V': ["#    #", "#    #", "#    #", "#    #", "#    #", " #  # ", "  ##  "],
+            'W': ["#    #", "#    #", "#    #", "#    #", "# ## #", "##  ##", "#    #"],
+            'X': ["#    #", "#    #", " #  # ", "  ##  ", " #  # ", "#    #", "#    #"],
+            'Y': ["#    #", "#    #", " #  # ", "  ##  ", "  #   ", "  #   ", "  #   "],
+            'Z': ["######", "     #", "    # ", "   #  ", "  #   ", " #    ", "######"],
+            '0': [" #### ", "#    #", "#   ##", "#  # #", "# #  #", "##   #", " #### "],
+            '1': ["  #   ", " ##   ", "  #   ", "  #   ", "  #   ", "  #   ", "#####"],
+            '2': [" #### ", "#    #", "     #", "    # ", "   #  ", "  #   ", "######"],
+            '3': [" #### ", "#    #", "     #", "  ### ", "     #", "#    #", " #### "],
+            '4': ["    # ", "   ## ", "  # # ", " #  # ", "######", "    # ", "    # "],
+            '5': ["######", "#     ", "#     ", "##### ", "     #", "#    #", " #### "],
+            '6': [" #### ", "#    #", "#     ", "##### ", "#    #", "#    #", " #### "],
+            '7': ["######", "     #", "    # ", "   #  ", "  #   ", " #    ", "#     "],
+            '8': [" #### ", "#    #", "#    #", " #### ", "#    #", "#    #", " #### "],
+            '9': [" #### ", "#    #", "#    #", " #####", "     #", "#    #", " #### "],
+            ' ': ["      ", "      ", "      ", "      ", "      ", "      ", "      "]
+        };
+
+        function scaleChar(ch, scale) {
+            let rows = font[ch] || font[' '];
+            let result = [];
+            for (let r = 0; r < rows.length; r++) {
+                let line = rows[r];
+                let scaled = "";
+                for (let c = 0; c < line.length; c++) {
+                    let chRep = line[c] === '#' ? '#' : ' ';
+                    for (let s = 0; s < scale; s++) scaled += chRep;
+                }
+                for (let s = 0; s < scale; s++) result.push(scaled);
+            }
+            return result;
+        }
+
+        function buildBanner(msg, scale) {
+            let rows = scale * 7;
+            let banner = new Array(rows).fill("");
+            for (let i = 0; i < msg.length; i++) {
+                let ch = msg[i].toUpperCase();
+                let scaled = scaleChar(ch, scale);
+                for (let r = 0; r < rows; r++) {
+                    if (banner[r].length > 0) banner[r] += " ";
+                    banner[r] += scaled[r] || "";
+                }
+            }
+            return banner;
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("BANNER / POSTER MAKER");
+            terminal.print("");
+
+            while (true) {
+                terminal.print("ENTER YOUR MESSAGE");
+                let msg = await terminal.input();
+                if (!msg) {
+                    terminal.print("PLEASE ENTER A MESSAGE.");
+                    continue;
+                }
+
+                terminal.print("SCALE (1-3)?");
+                let scaleStr = await terminal.input();
+                let scale = parseInt(scaleStr);
+                if (isNaN(scale) || scale < 1 || scale > 3) scale = 2;
+
+                terminal.print("");
+                let banner = buildBanner(msg, scale);
+                for (let r = 0; r < banner.length; r++) {
+                    terminal.print(banner[r]);
+                }
+                terminal.print("");
+
+                let again = (await terminal.input("ANOTHER MESSAGE (Y/N)")).toUpperCase();
+                if (again !== "Y" && again !== "YES") break;
+                terminal.print("");
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

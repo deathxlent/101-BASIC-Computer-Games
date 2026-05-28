@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>QUBIC - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">QUBIC.BAS - Qubic (3D Tic-Tac-Toe)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'QUBIC'});
+async function run() {
+  await t.delay(300);
+  t.print("QUBIC - 3D TIC-TAC-TOE ON A 4x4x4 BOARD");
+  t.print("YOU ARE X, I AM O. GET 4 IN A ROW TO WIN.");
+  let board = Array(64).fill('.');
+  function render() {
+    for (let z = 0; z < 4; z++) {
+      t.print("LEVEL " + (z+1) + ":");
+      let rows = [];
+      for (let y = 0; y < 4; y++) {
+        let row = "";
+        for (let x = 0; x < 4; x++) {
+          row += board[z * 16 + y * 4 + x] + " ";
+        }
+        rows.push(row);
+      }
+      rows.forEach(r => t.print(r));
+    }
+  }
+  function wins(c) {
+    // rows within layers
+    for (let z = 0; z < 4; z++) {
+      for (let y = 0; y < 4; y++) {
+        for (let x = 0; x <= 0; x++) {
+          if ([0,1,2,3].every(dx => board[z*16 + y*4 + x+dx] === c)) return true;
+        }
+      }
+      for (let x = 0; x < 4; x++) {
+        for (let y = 0; y <= 0; y++) {
+          if ([0,1,2,3].every(dy => board[z*16 + (y+dy)*4 + x] === c)) return true;
+        }
+      }
+      // diagonals in layer
+      if (board[z*16] === c && board[z*16+5] === c && board[z*16+10] === c && board[z*16+15] === c) return true;
+      if (board[z*16+3] === c && board[z*16+6] === c && board[z*16+9] === c && board[z*16+12] === c) return true;
+    }
+    // columns across layers
+    for (let y = 0; y < 4; y++) {
+      for (let x = 0; x < 4; x++) {
+        if ([0,1,2,3].every(dz => board[(dz)*16 + y*4 + x] === c)) return true;
+      }
+    }
+    // diagonals across layers
+    for (let y = 0; y < 4; y++) {
+      if (board[y*4] === c && board[16 + y*4+1] === c && board[32 + y*4+2] === c && board[48 + y*4+3] === c) return true;
+    }
+    // etc
+    return false;
+  }
+  render();
+  while (true) {
+    // human move
+    let inp = await t.input("YOUR MOVE (X,Y,Z 0-3)");
+    let parts = inp.split(',').map(s => parseInt(s.trim()));
+    if (parts.length < 3) continue;
+    let [x, y, z] = parts;
+    let idx = z * 16 + y * 4 + x;
+    if (idx < 0 || idx >= 64 || board[idx] !== '.') { t.print("ILLEGAL"); continue; }
+    board[idx] = 'X';
+    render();
+    if (wins('X')) { t.print("YOU WIN!"); break; }
+    if (board.every(c => c !== '.')) { t.print("DRAW!"); break; }
+    // computer move - random
+    let empty = board.map((c,i) => c === '.' ? i : -1).filter(i => i >= 0);
+    let ci = empty[Math.floor(Math.random() * empty.length)];
+    board[ci] = 'O';
+    t.print("I MOVE TO (" + (ci%4) + "," + (Math.floor(ci/4)%4) + "," + Math.floor(ci/16) + ")");
+    render();
+    if (wins('O')) { t.print("I WIN!"); break; }
+  }
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

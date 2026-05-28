@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>DICE - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">DICE.BAS - Dice Roll</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'DICE'});
+async function run() {
+  await t.delay(300);
+  t.print("THIS PROGRAM SIMULATES THE ROLLING OF A");
+  t.print("PAIR OF DICE.");
+  t.print("YOU ENTER THE NUMBER OF TIMES YOU WANT THE COMPUTER");
+  t.print("TO 'ROLL' THE DICE. WATCH OUT, VERY LARGE NUMBERS TAKE");
+  t.print("A LONG TIME. IN PARTICULAR, NUMBERS OVER 5000.");
+  while (true) {
+    let freq = Array(13).fill(0);
+    t.print("");
+    let x = parseInt(await t.input("HOW MANY ROLLS"));
+    if (isNaN(x) || x < 1) continue;
+    for (let s = 0; s < x; s++) {
+      let a = Math.floor(6 * Math.random()) + 1;
+      let b = Math.floor(6 * Math.random()) + 1;
+      freq[a + b]++;
+    }
+    t.print("");
+    t.print("TOTAL SPOTS    NUMBER OF TIMES");
+    for (let v = 2; v <= 12; v++) {
+      t.print("     " + v + "             " + freq[v]);
+    }
+    let again = await t.input("TRY AGAIN");
+    if (again.toUpperCase() !== "YES") break;
+  }
+  await t.delay(2000);
+  window.location.href = "../index.html";
+}
+run();
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOWL - 101 BASIC Games</title>
+    <link rel="stylesheet" href="../css/terminal.css">
+</head>
+<body>
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="terminal-title">BOWL.BAS - Bowling</span>
+            <div class="terminal-controls">
+                <a href="../index.html">← BACK</a>
+                <a href="#" onclick="location.reload()">RESTART</a>
+            </div>
+        </div>
+        <div class="terminal-body">
+            <div id="output"></div>
+            <div class="terminal-input-line">
+                <span class="prompt">?</span>
+                <input type="text" id="input" class="terminal-input" disabled placeholder="Press Enter to roll...">
+            </div>
+        </div>
+        <div class="terminal-footer">
+            <span>101 BASIC COMPUTER GAMES</span>
+            <span>HTML EDITION</span>
+        </div>
+    </div>
+
+    <script src="../js/terminal.js"></script>
+    <script>
+        const terminal = new BasicTerminal({
+            outputElement: document.getElementById('output'),
+            inputElement: document.getElementById('input'),
+            gameTitle: 'BOWL'
+        });
+
+        function rollBall() {
+            let hits = 0;
+            for (let i = 0; i < 20; i++) {
+                let x = Math.floor(100 * Math.random());
+                for (let j = 1; j <= 10; j++) {
+                    if (x < 15 * j) { hits++; break; }
+                }
+                if (hits === 10 + Math.floor(Math.random() * 3)) break;
+            }
+            return Math.min(hits, 10);
+        }
+
+        function printPins(standing) {
+            let k = 0;
+            for (let i = 0; i < 4; i++) {
+                let line = " ".repeat(i);
+                for (let j = 0; j < 4 - i; j++) {
+                    if (k >= 10) break;
+                    line += standing[k] ? "+ " : "O ";
+                    k++;
+                }
+                terminal.print(line);
+            }
+        }
+
+        async function runGame() {
+            await terminal.delay(500);
+
+            terminal.print("WELCOME TO THE ALLEY");
+            terminal.print("BRING YOUR FRIENDS");
+            terminal.print("");
+            terminal.print("OKAY LET'S FIRST GET ACQUAINTED");
+            terminal.print("");
+
+            let instr = (await terminal.input("WANT INSTRUCTIONS (Y OR N)")).toUpperCase();
+            if (instr === "Y") {
+                terminal.print("THE GAME OF BOWLING TAKES MIND AND SKILL. DURING THE GAME");
+                terminal.print("THE COMPUTER WILL KEEP SCORE. YOU MAY COMPETE WITH");
+                terminal.print("OTHER PLAYERS(UP TO FOUR). YOU WILL BE PLAYING TEN FRAMES");
+                terminal.print("ON THE PIN DIAGRAM 'O' MEANS THE PIN IS DOWN...'+' MEANS THE");
+                terminal.print("PIN IS STANDING. AFTER THE GAME THE COMPUTER WILL SHOW YOUR");
+                terminal.print("SCORES.");
+            }
+
+            terminal.print("");
+            let R = parseInt(await terminal.input("FIRST OF ALL...HOW MANY ARE PLAYING"));
+            if (isNaN(R) || R < 1 || R > 4) R = 1;
+            terminal.print("VERY GOOD...");
+
+            while (true) {
+                let scores = Array.from({length: R}, () => []);
+                let frames = Array.from({length: R}, () => 0);
+
+                for (let frame = 1; frame <= 10; frame++) {
+                    for (let p = 1; p <= R; p++) {
+                        terminal.print("");
+                        terminal.print("PLAYER " + p + " -- FRAME: " + frame);
+
+                        if (frame === 1) {
+                            await terminal.input("TYPE ROLL");
+                        }
+
+                        let standing = Array(10).fill(true);
+                        printPins(standing);
+
+                        let ball1 = rollBall();
+                        terminal.print("BALL 1: " + (ball1 === 10 ? "STRIKE!!!" : ball1 + " PINS"));
+
+                        if (ball1 === 10) {
+                            frames[p-1].push(10);
+                            scores[p-1].push("X");
+                            continue;
+                        }
+
+                        let remaining = Array(10 - ball1).fill(true).concat(Array(ball1).fill(false));
+                        printPins(remaining);
+
+                        let ball2 = rollBall();
+                        if (ball2 > 10 - ball1) ball2 = 10 - ball1;
+                        let total = ball1 + ball2;
+
+                        if (total === 10) {
+                            terminal.print("SPARE!!!");
+                            frames[p-1].push(10);
+                            scores[p-1].push("/");
+                        } else {
+                            terminal.print(total + " PINS");
+                            frames[p-1].push(total);
+                            scores[p-1].push(total);
+                        }
+                    }
+                }
+
+                terminal.print("");
+                terminal.print("FRAMES");
+                let header = "";
+                for (let i = 1; i <= 10; i++) header += i + " ";
+                terminal.print(header);
+
+                for (let p = 0; p < R; p++) {
+                    let row = "";
+                    for (let f = 0; f < 10; f++) {
+                        let s = scores[p][f];
+                        row += (typeof s === 'number' ? s : s) + " ";
+                    }
+                    terminal.print("P" + (p+1) + ": " + row);
+                }
+
+                terminal.print("");
+                let again = (await terminal.input("DO YOU WANT ANOTHER GAME")).toUpperCase();
+                if (again !== "Y") break;
+            }
+
+            terminal.print("");
+            terminal.print("*** Returning to menu in 3 seconds ***");
+            await terminal.delay(3000);
+            window.location.href = "../index.html";
+        }
+
+        runGame();
+    </script>
+</body>
+</html>

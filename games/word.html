@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>WORD - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">WORD.BAS - Word (Jumble)</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'WORD'});
+const words = ["APPLE","HOUSE","TIGER","OCEAN","PIANO","RIVER","STONE","CLOUD","FLAME","GRAPE","PEARL","QUEST","SNAKE","TOWER","UNITY","VIVID","WHALE","YACHT","ZEBRA","BRAIN"];
+async function run() {
+  await t.delay(300);
+  t.print("WORD JUMBLE");
+  t.print("UNSCRAMBLE THE LETTERS TO FORM A WORD.");
+  let score = 0;
+  for (let i = 0; i < 5; i++) {
+    let w = words[Math.floor(Math.random() * words.length)];
+    let scrambled = w.split('').sort(() => Math.random() - 0.5).join('');
+    while (scrambled === w) scrambled = w.split('').sort(() => Math.random() - 0.5).join('');
+    let ans = await t.input("UNSCRAMBLE: " + scrambled);
+    if (ans.toUpperCase() === w) { t.print("CORRECT!"); score++; }
+    else t.print("WRONG. THE WORD WAS " + w);
+  }
+  t.print("YOU GOT " + score + " OUT OF 5.");
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>LITQZ - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">LITQZ.BAS - Literature Quiz</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'LITQZ'});
+const questions = [
+  {q:"WHO WROTE 'A TALE OF TWO CITIES'?",a:"DICKENS"},
+  {q:"WHO WROTE 'MOBY DICK'?",a:"MELVILLE"},
+  {q:"WHO WROTE 'WAR AND PEACE'?",a:"TOLSTOY"},
+  {q:"WHO WROTE 'TOM SAWYER'?",a:"TWAIN"},
+  {q:"WHO WROTE 'THE GREAT GATSBY'?",a:"FITZGERALD"},
+  {q:"WHO WROTE 'PRIDE AND PREJUDICE'?",a:"AUSTEN"},
+  {q:"WHO WROTE '1984'?",a:"ORWELL"},
+  {q:"WHO WROTE 'THE ODYSSEY'?",a:"HOMER"},
+  {q:"WHO WROTE 'THE DIVINE COMEDY'?",a:"DANTE"},
+  {q:"WHO WROTE 'HAMLET'?",a:"SHAKESPEARE"}
+];
+async function run() {
+  await t.delay(300);
+  t.print("LITERATURE QUIZ");
+  t.print("I WILL ASK YOU 10 QUESTIONS ABOUT AUTHORS.");
+  let correct = 0;
+  for (let i = 0; i < questions.length; i++) {
+    let ans = await t.input(questions[i].q);
+    if (ans.toUpperCase() === questions[i].a) {
+      t.print("CORRECT!");
+      correct++;
+    } else {
+      t.print("WRONG. THE ANSWER IS " + questions[i].a);
+    }
+  }
+  t.print("YOU GOT " + correct + " OUT OF 10.");
+  if (correct === 10) t.print("PERFECT SCORE!");
+  else if (correct >= 7) t.print("GOOD JOB.");
+  else t.print("TRY AGAIN.");
+  await t.delay(3000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>

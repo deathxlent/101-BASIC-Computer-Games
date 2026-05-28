@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>NICOMA - 101 BASIC Games</title><link rel="stylesheet" href="../css/terminal.css"></head>
+<body>
+<div class="terminal-container"><div class="terminal-header"><span class="terminal-title">NICOMA.BAS - Nicoma</span><div class="terminal-controls"><a href="../index.html">← BACK</a><a href="#" onclick="location.reload()">RESTART</a></div></div>
+<div class="terminal-body"><div id="output"></div><div class="terminal-input-line"><span class="prompt">?</span><input type="text" id="input" class="terminal-input" disabled></div></div>
+<div class="terminal-footer"><span>101 BASIC COMPUTER GAMES</span><span>HTML EDITION</span></div></div>
+<script src="../js/terminal.js"></script>
+<script>
+const t = new BasicTerminal({outputElement:document.getElementById('output'),inputElement:document.getElementById('input'),gameTitle:'NICOMA'});
+async function run() {
+  await t.delay(300);
+  t.print("NICOMA - THE NAME ISN'T FAMILIAR? IT'S 'AMOCIN' SPELLED BACKWARDS.");
+  t.print("I'LL GIVE YOU A WORD, YOU GIVE IT BACKWARDS.");
+  let words = ["STOP","LIVE","PAL","ZEAL","PETS","BLOT","BARD","MUG","SLAP","BEER","SWAP","WAR","MEAT","DOG","WOLF","STAR","BATS","LEEK","SPOT","GOD"];
+  let score = 0;
+  let total = 0;
+  while (total < words.length) {
+    let w = words[total];
+    let answer = await t.input("REVERSE OF '" + w + "'");
+    let rev = w.split('').reverse().join('');
+    total++;
+    if (answer.toUpperCase() === rev) {
+      t.print("CORRECT!");
+      score++;
+    } else {
+      t.print("WRONG. THE REVERSE IS " + rev);
+    }
+  }
+  t.print("YOU GOT " + score + " OUT OF " + total);
+  await t.delay(2000);
+  window.location.href="../index.html";
+}
+run();
+</script>
+</body>
+</html>
