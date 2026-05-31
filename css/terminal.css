@@ -101,6 +101,14 @@ body {
     51%, 100% { opacity: 0; }
 }
 
+.terminal-credit {
+    text-align: center;
+    color: #00aa00;
+    font-size: 0.8em;
+    padding: 4px 0;
+    border-top: 1px solid #003300;
+}
+
 .terminal-footer {
     background: #003300;
     padding: 8px 15px;
